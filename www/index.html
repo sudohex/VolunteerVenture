@@ -1,49 +1,155 @@
 <!DOCTYPE html>
 <!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
+App: Volunteer Venture
+Created: July 17, 2023
+Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 -->
 <html>
     <head>
         <meta charset="utf-8">
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, please refer to the docs:
-            https://cordova.apache.org/docs/en/latest/
-        Some notes:
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css"/>
         <link rel="stylesheet" href="css/index.css">
+        <script src="js/jquery.js" ></script>
+        <script src="js/jquery.mobile-1.4.5.js"></script>
         <title>Volunteer Venture</title>
     </head>
-    <body>
-        <div class="app">
+    <body class="body">
+        <!-- Login Page -->
+        <div data-role="page" id="log-in">
+            <div data-role="header" data-position="fixed">
             <h1>Volunteer Venture</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
+            </div>
+                <div data-role="main" class="ui-content">
+                    <h1>Sign In</h1>
+                    <form id="LoginForm">
+                        <input type="text" name="email" id="email-login" value="" placeholder="Email">
+                        <input type="text" name="password" id="pw-login" value="" placeholder="Password">
+                    </form>
+                    <a href="#forgotpassword">Forgot Password</a> <!--TO-DO Add link to reset password-->
+                    <button type="button" id="SignIn">Sign In</button> <!--TO-DO user auth - takes to user public page-->
+				    <button type="button" id="CreateNew">Create New Account</button> <!--TO-DO action to take to new account page-->
+                    <a href="#Stafflogin">Staff Member Login</a> <!--TO-DO Add link to staff login page-->
+                </div>
+            
+        </div>
+        <!-- END - Login Page-->
+
+        <!-- Create Account Page -->
+        <div data-role="page" id="createAcct">
+            <div data-role="header" data-position="fixed">
+            <h1>Create Account</h1>
+            </div>
+                <div data-role="main" class="ui-content">
+                    <form id="createForm">
+                        <!-- TO-DO data validation -->
+                            <label for="userEmail">Email *</label>
+                            <input type="text" name="addEmail" id="userEmail" value="">
+                            <label for="userPW">Password *</label>
+                            <input type="text" name="addPW" id="userPW" value="">
+                            <label for="userPWConfirm">Confirm Password *</label>
+                            <input type="text" name="confirmPW" id="userPWConfirm" value="">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" name="addFN" id="firstName" value="">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" name="addLN" id="lastName" value="">                      
+                            <label for="phoneNo">Phone *</label>
+                            <input type="text" name="addLN" id="phoneNo" value="">
+
+                            <!-- TO-DO: use JS to create selection functions (briana - review little libraries with Pyae) -->
+                            <label for="select-location">Preferred Location:</label>
+                            <select name="select-location" id="select-location" data-mini="true">
+                                    <option value="">Select one</option>    
+                                    <option value="loc1">Mackay Oorlea</option>
+                                    <option value="loc2">Mackay</option>
+                                    <option value="loc3">Brisbane</option>
+                            </select> 
+                            <label for="select-services">Preferred Service Categories:</label>
+                            <select multiple="multiple" data-native-menu="false" name="select-services" id="select-services" data-mini="true">
+                                <option value="">Select all that apply</option>
+                                <option value="cat1">Hair</option>
+                                <option value="cat2">Beauty</option>
+                                <option value="cat3">Chiro</option>
+                            </select>
+                             <label for="select-consent">Notification Preferences: </label>
+                            <select multiple="multiple" data-native-menu="false" name="select-consent" id="select-consent" data-mini="true">
+                            <option value="">Select all that apply</option>
+                            <option value="sms-on">SMS</option>
+                            <option value="email-on">Email</option>
+                        </select>    
+                    </form>
+                    <button type="button" id="save-account">Create</button> <!-- CREATE saves data and takes user to logged in home page-->
+                    <button type="button" id="temp-button">Back</button>    <!--TO-DO: just for UI test navigation - remove this button after Create account button works -->
+                </div>
+            
+        </div>
+        <!-- END - Create Account Page-->
+
+        <!-- Public Home Page -->
+        <div data-role="page" id="public-home">
+            <div data-role="header" data-position="fixed">
+                <h1>Volunteer Venture</h1>
+             </div>
+            <div data-role="main" class="ui-content">
+                <H2>Current Service Opportunities</H2>
+                <form>
+                    <input type="text" data-role="date" data-inline="true">
+                </form>
+
+            </div>
+            <div>
+                <footer data-role="footer" data-position="fixed" id="foort">
+                    <div data-role="navbar">
+                        <ul data-role="listview">
+                          <li><a href="#messages" data-icon="mail"></a></li>
+                          <li><a href="#manageAcct" data-icon="user"></a></li>
+                </footer>
             </div>
         </div>
+        <!-- END Public Home Page -->
+
+        <!-- Public Messages Page -->
+            <div data-role="page" id="notif-page">
+                <div data-role="header" data-position="fixed">
+                    <h1>Opportunity Notifications</h1>
+                    </div>
+                <div data-role="main" class="ui-content">
+
+                </div>
+                <div>
+                    <footer data-role="footer" data-position="fixed" id="foort">
+                        <div data-role="navbar">
+                            <ul data-role="listview">
+                                <li><a href="#messages" data-icon="mail"></a></li>
+                                <li><a href="#manageAcct" data-icon="user"></a></li>
+                    </footer>
+                </div>
+            </div>
+        <!-- END Public Home Page -->
+
+        <!-- Manage Account Page -->
+        <div data-role="page" id="manage-acct-page">
+            <div data-role="header" data-position="fixed">
+                <h1>Manage Account</h1>
+                </div>
+            <div data-role="main" class="ui-content">
+
+            </div>
+            <div>
+                <footer data-role="footer" data-position="fixed" id="foort">
+                    <div data-role="navbar">
+                        <ul data-role="listview">
+                            <li><a href="#messages" data-icon="mail"></a></li>
+                            <li><a href="#manageAcct" data-icon="user"></a></li>
+                </footer>
+            </div>
+        </div>
+        <!-- END Manage Account Page -->
+
         <script src="cordova.js"></script>
         <script src="js/index.js"></script>
     </body>

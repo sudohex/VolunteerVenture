@@ -17,15 +17,19 @@ function onDeviceReady() {
     $('#temp-button').click(() => {
 		$("body").pagecontainer("change", "#log-in");    
     });
+    $('#temp-button-2').click(() => {
+      $("body").pagecontainer("change", "#manage-acct-page");    
+      });
+    $('#temp-button-3').click(() => {
+       $("body").pagecontainer("change", "#log-#notif-page");    
+       });    
+    
     $('#save-account').click(() => {
 		$("body").pagecontainer("change", "#public-home"); 
     });
-    $('#messages').click(() => {
-		$("body").pagecontainer("change", "#notif-page");
-    });
-    $('#manageAcct').click(() => {
-		$("body").pagecontainer("change", "#manage-acct-page");
-    });
+
+    /* footer navigation links */
+
     
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);

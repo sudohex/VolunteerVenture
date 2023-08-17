@@ -33,6 +33,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <a href="#forgotpassword">Forgot Password</a> <!--TO-DO Add link to reset password-->
                     <button type="button" id="SignIn">Sign In</button> <!--TO-DO user auth - takes to user public page-->
 				    <button type="button" id="CreateNew">Create New Account</button> <!--TO-DO action to take to new account page-->
+
+                <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
+                <button type="button" id="temp-button-2">Manage account Page</button>  
+                <button type="button" id="temp-button-3">Notifications page</button>  
+                
                     <a href="#Stafflogin">Staff Member Login</a> <!--TO-DO Add link to staff login page-->
                 </div>
             
@@ -61,15 +66,15 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                             <input type="text" name="addLN" id="phoneNo" value="">
 
                             <!-- TO-DO: use JS to create selection functions (briana - review little libraries with Pyae) -->
-                            <label for="select-location">Preferred Location:</label>
-                            <select name="select-location" id="select-location" data-mini="true">
+                        <label for="select-location">Preferred Location:</label>
+                        <select name="select-location" id="select-location" data-mini="true">
                                     <option value="">Select one</option>    
                                     <option value="loc1">Mackay Oorlea</option>
                                     <option value="loc2">Mackay</option>
                                     <option value="loc3">Brisbane</option>
-                            </select> 
-                            <label for="select-services">Preferred Service Categories:</label>
-                            <select multiple="multiple" data-native-menu="false" name="select-services" id="select-services" data-mini="true">
+                        </select> 
+                        <label for="select-services">Preferred Service Categories:</label>
+                        <select multiple="multiple" data-native-menu="false" name="select-services" id="select-services" data-mini="true">
                                 <option value="">Select all that apply</option>
                                 <option value="cat1">Hair</option>
                                 <option value="cat2">Beauty</option>
@@ -83,7 +88,9 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         </select>    
                     </form>
                     <button type="button" id="save-account">Create</button> <!-- CREATE saves data and takes user to logged in home page-->
-                    <button type="button" id="temp-button">Back</button>    <!--TO-DO: just for UI test navigation - remove this button after Create account button works -->
+                <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
+                <button type="button" id="temp-button">Back</button>   
+
                 </div>
             
         </div>
@@ -96,10 +103,33 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
              </div>
             <div data-role="main" class="ui-content">
                 <H2>Current Service Opportunities</H2>
-                <form>
-                    <input type="text" data-role="date" data-inline="true">
-                </form>
-
+                <div>
+                    <form>
+                        <input type="text" data-role="date" data-inline="true">
+                        <input data-type="search" id="searchForCollapsibleSet">
+                    </form>
+                    <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">
+                        <div data-role="collapsible" data-filtertext="Animals">
+                            <h3>Location</h3>
+                            <ul data-role="listview" data-inset="false">
+                                <li>Mackay</li>
+                                <li>Mackay Oorlea</li>
+                                <li>Brisbane</li>
+                            </ul>
+                        </div>
+                        <div data-role="collapsible" data-filtertext="Cars">
+                        <h3>Categories</h3>
+                            <ul data-role="listview" data-inset="false">
+                                <li>Hair</li>
+                                <li>Beauty</li>
+                                <li>Chiro</li>
+                                <li>Catering</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
+            <button type="button" id="temp-button">Back</button>   
             </div>
             <div>
                 <footer data-role="footer" data-position="fixed" id="foort">
@@ -127,6 +157,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                                 <li><a href="#messages" data-icon="mail"></a></li>
                                 <li><a href="#manageAcct" data-icon="user"></a></li>
                     </footer>
+                <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
+                <button type="button" id="temp-button">Back</button>   
                 </div>
             </div>
         <!-- END Public Home Page -->
@@ -136,8 +168,34 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <div data-role="header" data-position="fixed">
                 <h1>Manage Account</h1>
                 </div>
-            <div data-role="main" class="ui-content">
-
+                <div data-role="main" class="ui-content">
+                <form id="manage-acct-form">
+                    <label for="userEmail">Email *</label>
+                    <input type="text" name="addEmail" id="userEmail" value="">
+                    <label for="phoneNo">Phone *</label>
+                    <input type="text" name="addLN" id="phoneNo" value="">
+                    <label for="select-location">Preferred Location:</label>
+                    <select name="select-location" id="select-location" data-mini="true">
+                                <option value="">Select one</option>    
+                                <option value="loc1">Mackay Oorlea</option>
+                                <option value="loc2">Mackay</option>
+                                <option value="loc3">Brisbane</option>
+                    </select> 
+                    <label for="select-services">Preferred Service Categories:</label>
+                    <select multiple="multiple" data-native-menu="false" name="select-services" id="select-services" data-mini="true">
+                            <option value="">Select all that apply</option>
+                            <option value="cat1">Hair</option>
+                            <option value="cat2">Beauty</option>
+                            <option value="cat3">Chiro</option>
+                        </select>
+                         <label for="select-consent">Notification Preferences: </label>
+                        <select multiple="multiple" data-native-menu="false" name="select-consent" id="select-consent" data-mini="true">
+                        <option value="">Select all that apply</option>
+                        <option value="sms-on">SMS</option>
+                        <option value="email-on">Email</option>
+                    </select>  
+                </form>
+                <button type="button" id="update-account">Update Now</button> 
             </div>
             <div>
                 <footer data-role="footer" data-position="fixed" id="foort">
@@ -147,6 +205,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                             <li><a href="#manageAcct" data-icon="user"></a></li>
                 </footer>
             </div>
+<!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
+<button type="button" id="temp-button">Back</button>               
         </div>
         <!-- END Manage Account Page -->
 

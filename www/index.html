@@ -110,7 +110,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     </form>
                     <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">
                         <div data-role="collapsible" data-filtertext="Animals">
-                            <h3>Location</h3>
+                            <h3>Locations</h3>
                             <ul data-role="listview" data-inset="false">
                                 <li>Mackay</li>
                                 <li>Mackay Oorlea</li>
@@ -118,7 +118,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                             </ul>
                         </div>
                         <div data-role="collapsible" data-filtertext="Cars">
-                        <h3>Categories</h3>
+                        <h3>Service Categories</h3>
                             <ul data-role="listview" data-inset="false">
                                 <li>Hair</li>
                                 <li>Beauty</li>
@@ -128,8 +128,6 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         </div>
                     </div>
                 </div>
-            <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
-            <button type="button" id="temp-button">Back</button>   
             </div>
             <div>
                 <footer data-role="footer" data-position="fixed" id="foort">
@@ -145,10 +143,12 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <!-- Public Messages Page -->
             <div data-role="page" id="notif-page">
                 <div data-role="header" data-position="fixed">
-                    <h1>Opportunity Notifications</h1>
+                    <h1>Notifications</h1>
                     </div>
                 <div data-role="main" class="ui-content">
-
+                    <p>List of past notifications</p>
+                <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
+                <button type="button" id="temp-button">Back</button>   
                 </div>
                 <div>
                     <footer data-role="footer" data-position="fixed" id="foort">
@@ -157,8 +157,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                                 <li><a href="#messages" data-icon="mail"></a></li>
                                 <li><a href="#manageAcct" data-icon="user"></a></li>
                     </footer>
-                <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
-                <button type="button" id="temp-button">Back</button>   
+
                 </div>
             </div>
         <!-- END Public Home Page -->
@@ -210,6 +209,14 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
         <!-- END Manage Account Page -->
 
+        <!-- Staff Home Page -->
+        <div data-role="page" id="staff-home-page">
+            <div data-role="header" data-position="fixed">
+                <h1>Staff Home</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                </div>
+        </div>
         <script src="cordova.js"></script>
         <script src="js/index.js"></script>
     </body>

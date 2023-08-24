@@ -15,17 +15,19 @@ function onDeviceReady() {
 
     /* to be removed, just using while developing UI */
     $('#temp-button').click(() => {
-		$("body").pagecontainer("change", "#log-in");    
+		$("body").pagecontainer("change", "#public-home");    
     });
+
     $('#temp-button-2').click(() => {
       $("body").pagecontainer("change", "#manage-acct-page");    
       });
+
     $('#temp-button-3').click(() => {
-       $("body").pagecontainer("change", "#log-#notif-page");    
+       $("body").pagecontainer("change", "#notif-page");    
        });    
     
-    $('#save-account').click(() => {
-		$("body").pagecontainer("change", "#public-home"); 
+    $('#temp-button-4').click(() => {
+		$("body").pagecontainer("change", "#staff-home-page"); 
     });
 
     /* footer navigation links */

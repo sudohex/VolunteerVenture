@@ -34,9 +34,9 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="main" class="ui-content">
             <h1>Sign In</h1>
             <form id="LoginForm" method="post">
-                <input type="text" name="email" id="email-login" data-param="email" value="" placeholder="Email">
+                <input type="text" name="email" id="email-login" data-param="email" data-required="true" value="" placeholder="Email">
                 <span class="err-msg" data-param="email"></span>
-                <input type="password" name="password" id="pw-login" data-param="password" value="" placeholder="Password">
+                <input type="password" name="password" id="pw-login" data-param="password" data-required="true" value="" placeholder="Password">
                 <span class="err-msg" data-param="password"></span>
 
                 <a href="#forgotpassword">Forgot Password</a>
@@ -46,6 +46,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </form>
 
             <!--TO-DO user auth - takes to user public page-->
+
             <button type="button" id="CreateNew">Create New Account</button>
             <!--TO-DO action to take to new account page-->
 
@@ -70,22 +71,22 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <form id="createForm">
                 <!-- TO-DO data validation -->
                 <label for="userEmail">Email *</label>
-                <input type="text" name="addEmail" id="userEmail" data-param="email" value="">
+                <input type="text" name="addEmail" id="userEmail" data-param="email" data-required="true" value="">
                 <span class="err-msg" data-param="email"></span>
                 <label for="userPW">Password *</label>
-                <input type="text" name="addPW" id="userPW" data-param="password" value="">
+                <input type="text" name="addPW" id="userPW" data-param="password" data-required="true" value="">
                 <span class="err-msg" data-param="password"></span>
                 <label for="userPWConfirm">Confirm Password *</label>
-                <input type="text" name="confirmPW" id="userPWConfirm" data-param="cPassword" value="">
+                <input type="text" name="confirmPW" id="userPWConfirm" data-param="cPassword" data-required="true" data-parent="userPW" value="">
                 <span class="err-msg" data-param="cPassword"></span>
                 <label for="firstName">First Name *</label>
-                <input type="text" name="addFN" id="firstName" data-param="firstName" value="">
+                <input type="text" name="addFN" id="firstName" data-param="firstName" data-required="true" value="">
                 <span class="err-msg" data-param="firstName"></span>
                 <label for="lastName">Last Name *</label>
-                <input type="text" name="addLN" id="lastName" data-param="lastName" value="">
+                <input type="text" name="addLN" id="lastName" data-param="lastName" data-required="true" value="">
                 <span class="err-msg" data-param="lastName"></span>
                 <label for="phoneNo">Phone *</label>
-                <input type="text" name="addLN" id="phoneNo" data-param="mobile" value="">
+                <input type="text" name="addLN" id="phoneNo" data-param="mobile" data-required="true" value="">
                 <span class="err-msg" data-param="mobile"></span>
 
                 <!-- TO-DO: use JS to create selection functions (briana - review little libraries with Pyae) -->
@@ -113,7 +114,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         </select>
                 <span class="err-msg" data-param="notifPref"></span>
             </form>
-            <button type="button" id="save-account" data-form-id="createForm">Create</button>
+            <button type="submit" id="save-account" data-form-id="createForm" data-ajax="false">Create</button>
             <!-- CREATE saves data and takes user to logged in home page-->
             <!--TO-DO: just for UI test navigation - remove these buttona after Create account button works -->
             <button type="button" id="temp-button">Back</button>
@@ -207,13 +208,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <div data-role="main" class="ui-content">
                     <form id="manage-acct-form">
                         <label for="userEmail">Email *</label>
-                        <input type="text" name="addEmail" id="userEmail" data-param="email" value="">
+                        <input type="text" name="addEmail" id="userEmail" data-required="true" data-param="email" value="">
                         <span class="err-msg" data-param="email"></span>
                         <label for="phoneNo">Phone *</label>
-                        <input type="text" name="addLN" id="phoneNo" data-param="mobile" value="">
+                        <input type="text" name="addLN" id="phoneNo" data-required="true" data-param="mobile" value="">
                         <span class="err-msg" data-param="mobile"></span>
                         <label for="select-location">Preferred Location:</label>
-                        <select name="select-location" id="select-location" data-param="prefLocation" data-mini="true">
+                        <select name="select-location" id="select-location" data-required="true" data-param="prefLocation" data-mini="true">
                                 <option value="">Select one</option>    
                                 <option value="loc1">Mackay Oorlea</option>
                                 <option value="loc2">Mackay</option>

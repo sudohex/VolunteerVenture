@@ -17,13 +17,19 @@ function onDeviceReady() {
     $('#temp-button').click(() => {
 		$("body").pagecontainer("change", "#public-home");    
     });
+
     $('#temp-button-2').click(() => {
       $("body").pagecontainer("change", "#manage-acct-page");    
       });
+
     $('#temp-button-3').click(() => {
        $("body").pagecontainer("change", "#notif-page");    
        });    
     
+    $('#temp-button-4').click(() => {
+		$("body").pagecontainer("change", "#staff-home-page"); 
+    });
+
     /* footer navigation links */
 
     

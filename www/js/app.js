@@ -155,6 +155,8 @@ TO make sure all elements loaded to DOM
 
 $(document).ready(function() {
 
+    $('input[name="dates"]').daterangepicker();
+
     //START of "login" authentication
     $('#sign-in').click(function() {
         var ajaxURL = apiEndPoints['login'];

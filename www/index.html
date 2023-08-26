@@ -16,8 +16,12 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css" />
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" media="all" href="css/daterangepicker.css" />
+    <script src="js/moment.min.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/jquery.mobile-1.4.5.js"></script>
+    <script src="js/daterangepicker.js"></script>
+
     <title>Volunteer Venture</title>
 </head>
 
@@ -128,7 +132,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <H2>Current Service Opportunities</H2>
             <div>
                 <form>
-                    <input type="text" data-role="date" data-inline="true">
+                    <input type="text" name="dates" data-role="date" data-inline="true">
+
                     <input data-type="search" id="searchForCollapsibleSet">
                 </form>
                 <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">

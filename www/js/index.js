@@ -30,6 +30,10 @@ function onDeviceReady() {
 		$("body").pagecontainer("change", "#staff-home-page"); 
     });
 
+    $('#temp-button-5').click(() => {
+      $("body").pagecontainer("change", "#admin-home-page"); 
+      });
+
     /* footer navigation links */
 
     

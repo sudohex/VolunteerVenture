@@ -7,8 +7,15 @@ const bodyParser = require("body-parser");
 
 const connectDB = require("./config/db");
 const login = require("./routes/login");
+const signup = require("./routes/signup");
+
 const profile = require("./routes/profile");
 const services = require("./routes/services");
+const categories = require("./routes/categories");
+const locations = require("./routes/locations");
+const volunteers = require("./routes/volunteers");
+
+
 
 const app = express();
 // Middleware
@@ -25,8 +32,14 @@ app.use(express.json());
 
 // Define Routes
 app.use("/api/login", login);
+app.use("/api/signup", signup);
 app.use("/api/profile", profile);
 app.use("/api/services", services);
+app.use("/api/categories", categories);
+app.use("/api/locations", locations);
+app.use("/api/volunteers", volunteers);
+
+
 // Use other routes similarly
 
 const PORT = process.env.PORT || 3000;

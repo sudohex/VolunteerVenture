@@ -1,0 +1,138 @@
+/* Display */
+.block {
+    display: block;
+  }
+  .inline-block {
+    display: inline-block;
+  }
+  .flex {
+    display: flex;
+  }
+  .grid {
+    display: grid;
+  }
+  
+  /* Flex direction */
+  .flex-row {
+    flex-direction: row;
+  }
+  .flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+  .flex-col {
+    flex-direction: column;
+    gap:.2rem;
+  }
+  .flex-col-reverse {
+    flex-direction: column-reverse;
+  }
+  
+  /* Flex wrap */
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .flex-no-wrap {
+    flex-wrap: nowrap;
+  }
+  
+  /* Flex justify-content */
+  .justify-start {
+    justify-content: flex-start;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .justify-end {
+    justify-content: flex-end;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .justify-around {
+    justify-content: space-around;
+  }
+  
+  /* Flex align-items */
+  .items-start {
+    align-items: flex-start;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .items-end {
+    align-items: flex-end;
+  }
+  .items-stretch {
+    align-items: stretch;
+  }
+  .items-baseline {
+    align-items: baseline;
+  }
+  
+  /* Flex align-content */
+  .content-start {
+    align-content: flex-start;
+  }
+  .content-center {
+    align-content: center;
+  }
+  .content-end {
+    align-content: flex-end;
+  }
+  .content-between {
+    align-content: space-between;
+  }
+  .content-around {
+    align-content: space-around;
+  }
+  
+  /* Position */
+  .relative {
+    position: relative;
+  }
+  .absolute {
+    position: absolute;
+  }
+  .fixed {
+    position: fixed;
+  }
+  .sticky {
+    position: sticky;
+  }
+  
+  /* Text alignment */
+  .text-left {
+    text-align: left;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .text-right {
+    text-align: right;
+  }
+  
+  /* Width and height */
+  .w-full {
+    width: 100%;
+  }
+  .h-full {
+    height: 100%;
+  }
+  
+  /* Padding and Margin */
+  /* ... You can expand this for p-1, p-2... m-1, m-2... and so on for different spacings */
+  
+  /* Overflow */
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  .overflow-scroll {
+    overflow: scroll;
+  }
+  .overflow-x-hidden {
+    overflow-x: hidden;
+  }
+  .overflow-y-hidden {
+    overflow-y: hidden;
+  }
+  

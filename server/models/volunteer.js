@@ -11,7 +11,6 @@ const volunteerSchema = new mongoose.Schema({
     categories: [{ type: mongoose.Schema.ObjectId, ref: " Category" }],
     locations: [{ type: mongoose.Schema.ObjectId, ref: " Location" }],
   },
-  notifications: [{ type: mongoose.Schema.ObjectId, ref: " Notification" }],
 });
 
 module.exports = mongoose.model("Volunteer", volunteerSchema);

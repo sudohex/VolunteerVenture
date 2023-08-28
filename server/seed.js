@@ -99,8 +99,10 @@ const services = [
     inDisplay: true,
     description: 'Tutoring services for high school students.'
   }),
+  
   // ... Add more services as needed...
 ];
+
 
 const volunteers = [
   new Volunteer({
@@ -117,17 +119,20 @@ const volunteers = [
   }),
   // ... Add more volunteers as needed...
 ];
-
 const notifications = [
   new Notification({
     createdBy: staffs[0]._id,
+    sentTo:[volunteers[0]._id],
     subject: 'Welcome to our platform',
     message: 'Thank you for joining us!',
     dateSent: new Date(),
     channelType: 'Email'
   }),
+  
   // ... Add more notifications as needed...
 ];
+
+
 
 async function cleanDB() {
   try {

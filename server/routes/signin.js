@@ -14,11 +14,15 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const isMatch = bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
+
+    // Update the lastLogin date
+    user.lastLogin = Date.now();
+    await user.save();
 
     const payload = {
       user: {
@@ -29,12 +33,17 @@ router.post("/", async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    
+    // Exclude password from the user object
+    const userResponse = user.toObject();
+    delete userResponse.password;
 
-    // 4. Return the token to the client
-    res.json({ token, user });
+    // Return the token and the sanitized user object to the client
+    res.json({ token, user: userResponse });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 });
+
 module.exports = router;

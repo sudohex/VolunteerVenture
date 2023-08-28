@@ -6,7 +6,7 @@ const compression = require("compression");
 const bodyParser = require("body-parser");
 
 const connectDB = require("./config/db");
-const login = require("./routes/login");
+const signin = require("./routes/signin");
 const signup = require("./routes/signup");
 
 const profile = require("./routes/profile");
@@ -31,7 +31,7 @@ connectDB();
 app.use(express.json());
 
 // Define Routes
-app.use("/api/login", login);
+app.use("/api/signin", signin);
 app.use("/api/signup", signup);
 app.use("/api/profile", profile);
 app.use("/api/services", services);

@@ -9,7 +9,6 @@ router.post("/", async (req, res) => {
         const {
             email,
             password,
-            acctType,
             firstName,
             lastName,
             phoneNo,
@@ -32,7 +31,7 @@ router.post("/", async (req, res) => {
         user = new User({
             email,
             password: hashedPassword,
-            acctType,
+            acctType:"volunteer",
             lastLogin: new Date(),
             acctCreationDate: new Date()
         });

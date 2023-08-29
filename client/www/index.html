@@ -14,9 +14,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css" />
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" media="all" href="css/daterangepicker.css" />
     <link rel="stylesheet" href="css/utility.css">
+    <script src="js/moment.min.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/jquery.mobile-1.4.5.js"></script>
+    <script src="js/daterangepicker.js"></script>
+
     <title>Volunteer Venture</title>
 </head>
 
@@ -67,8 +71,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <!--ADDED WITH JS-->
                 </select>
                 <label for="select-consent">Notification Preferences: </label>
-                <select multiple="multiple" data-native-menu="false" name="select-consent" id="select-consent"
-                    data-mini="true">
+                <select multiple="multiple" data-native-menu="false" name="select-consent" id="select-consent" data-mini="true">
                     <option value="">Select all that apply</option>
                     <option value="isSMSOn">SMS</option>
                     <option value="isEmailOn">Email</option>
@@ -88,11 +91,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
         <div data-role="main" class="ui-content">
             <form id="search-form">
-                <input data-type="search" id="searchForCollapsibleSet"
-                    placeholder="Enter a keyword to match Service, Category, or Location">
+                <input name="date-range" placeholder="Example: 12/02/2023 - 14/02/2023" />
+                <input data-type="search" id="searchForCollapsibleSet" placeholder="Enter a keyword to match Service, Category, or Location">
             </form>
-            <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter"
-                data-input="#searchForCollapsibleSet">
+            <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">
                 <!-- ADD Services With JS -->
             </div>
         </div>
@@ -100,110 +102,121 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <footer data-role="footer" data-position="fixed" id="foort">
                 <div data-role="navbar">
                     <ul data-role="listview">
-                        <li><a href="#notification-page" data-icon="mail"></a></li>
-                        <li><a href="#update-profile-page" data-icon="user"></a></li>
+                        <li>
+                            <a href="#notification-page" data-icon="mail"></a>
+                        </li>
+                        <li>
+                            <a href="#update-profile-page" data-icon="user"></a>
+                        </li>
             </footer>
+            </div>
         </div>
-    </div>
 
-    <!-- Notifications Page -->
-    <div data-role="page" id="notification-page">
-        <div data-role="header" data-position="fixed">
-            <h1>Notifications</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-            <p>List of past notifications</p>
+        <!-- Notifications Page -->
+        <div data-role="page" id="notification-page">
+            <div data-role="header" data-position="fixed">
+                <h1>Notifications</h1>
+            </div>
+            <div data-role="main" class="ui-content">
+                <p>List of past notifications</p>
 
-        </div>
-        <div>
-            <footer data-role="footer" data-position="fixed" id="foort">
-                <div data-role="navbar">
-                    <ul data-role="listview">
-                        <li><a href="#notification-page" data-icon="mail" data-iconshadow="true"></a></li>
-                        <li><a href="#update-profile-page" data-icon="user"></a></li>
-            </footer>
+            </div>
+            <div>
+                <footer data-role="footer" data-position="fixed" id="foort">
+                    <div data-role="navbar">
+                        <ul data-role="listview">
+                            <li>
+                                <a href="#notification-page" data-icon="mail" data-iconshadow="true"></a>
+                            </li>
+                            <li>
+                                <a href="#update-profile-page" data-icon="user"></a>
+                            </li>
+                </footer>
 
-        </div>
-    </div>
+                </div>
+            </div>
 
-    <!-- Update Profile Page -->
-    <div data-role="page" id="update-profile-page">
-        <div data-role="header" data-position="fixed">
-            <h1>Update Profile</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-            <form class="flex flex-col" id="update-profile-form">
-                <label for="update-email">Email *
+            <!-- Update Profile Page -->
+            <div data-role="page" id="update-profile-page">
+                <div data-role="header" data-position="fixed">
+                    <h1>Update Profile</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <form class="flex flex-col" id="update-profile-form">
+                        <label for="update-email">Email *
                     <input type="email" name="email" id="update-email">
                 </label>
-                <label for="update-password">Password *
+                        <label for="update-password">Password *
                     <input type="password" name="password" id="update-password">
                 </label>
-                <label for="update-firstName">First Name *
+                        <label for="update-firstName">First Name *
                     <input type="text" name="firstName" id="update-firstName">
                 </label>
-                <label for="update-lastName">Last Name *
+                        <label for="update-lastName">Last Name *
                     <input type="text" name="lastName" id="update-lastName">
                 </label>
-                <label for="update-phoneNo">Phone *
+                        <label for="update-phoneNo">Phone *
                     <input type="text" name="phoneNo" id="update-phoneNo">
                 </label>
-                <label for="update-select-location">Preferred Locations:</label>
-                <select multiple="multiple" data-native-menu="false" name="locations" data-mini="true">
+                        <label for="update-select-location">Preferred Locations:</label>
+                        <select multiple="multiple" data-native-menu="false" name="locations" data-mini="true">
                     <!-- ADDED WITH JS -->
                 </select>
-                <label for="update-select-services">Preferred Service Categories:</label>
-                <select multiple="multiple" data-native-menu="false" name="services" data-mini="true">
+                        <label for="update-select-services">Preferred Service Categories:</label>
+                        <select multiple="multiple" data-native-menu="false" name="services" data-mini="true">
                     <!--ADDED WITH JS-->
                 </select>
-                <label for="update-select-consent">Notification Preferences: </label>
-                <select multiple="multiple" data-native-menu="false" name="update-select-consent"
-                    id="update-select-consent" data-mini="true">
+                        <label for="update-select-consent">Notification Preferences: </label>
+                        <select multiple="multiple" data-native-menu="false" name="update-select-consent" id="update-select-consent" data-mini="true">
                     <option value="">Select all that apply</option>
                     <option value="isSMSOn">SMS</option>
                     <option value="isEmailOn">Email</option>
                 </select>
-                <button type="submit" class="ui-btn">Update</button>
-                <button type="button" class="ui-btn">Cancel</button>
-            </form>
-        </div>
-        <div>
-            <footer data-role="footer" data-position="fixed" id="foort">
-                <div data-role="navbar">
-                    <ul data-role="listview">
-                        <li><a href="#notification-page" data-icon="mail"></a></li>
-                        <li><a href="#update-profile-page" data-icon="user"></a></li>
-            </footer>
-        </div>
-    </div>
+                        <button type="submit" class="ui-btn">Update</button>
+                        <button type="button" class="ui-btn">Cancel</button>
+                    </form>
+                </div>
+                <div>
+                    <footer data-role="footer" data-position="fixed" id="foort">
+                        <div data-role="navbar">
+                            <ul data-role="listview">
+                                <li>
+                                    <a href="#notification-page" data-icon="mail"></a>
+                                </li>
+                                <li>
+                                    <a href="#update-profile-page" data-icon="user"></a>
+                                </li>
+                    </footer>
+                    </div>
+                </div>
 
-    <!-- Staff Home Page -->
-    <div data-role="page" id="staff-home-page">
-        <div data-role="header" data-position="fixed">
-            <h1>Staff Home</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-            <button type="button" id="volunteer-list">Access Volunteer List</button>
-            <button type="button" id="edit-services">Edit Services Menu</button>
-            <button type="button" id="past-notif">Past Notifications</button>
-        </div>
-    </div>
+                <!-- Staff Home Page -->
+                <div data-role="page" id="staff-home-page">
+                    <div data-role="header" data-position="fixed">
+                        <h1>Staff Home</h1>
+                    </div>
+                    <div data-role="main" class="ui-content">
+                        <button type="button" id="volunteer-list">Access Volunteer List</button>
+                        <button type="button" id="edit-services">Edit Services Menu</button>
+                        <button type="button" id="past-notif">Past Notifications</button>
+                    </div>
+                </div>
 
-    <!-- Admin Home Page -->
-    <div data-role="page" id="admin-home-page">
-        <div data-role="header" data-position="fixed">
-            <h1>App Admin</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-            <button type="button" id="volunteer-list">Access Volunteer List</button>
-            <button type="button" id="edit-services">Edit Services Menu</button>
-            <button type="button" id="past-notif">Past Notifications</button>
-            <button type="button" id="manage-staff-accts">Update Profiles</button>
-        </div>
-    </div>
+                <!-- Admin Home Page -->
+                <div data-role="page" id="admin-home-page">
+                    <div data-role="header" data-position="fixed">
+                        <h1>App Admin</h1>
+                    </div>
+                    <div data-role="main" class="ui-content">
+                        <button type="button" id="volunteer-list">Access Volunteer List</button>
+                        <button type="button" id="edit-services">Edit Services Menu</button>
+                        <button type="button" id="past-notif">Past Notifications</button>
+                        <button type="button" id="manage-staff-accts">Update Profiles</button>
+                    </div>
+                </div>
 
-    <script src="cordova.js"></script>
-    <script src="js/index.js"></script>
+                <script src="cordova.js"></script>
+                <script src="js/index.js"></script>
 </body>
 
 </html>

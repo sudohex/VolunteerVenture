@@ -1,3 +1,10 @@
-.highlight{
+/* CUSTOM CSS WILL BE IN THIS FILE */
+
+.err-msg {
+    display: block;
+    color: rgb(222, 21, 21);
+}
+
+.highlight {
     background-color: yellow;
 }

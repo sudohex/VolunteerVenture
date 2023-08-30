@@ -205,6 +205,44 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
     </div>
 
+    <!-- Staff: Volunteer List Page-->
+    <div data-role="page" id="volunteer-list-page">
+        <div data-role="header" data-position="fixed">
+            <h1>Volunteer List</h1>
+        </div>
+        <div data-role="main" class="ui-content">
+            <form id="search-form">
+                <input data-type="search" id="searchForCollapsibleSet"
+                    placeholder="Search by Category or location preference">
+            </form>
+            <div>
+            <table data-role="table" id="volunteer-table" class="ui-responsive table-stroke">
+                <thead>
+                    <tr>
+                    <th><input type="checkbox"></th>
+                    <th data-priority="2">First Name</th>
+                    <th data-priority="3">Location</th>
+                    <th data-priority="4">Categories</th>
+                    <th data-priority="5">Email</th>
+                    <th data-priority="6">SMS</th>
+                </tr>
+                </thead>
+				<tbody id="tableBody">
+                    <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Bob</td>
+                    <td>Smith</td>
+                    <td>Hair</td>
+                    <td>Yes</td>
+                    <td>no</td>
+                </tr>
+                </tbody>
+			</table>
+        </div>
+        </div>
+    
+    </div>
+
     <!-- Admin Home Page -->
     <div data-role="page" id="admin-home-page">
         <div data-role="header" data-position="fixed">

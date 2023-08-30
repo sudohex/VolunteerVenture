@@ -48,8 +48,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <button type="submit" class="ui-btn signin-btn" id="signin-btn">Sign In</button>
 
             </form>
-            <a href="#signup-page" data-role="button" class="ui-btn signup-btn">Create New Account</a>
-
+            <a href="#signup-page" data-role="button" class="ui-btn">Create New Account</a>
+            <a href="#staff-signin-page" class="w-full text-center block">Staff Sign In</a>
         </div>
     </div>
 
@@ -258,40 +258,21 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <button type="button" id="volunteer-list">Access Volunteer List</button>
             <button type="button" id="edit-services">Edit Services Menu</button>
             <button type="button" id="past-notif">Past Notifications</button>
-            <button type="button" id="volunteer-list-btn">Access Volunteer List</button>
-            <button type="button" id="edit-services-btn">Edit Services Menu</button>
-            <button type="button" id="past-notif-btn">Past Notifications</button>
         </div>
     </div>
 
-    <!-- Staff Services Menu -->
-    <div data-role="page" id="staff-services-menu">
+    <!-- Staff Signin Page -->
+    <div data-role="page" id="staff-signin-page">
         <div data-role="header" data-position="fixed">
-            <h1>Services Menu</h1>
-            <a href="#staff-home-btn" data-role="button" data-icon="home" data-iconpos="notext" data-position="right"></a>
+            <h1>CQU Staff Login</h1>
         </div>
+        <!-- ADD to JS -->
         <div data-role="main" class="ui-content">
-            <p>Add New Service</p>
-            <form class="flex flex-col" id="new-service-form">
-                <input type="text" name="service-name" id="service-name" placeholder="Service Name">
-                <label for="set-location">Location</label>
-                    <select data-native-menu="false" name="locations" data-mini="true">
-                        <!-- ADDED WITH JS -->
-                    </select>
-                <label for="set-services">Category</label>
-                <select data-native-menu="false" name="services" data-mini="true">
-                    <!--ADDED WITH JS-->
-                </select>
-                <!-- To choose whether to display in services menu for volunteers or not -->
-                <label for="slider-flip-m">Display on?</label>
-                    <select name="slider-flip-m" id="slider-flip-m" data-role="slider" data-mini="true">
-                    <option value="off">No</option>
-                    <option value="on" selected="">Yes</option>  
-                </select>
+            <form id="signin-form">
+                <input type="email" name="email" placeholder="CQU Email">
+                <input type="password" name="password" placeholder="Password">
+                <button type="submit" class="ui-btn">Sign In</button>
             </form>
-
-            <!-- Need to add a table to populate the back-end services menu -->
-
         </div>
     </div>
 

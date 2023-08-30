@@ -24,9 +24,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- Signin Page -->
     <div data-role="page" id="signin-page">
         <div data-role="header" data-position="fixed">
-            <h1>Welcome - Sign In To Get Started</h1>
+            <h1>Volunteer Venture</h1>
         </div>
         <div data-role="main" class="ui-content">
+            <!-- ADD CQU LOGO here -->
+            <h3>Sign In</h3>
             <form id="signin-form">
                 <input type="email" name="email" placeholder="Email">
                 <input type="password" name="password" placeholder="Password">
@@ -36,10 +38,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
     </div>
 
-    <!-- Sign Up Page -->
+    <!-- Create Account Page -->
     <div data-role="page" id="signup-page">
         <div data-role="header" data-position="fixed">
-            <h1>Sign Up</h1>
+            <h1>Create Account</h1>
         </div>
         <div data-role="main" class="ui-content">
             <form class="flex flex-col" id="signup-form">
@@ -58,7 +60,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <label for="phoneNo">Phone *
                     <input type="text" name="phoneNo" id="phoneNo">
                 </label>
-                <label for="select-location">Preferred Locations:</label>
+                <label for="select-location">Preferred Location:</label>
                 <select multiple="multiple" data-native-menu="false" name="locations" data-mini="true">
                     <!-- ADDED WITH JS -->
                 </select>
@@ -83,10 +85,12 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- Public Home Page -->
     <div data-role="page" id="public-home">
         <div data-role="header" data-position="fixed">
-            <h1>Services</h1>
+            <h1>Volunteer Venture</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">Logout</a>
         </div>
         <div data-role="main" class="ui-content">
+            <h3>Current Service Opportunities</h3>
+            <!--ADD date Range selector-->
             <form id="search-form">
                 <input data-type="search" id="searchForCollapsibleSet"
                     placeholder="Enter a keyword to match Service, Category, or Location">
@@ -110,6 +114,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <div data-role="page" id="notification-page">
         <div data-role="header" data-position="fixed">
             <h1>Notifications</h1>
+            <a href="#" class="ui-btn ui-btn-left home-btn">Home</a>
         </div>
         <div data-role="main" class="ui-content">
             <p>List of past notifications</p>
@@ -126,10 +131,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
     </div>
 
-    <!-- Update Profile Page -->
+    <!-- Manage Account Page -->
     <div data-role="page" id="update-profile-page">
         <div data-role="header" data-position="fixed">
-            <h1>Update Profile</h1>
+            <h1>Manage Account</h1>
         </div>
         <div data-role="main" class="ui-content">
             <form class="flex flex-col" id="update-profile-form">
@@ -139,16 +144,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <label for="update-password">Password *
                     <input type="password" name="password" id="update-password">
                 </label>
-                <label for="update-firstName">First Name *
-                    <input type="text" name="firstName" id="update-firstName">
-                </label>
-                <label for="update-lastName">Last Name *
-                    <input type="text" name="lastName" id="update-lastName">
-                </label>
                 <label for="update-phoneNo">Phone *
                     <input type="text" name="phoneNo" id="update-phoneNo">
                 </label>
-                <label for="update-select-location">Preferred Locations:</label>
+                <label for="update-select-location">Preferred Location:</label>
                 <select multiple="multiple" data-native-menu="false" name="locations" data-mini="true">
                     <!-- ADDED WITH JS -->
                 </select>
@@ -164,7 +163,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <option value="isEmailOn">Email</option>
                 </select>
                 <button type="submit" class="ui-btn">Update</button>
-                <button type="button" class="ui-btn">Cancel</button>
+                <!--ADD JS to make CANCEL  button work-->
+                <button type="button" class="ui-btn" id="cancel-btn">Cancel</button>
             </form>
         </div>
         <div>

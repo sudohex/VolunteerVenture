@@ -205,6 +205,16 @@ function onDeviceReady() {
 
   });
 
+  //Return Home
+  $(".home-btn").click(() => {
+    $("body").pagecontainer("change","#public-home")
+  });
+
+  //HELP HERE PLEASE This cancel button doesnt work :( - BL
+  $("cancel-btn").click(()=> {
+    $("body").pagecontainer("change","#public-home")
+  });
+
   //Notifications 
   
   

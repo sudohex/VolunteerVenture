@@ -32,8 +32,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
         <div data-role="main" class="ui-content">
             <form id="signin-form">
-                <input type="email" name="email" placeholder="Email">
-                <input type="password" name="password" placeholder="Password">
+                <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
+                <span class="err-msg" data-param="email"></span>
+                <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
+                <span class="err-msg" data-param="password"></span>
                 <button type="submit" class="ui-btn">Sign In</button>
             </form>
             <a href="#signup-page" data-role="button" class="ui-btn">Create New Account</a>
@@ -48,34 +50,42 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="main" class="ui-content">
             <form class="flex flex-col" id="signup-form">
                 <label for="email">Email *
-                    <input type="email" name="email" id="email">
+                    <input type="email" name="email" id="email" data-param="email" data-required="true">
+                    <span class="err-msg" data-param="email"></span>
                 </label>
                 <label for="password">Password *
-                    <input type="password" name="password" id="password">
+                    <input type="password" name="password" id="password" data-param="password" data-required="true">
+                    <span class="err-msg" data-param="password"></span>
                 </label>
                 <label for="firstName">First Name *
-                    <input type="text" name="firstName" id="firstName">
+                    <input type="text" name="firstName" id="firstName" data-param="firstName" data-required="true">
+                    <span class="err-msg" data-param="firstName"></span>
                 </label>
                 <label for="lastName">Last Name *
-                    <input type="text" name="lastName" id="lastName">
+                    <input type="text" name="lastName" id="lastName" data-param="lastName" data-required="true">
+                    <span class="err-msg" data-param="lastName"></span>
                 </label>
                 <label for="phoneNo">Phone *
-                    <input type="text" name="phoneNo" id="phoneNo">
+                    <input type="text" name="phoneNo" id="phoneNo" data-param="mobile" data-required="true">
+                    <span class="err-msg" data-param="mobile"></span>
                 </label>
                 <label for="select-location">Preferred Locations:</label>
-                <select multiple="multiple" data-native-menu="false" name="locations" data-mini="true">
+                <select data-native-menu="false" name="locations" data-mini="true" data-param="prefLocation" data-required="true">
                     <!-- ADDED WITH JS -->
                 </select>
+                <span class="err-msg" data-param="prefLocation"></span>
                 <label for="select-services">Preferred Service Categories:</label>
-                <select multiple="multiple" data-native-menu="false" name="services" data-mini="true">
+                <select multiple="multiple" data-native-menu="false" name="services" data-mini="true" data-param="prefServiceCategories" data-required="true">
                     <!--ADDED WITH JS-->
                 </select>
+                <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="select-consent">Notification Preferences: </label>
-                <select multiple="multiple" data-native-menu="false" name="select-consent" id="select-consent" data-mini="true">
+                <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="select-consent" id="select-consent" data-mini="true">
                     <option value="">Select all that apply</option>
                     <option value="isSMSOn">SMS</option>
                     <option value="isEmailOn">Email</option>
                 </select>
+                <span class="err-msg" data-param="notifPref"></span>
                 <button type="submit" class="ui-btn">Submit</button>
             </form>
             <p class="text-center">Already a member?</p>

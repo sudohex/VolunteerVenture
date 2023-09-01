@@ -207,6 +207,14 @@ function onDeviceReady() {
 
   //Notifications 
   
+  //Navigate within Staff UI
+  $('#edit-services-btn').click(() => {
+		$("body").pagecontainer("change", "#staff-services-menu");
+    });
+
+  $('#staff-home-btn').click(() => {
+    $("body").pagecontainer("change", "#staff-home-page");
+  });
   
 }
 function checkAuthentication() {

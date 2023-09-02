@@ -30,10 +30,13 @@ var apiEndPoints = {
     updateVlntrAccount: "dummy_url",
     locations: "locations",
     categories: "categories",
-    services: "services?q="
+    services: "services?q=",
+    notifications: "notifications"
 
     //TO-DO Need to define all the endpoints
 };
+
+
 var routes = {
     vlntrLogin: "",
     vlntrHome: "",
@@ -514,14 +517,110 @@ function onDeviceReady() {
     //Logout
     $(".signout-btn").click(function(e) {
         e.preventDefault();
-        localStorage.clear();
-        alert('Logged out successfully!');
-        $.mobile.changePage("#signin-page");
+        const decison = window.confirm("Are you sure to logout?");
+        if (decison) {
+            localStorage.clear();
+            alert('Logged out successfully!');
+            $.mobile.changePage("#signin-page");
+        } else {
+            return true;
+        }
+
 
     });
 
+
+
     //Notifications 
 
+    $(document).on("pageshow", "#notification-page", function() {
+
+        fetchNotifications();
+
+    })
+
+} //END of OnDeviceReady
+
+
+//Fetch notifications sent to current user
+function fetchNotifications() {
+    const token = localStorage.getItem('token');
+    const id = JSON.parse(localStorage.getItem('user'))._id;
+    const formData = JSON.stringify({ id });
+
+
+    $.ajax({
+        type: 'POST',
+        url: baseURL + apiEndPoints.notifications,
+        data: formData,
+        contentType: 'application/json',
+        headers: {
+            'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+            'x-auth-token': token
+        },
+        success: function(response) {
+            var myNotifications = "";
+            if (response && response.length > 0) {
+
+                response.forEach((item) => {
+                    var notifSubject = item.subject;
+                    var notifMessage = item.message;
+                    var notifSentBy = item.createdBy;
+                    var notifSentOn = formatDateTime(item.dateSent);
+                    var notifSentThrough = item.channelType;
+                    myNotifications += '<div class="each-notification">' +
+                        '<p class = "notif-subject">' + notifSubject + '</p>' +
+                        '<p class = "notif-message">' + notifMessage + '</p>' +
+                        '<span class = "sent-timedate">' +
+                        '<span class = "material-symbols-sharp"> schedule</span>' +
+                        '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
+                        '</span >' +
+                        '<span class = "sent-by">' +
+                        '<span class = "material-symbols-sharp">account_circle</span>' +
+                        '<span class = "notif-sentby">' + notifSentBy + '</span>' +
+                        '</span></div>';
+                });
+                $(".voluntr-notif").html(myNotifications); //append to the parent div
+            } else {
+                //No notoifications found KEEP CALM
+                // myNotifications += '<div class="no-notifications">' +
+                //     '<span class="material-symbols-sharp">notifications_active</span>' +
+                //     '<h4 class="mainmsg">No notifications yet.</h4>' +
+                //     '<p class="submsg">When you get notifications,they\'ll show up here</p>' +
+                //     '<button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>' +
+                //     '</div>';
+
+                alert("Zero notifications found!");
+            }
+
+            //console.log(myNotifications);
+        },
+        error: function(error) {
+            console.error("Error fetching notifications:", error);
+        }
+    });
+}
+
+function formatDateTime(dateString = '') {
+
+    if (dateString != '') {
+
+        const dateObject = new Date(dateString);
+
+        const day = dateObject.getDate();
+        const month = dateObject.getMonth() + 1; //  +1 because months are zero-indexed
+        const year = dateObject.getFullYear();
+        const hour = dateObject.getHours();
+        const minute = dateObject.getMinutes();
+        const amOrPm = hour >= 12 ? "PM" : "AM";
+        const formattedDate = `${day}/${month}/${year}`;
+        const formattedTime = `${(hour % 12 || 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${amOrPm}`;
+        const formattedDateTime = `${formattedDate} ${formattedTime}`;
+        return formattedDateTime;
+
+    } else {
+        return "";
+    }
 
 }
 

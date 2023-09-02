@@ -14,6 +14,7 @@ const services = require("./routes/services");
 const categories = require("./routes/categories");
 const locations = require("./routes/locations");
 const volunteers = require("./routes/volunteers");
+const notifications = require("./routes/notifications");
 
 
 
@@ -38,6 +39,7 @@ app.use("/api/services", services);
 app.use("/api/categories", categories);
 app.use("/api/locations", locations);
 app.use("/api/volunteers", volunteers);
+app.use("/api/notifications", notifications);
 
 
 // Use other routes similarly

@@ -1,10 +1,143 @@
-/* CUSTOM CSS WILL BE IN THIS FILE */
-
-.err-msg {
-    display: block;
-    color: rgb(222, 21, 21);
-}
-
-.highlight {
-    background-color: yellow;
-}
+    /* CUSTOM CSS WILL BE IN THIS FILE */
+    
+    .err-msg {
+        display: block;
+        color: rgb(222, 21, 21);
+    }
+    
+    .highlight {
+        background-color: yellow;
+    }
+    
+    body {
+        font-family: 'Montserrat', sans-serif !important;
+        font-family: 'Open Sans', sans-serif !important;
+        font-family: 'Roboto', sans-serif !important;
+    }
+    
+    h1.ui-title {
+        background: white !important;
+        font-size: 16px !important;
+        text-shadow: none !important;
+    }
+    
+    div.ui-header {
+        background: white !important;
+    }
+    /* Notifications list */
+    
+    .each-notification {
+        background: #fff;
+        border-radius: 2px;
+        display: block;
+        padding: 10px;
+        min-height: 100px;
+        margin-bottom: 10px;
+        position: relative;
+        /* width: 95%; */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+        padding-top: 1%;
+    }
+    
+    .sent-timedate {
+        position: absolute;
+        right: 10px;
+        bottom: 5px;
+    }
+    
+    .sent-by {
+        position: absolute;
+        left: 10px;
+        bottom: 5px;
+    }
+    
+    .notif-datetime,
+    .notif-sentby {
+        vertical-align: middle;
+    }
+    
+    .notif-subject {
+        font-weight: bold;
+        font-size: 18px;
+    }
+    
+    .notif-message {
+        margin-bottom: 10%;
+    }
+    /* .no-notifications {
+        width: 80%;
+        margin: 0px auto;
+        border-radius: 5px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+        padding: 10px;
+        min-height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    } */
+    
+    .no-notifications {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+        text-align: center;
+        width: 80%;
+        margin: 0px auto;
+        border-radius: 5px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    }
+    
+    .no-notifications span.material-symbols-sharp {
+        font-size: 50px;
+    }
+    
+    .refresh-notifications {
+        width: 100px !important;
+        background: slateblue !important;
+        text-shadow: none !important;
+        color: white !important;
+        font-weight: normal !important;
+        border: none !important;
+    }
+    
+    .mainmsg {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+    
+    .submsg {
+        font-size: 14px;
+        color: #929293;
+    }
+    /* fallback */
+    
+    @font-face {
+        font-family: 'Material Symbols Sharp';
+        font-style: normal;
+        font-weight: 100 700;
+        src: url(../fonts/material_icons.woff2) format('woff2');
+    }
+    
+    .material-symbols-sharp {
+        font-family: 'Material Symbols Sharp';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 20px;
+        /* 24px default */
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        vertical-align: middle;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+    }
+    
+    .material-symbols-sharp {
+        font-variation-settings: 'FILL' 0, 'wght' 0, 'GRAD' 0, 'opsz' NaN
+    }

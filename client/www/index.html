@@ -21,6 +21,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <script src="js/jquery.mobile-1.4.5.js"></script>
     <script src="js/daterangepicker.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,200&family=Open+Sans:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+
     <title>Volunteer Venture</title>
 </head>
 
@@ -97,7 +101,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <div data-role="page" id="public-home">
         <div data-role="header" data-position="fixed">
             <h1>Services</h1>
-            <a href="#" class="ui-btn ui-btn-right signout-btn">Logout</a>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span> Logout
+            </a>
         </div>
         <div data-role="main" class="ui-content">
             <form id="search-form">
@@ -126,10 +134,21 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="page" id="notification-page">
             <div data-role="header" data-position="fixed">
                 <h1>Notifications</h1>
+                <a href="#" class="ui-btn ui-btn-right signout-btn">
+                    <span class="material-symbols-sharp">
+                        logout
+                        </span> Logout
+                </a>
             </div>
-            <div data-role="main" class="ui-content">
-                <p>List of past notifications</p>
-
+            <div data-role="main" class="ui-content voluntr-notif">
+                <div class="no-notifications">
+                    <span class="material-symbols-sharp">
+                        notifications_active
+                        </span>
+                    <h4 class="mainmsg">No notifications yet.</h4>
+                    <p class="submsg">When you get notifications,they'll show up here</p>
+                    <button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>
+                </div>
             </div>
             <div>
                 <footer data-role="footer" data-position="fixed" id="foort">
@@ -150,6 +169,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <div data-role="page" id="update-profile-page">
                 <div data-role="header" data-position="fixed">
                     <h1>Update Profile</h1>
+                    <a href="#" class="ui-btn ui-btn-right signout-btn">
+                        <span class="material-symbols-sharp">
+                            logout
+                            </span> Logout
+                    </a>
                 </div>
                 <div data-role="main" class="ui-content">
                     <form class="flex flex-col" id="update-profile-form">

@@ -228,13 +228,58 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <div data-role="page" id="staff-home-page">
                     <div data-role="header" data-position="fixed">
                         <h1>Staff Home</h1>
-                    </div>
-                    <div data-role="main" class="ui-content">
-                        <button type="button" id="volunteer-list">Access Volunteer List</button>
-                        <button type="button" id="edit-services">Edit Services Menu</button>
-                        <button type="button" id="past-notif">Past Notifications</button>
-                    </div>
-                </div>
+        </div>
+        <div data-role="main" class="ui-content">
+            <button type="button" id="volunteer-list">Access Volunteer List</button>
+            <button type="button" id="edit-services">Edit Services Menu</button>
+            <button type="button" id="past-notif">Past Notifications</button>
+            <button type="button" id="volunteer-list-btn">Access Volunteer List</button>
+            <button type="button" id="edit-services-btn">Edit Services Menu</button>
+            <button type="button" id="past-notif-btn">Past Notifications</button>
+        </div>
+    </div>
+
+    <!-- Staff Services Menu -->
+    <div data-role="page" id="staff-services-menu">
+        <div data-role="header" data-position="fixed">
+            <h1>Services Menu</h1>
+            <a href="#staff-home-btn" data-role="button" data-icon="home" data-iconpos="notext" data-position="right"></a>
+        </div>
+        <div data-role="main" class="ui-content">
+            <p>Add New Service</p>
+            <form class="flex flex-col" id="new-service-form">
+                <input type="text" name="service-name" id="service-name" placeholder="Service Name">
+                <label for="set-location">Location</label>
+                    <select data-native-menu="false" name="locations" data-mini="true">
+                        <!-- ADDED WITH JS -->
+                    </select>
+                <label for="set-services">Category</label>
+                <select data-native-menu="false" name="services" data-mini="true">
+                    <!--ADDED WITH JS-->
+                </select>
+                <!-- To choose whether to display in services menu for volunteers or not -->
+                <label for="slider-flip-m">Display on?</label>
+                    <select name="slider-flip-m" id="slider-flip-m" data-role="slider" data-mini="true">
+                    <option value="off">No</option>
+                    <option value="on" selected="">Yes</option>  
+                </select>
+            </form>
+
+            <!-- Need to add a table to populate the back-end services menu -->
+
+        </div>
+    </div>
+
+    <!-- Staff Notifications Archive-->
+    <div data-role="page" id="admin-home-page">
+        <div data-role="header" data-position="fixed">
+            <h1>Past Notifications</h1>
+        </div>
+        <div data-role="main" class="ui-content">
+
+        </div>
+    </div>
+
 
                 <!-- Admin Home Page -->
                 <div data-role="page" id="admin-home-page">

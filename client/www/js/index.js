@@ -21,7 +21,7 @@ var masterData = [{
         prefServiceCategories: "Please select atleast one option",
         notifPref: "Please select atleast one option.",
     },
-}, ];
+},];
 
 var baseURL = "http://localhost:3000/api/";
 var apiEndPoints = {
@@ -45,9 +45,6 @@ var routes = {
     //TO-DO Need to define all the routes
 };
 
-
-
-
 /**
  *
  * @param {string} formId
@@ -63,7 +60,7 @@ function finalFormValidation(formId) {
     var totalElements = allElements.length;
     var processedElements = 0; //To wait for all iterations to complete
 
-    allElements.each(function() {
+    allElements.each(function () {
         isRequired = $(this).data("required"); //predefined attr for every form element for validation{false if not req}
         if (isRequired == true) {
             inputType = $(this).data("param");
@@ -152,7 +149,7 @@ function readFormData(formId) {
     var formData = $("#" + formId).serializeArray();
     var formDataObject = {};
 
-    formData.forEach(function(field) {
+    formData.forEach(function (field) {
         var fieldName = field.name;
         var fieldValue = decodeURIComponent(field.value || "");
 
@@ -184,8 +181,6 @@ function readFormData(formId) {
     return formDataJSON;
 }
 
-
-
 // document.addEventListener('deviceready', onDeviceReady, false);
 $(document).ready(onDeviceReady)
 
@@ -202,7 +197,7 @@ function onDeviceReady() {
 
     });
     //SET value to it
-    $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
+    $('input[name="date-range"]').on('apply.daterangepicker', function (ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
     });
 
@@ -210,7 +205,7 @@ function onDeviceReady() {
     //CHANGES FROM - MAHAMMAD 
 
     //START of "input" JS validation
-    $("input,select").on("blur change", function() {
+    $("input,select").on("blur change", function () {
         //When user finish to input this event will be in action
 
         // Get the current input element and its attributes
@@ -240,7 +235,7 @@ function onDeviceReady() {
     }); //END of input validation;
 
     //CHANGES FROM - MAHAMMAD 
-    $("#signin-form").submit(async function(event) {
+    $("#signin-form").submit(async function (event) {
         event.preventDefault();
 
         var formId = "signin-form";
@@ -256,7 +251,7 @@ function onDeviceReady() {
                 url: baseURL + apiEndPoints.login,
                 data: formData,
                 contentType: 'application/json',
-                success: function(response) {
+                success: function (response) {
                     // 4. Handle the response
 
                     localStorage.setItem('token', response.token);
@@ -266,7 +261,7 @@ function onDeviceReady() {
                     $.mobile.changePage("#public-home");
 
                 },
-                error: function(error) {
+                error: function (error) {
 
                     alert('Error signing in: ' + error.responseJSON.message);
                 }
@@ -279,53 +274,16 @@ function onDeviceReady() {
         }
     });
 
-
-    // //Sign in submit
-    // $("#signin-form").submit(function(e) {
-    //     e.preventDefault();
-
-    //     // 1. Collect data from the form
-    //     const email = $("#signin-form input[name='email']").val();
-    //     const password = $("#signin-form input[name='password']").val();
-
-    //     if (!email || !password) {
-    //         alert('Please fill in all the fields.');
-    //         return;
-    //     }
-    //     // 2. Send the POST request
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'http://localhost:3000/api/signin', // update this URL if it's different
-    //         data: JSON.stringify({ email, password }),
-    //         contentType: 'application/json',
-    //         success: function(response) {
-    //             // 3. Handle the response
-
-    //             localStorage.setItem('token', response.token);
-    //             localStorage.setItem('user', JSON.stringify(response.user));
-
-
-    //             alert('Successfully signed in!');
-    //             $.mobile.changePage("#public-home");
-
-    //         },
-    //         error: function(error) {
-
-    //             alert('Error signing in: ' + error.responseJSON.message);
-    //         }
-    //     });
-    // });
-
     //Sign up initialize
-    $(document).on("pageshow", "#signup-page", function() {
+    $(document).on("pageshow", "#signup-page", function () {
         // Fetch and populate locations
         $.ajax({
             type: 'GET',
             url: baseURL + apiEndPoints.locations,
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 var locationsOptions = '<option value="">Select all that apply</option>';
-                data.forEach(function(location) {
+                data.forEach(function (location) {
                     locationsOptions += '<option value="' + location._id + '">' + location.locationName + '</option>';
                 });
                 $('select[name="locations"]').html(locationsOptions).selectmenu("refresh");
@@ -336,9 +294,9 @@ function onDeviceReady() {
             type: 'GET',
             url: baseURL + apiEndPoints.services,
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 var categoriesOptions = '<option value="">Select all that apply</option>';
-                data.forEach(function(category) {
+                data.forEach(function (category) {
                     categoriesOptions += '<option value="' + category._id + '">' + category.categoryName + '</option>';
                 });
                 $('select[name="services"]').html(categoriesOptions).selectmenu("refresh");
@@ -347,7 +305,7 @@ function onDeviceReady() {
     }); //END of signup page prerequisites loading
 
     //START of "create volunteer account"
-    $("#signup-form").submit(function(event) {
+    $("#signup-form").submit(function (event) {
 
         event.preventDefault();
         var formId = "signup-form";
@@ -362,12 +320,12 @@ function onDeviceReady() {
                 url: baseURL + apiEndPoints.createVlntrAccount,
                 data: formData,
                 contentType: 'application/json',
-                success: function(response) {
+                success: function (response) {
                     //4.Handle resposne
                     alert('Successfully signed up!');
                     $.mobile.changePage("#signin-page");
                 },
-                error: function(error) {
+                error: function (error) {
                     if (error.status === 400 && error.responseText.includes("email")) {
                         alert('Email already exists.');
                     } else {
@@ -383,78 +341,8 @@ function onDeviceReady() {
         }
     }); //END of create volunteer account
 
-
-
-    // //Sign up submit
-    // $("#signup-form").submit(function(e) {
-    //     e.preventDefault();
-
-    //     var email = $('#email').val();
-    //     var password = $('#password').val();
-    //     var firstName = $('#firstName').val();
-    //     var lastName = $('#lastName').val();
-    //     var phoneNo = $('#phoneNo').val();
-    //     var isSMSOn = $('#select-consent option[value="isSMSOn"]').is(':selected');
-    //     var isEmailOn = $('#select-consent option[value="isEmailOn"]').is(':selected');
-    //     var locations = $('select[name="locations"]').val();
-    //     var categories = $('select[name="services"]').val();
-
-    //     // Validation
-    //     if (!email || !password || !firstName || !lastName || !phoneNo) {
-    //         alert('Please fill in all the fields.');
-    //         return;
-    //     }
-
-    //     if (password.length < 8) {
-    //         alert('Password should be at least 8 characters.');
-    //         return;
-    //     }
-
-    //     if (!locations || !locations.length) {
-    //         alert('Please select your preferred locations.');
-    //         return;
-    //     }
-
-    //     if (!categories || !categories.length) {
-    //         alert('Please select your preferred service categories.');
-    //         return;
-    //     }
-
-    //     var formData = {
-    //         email: email,
-    //         password: password,
-    //         firstName: firstName,
-    //         lastName: lastName,
-    //         phoneNo: phoneNo,
-    //         isSMSOn: isSMSOn,
-    //         isEmailOn: isEmailOn,
-    //         preferences: {
-    //             locations: locations,
-    //             categories: categories
-    //         }
-    //     };
-
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'http://localhost:3000/api/signup',
-    //         data: JSON.stringify(formData),
-    //         contentType: 'application/json',
-    //         success: function(response) {
-    //             alert('Successfully signed up!');
-    //             $.mobile.changePage("#signin-page");
-    //         },
-    //         error: function(error) {
-    //             if (error.status === 400 && error.responseText.includes("email")) {
-    //                 alert('Email already exists.');
-    //             } else {
-    //                 alert('Error signing up: ' + error.responseText);
-    //             }
-    //         }
-    //     });
-    // });
-
     //Services
-    $(document).on("pageshow", "#public-home", function() {
+    $(document).on("pageshow", "#public-home", function () {
         //Only logged in user can see this page 
         checkAuthentication();
 
@@ -462,7 +350,7 @@ function onDeviceReady() {
         fetchServices();
 
         // Search form submission
-        $("#search-form").on("submit", function(e) {
+        $("#search-form").on("submit", function (e) {
             e.preventDefault();
             var query = $("#searchForCollapsibleSet").val();
             fetchServices(query);
@@ -474,10 +362,10 @@ function onDeviceReady() {
                 type: 'GET',
                 url: baseURL + apiEndPoints.services + `${query}`,
                 dataType: 'json',
-                success: function(services) {
+                success: function (services) {
                     renderServices(services);
                 },
-                error: function(error) {
+                error: function (error) {
                     console.error("Error fetching services:", error);
                 }
             });
@@ -515,7 +403,7 @@ function onDeviceReady() {
         }
     });
     //Logout
-    $(".signout-btn").click(function(e) {
+    $(".signout-btn").click(function (e) {
         e.preventDefault();
         const decison = window.confirm("Are you sure to logout?");
         if (decison) {
@@ -530,10 +418,16 @@ function onDeviceReady() {
     });
 
 
+    //Navigate within Staff UI
+    $('#edit-services-btn').click(() => {
+        $("body").pagecontainer("change", "#staff-services-menu");
+    });
 
-    //Notifications 
+    $('#staff-home-btn').click(() => {
+        $("body").pagecontainer("change", "#staff-home-page");
+    });
 
-    $(document).on("pageshow", "#notification-page", function() {
+    $(document).on("pageshow", "#notification-page", function () {
 
         fetchNotifications();
 
@@ -558,7 +452,7 @@ function fetchNotifications() {
             'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
             'x-auth-token': token
         },
-        success: function(response) {
+        success: function (response) {
             var myNotifications = "";
             if (response && response.length > 0) {
 
@@ -595,7 +489,7 @@ function fetchNotifications() {
 
             //console.log(myNotifications);
         },
-        error: function(error) {
+        error: function (error) {
             console.error("Error fetching notifications:", error);
         }
     });

@@ -32,17 +32,24 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- Signin Page -->
     <div data-role="page" id="signin-page">
         <div data-role="header" data-position="fixed">
-            <h1>Welcome - Sign In To Get Started</h1>
+            <h1>Volunteer Venture</h1>
         </div>
         <div data-role="main" class="ui-content">
             <form id="signin-form">
+                <h3>Sign In</h3>
                 <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
                 <span class="err-msg" data-param="email"></span>
                 <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
                 <span class="err-msg" data-param="password"></span>
-                <button type="submit" class="ui-btn">Sign In</button>
+                <p class=""><a href="#">Forgot Password?</a></p>
+                <!-- TO-DO add page -->
+                <p class="staff-login-link"><a href="#">Login as Staff Member</a></p>
+                <!-- TO-DO add page -->
+                <button type="submit" class="ui-btn signin-btn" id="signin-btn">Sign In</button>
+
             </form>
-            <a href="#signup-page" data-role="button" class="ui-btn">Create New Account</a>
+            <a href="#signup-page" data-role="button" class="ui-btn signup-btn">Create New Account</a>
+
         </div>
     </div>
 
@@ -84,6 +91,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 </select>
                 <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="select-consent">Notification Preferences: </label>
+
                 <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="select-consent" id="select-consent" data-mini="true">
                     <option value="">Select all that apply</option>
                     <option value="isSMSOn">SMS</option>
@@ -104,7 +112,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <a href="#" class="ui-btn ui-btn-right signout-btn">
                 <span class="material-symbols-sharp">
                     logout
-                    </span> Logout
+                    </span>
             </a>
         </div>
         <div data-role="main" class="ui-content">
@@ -121,10 +129,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <div data-role="navbar">
                     <ul data-role="listview">
                         <li>
-                            <a href="#notification-page" data-icon="mail"></a>
+                            <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
                         </li>
                         <li>
-                            <a href="#update-profile-page" data-icon="user"></a>
+                            <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
+                        </li>
+                        <li>
+                            <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
                         </li>
             </footer>
             </div>
@@ -137,7 +148,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <a href="#" class="ui-btn ui-btn-right signout-btn">
                     <span class="material-symbols-sharp">
                         logout
-                        </span> Logout
+                        </span>
                 </a>
             </div>
             <div data-role="main" class="ui-content voluntr-notif">
@@ -155,10 +166,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <div data-role="navbar">
                         <ul data-role="listview">
                             <li>
-                                <a href="#notification-page" data-icon="mail" data-iconshadow="true"></a>
+                                <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
                             </li>
                             <li>
-                                <a href="#update-profile-page" data-icon="user"></a>
+                                <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
+                            </li>
+                            <li>
+                                <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
                             </li>
                 </footer>
 
@@ -172,42 +186,50 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <a href="#" class="ui-btn ui-btn-right signout-btn">
                         <span class="material-symbols-sharp">
                             logout
-                            </span> Logout
+                            </span>
                     </a>
                 </div>
                 <div data-role="main" class="ui-content">
                     <form class="flex flex-col" id="update-profile-form">
                         <label for="update-email">Email *
-                    <input type="email" name="email" id="update-email">
+                    <input type="email" name="email" id="update-email" data-param="email" data-required="true">
+                    <span class="err-msg" data-param="email"></span>
+                    </label>
+                        <!-- <label for="update-password">Password 
+                    <input type="password" name="password" id="update-password" disabled="true">
+                </label> -->
+                        <label for="update-firstName">First Name 
+                    <input type="text" name="firstName" id="update-firstName" disabled="true">
                 </label>
-                        <label for="update-password">Password *
-                    <input type="password" name="password" id="update-password">
-                </label>
-                        <label for="update-firstName">First Name *
-                    <input type="text" name="firstName" id="update-firstName">
-                </label>
-                        <label for="update-lastName">Last Name *
-                    <input type="text" name="lastName" id="update-lastName">
+                        <label for="update-lastName">Last Name 
+                    <input type="text" name="lastName" id="update-lastName" disabled="true">
                 </label>
                         <label for="update-phoneNo">Phone *
-                    <input type="text" name="phoneNo" id="update-phoneNo">
+                    <input type="text" name="phoneNo" id="update-phoneNo" data-param="mobile" data-required="true">
+                    <span class="err-msg" data-param="mobile"></span>
                 </label>
-                        <label for="update-select-location">Preferred Locations:</label>
-                        <select multiple="multiple" data-native-menu="false" name="locations" data-mini="true">
+                        <label for="update-select-location">Preferred Locations: *</label>
+                        <select id="update-locations" data-native-menu="false" name="locations" data-param="prefLocation" data-required="true" data-mini="true">
                     <!-- ADDED WITH JS -->
                 </select>
-                        <label for="update-select-services">Preferred Service Categories:</label>
-                        <select multiple="multiple" data-native-menu="false" name="services" data-mini="true">
+                        <span class="err-msg" data-param="prefLocation"></span>
+                        <label for="select-services">Preferred Service Categories:</label>
+                        <select multiple="multiple" data-native-menu="false" name="services" data-mini="true" data-param="prefServiceCategories" data-required="true" id="update-select-services-menu">
                     <!--ADDED WITH JS-->
                 </select>
-                        <label for="update-select-consent">Notification Preferences: </label>
-                        <select multiple="multiple" data-native-menu="false" name="update-select-consent" id="update-select-consent" data-mini="true">
-                    <option value="">Select all that apply</option>
-                    <option value="isSMSOn">SMS</option>
-                    <option value="isEmailOn">Email</option>
+                        <span class="err-msg" data-param="prefServiceCategories"></span>
+                        <label for="update-select-consent">Notification Preferences: *</label>
+                        <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="update-select-consent" id="update-select-consent" data-mini="true">
+                            <option value="">Select all that apply</option>
+                            <option value="isSMSOn">SMS</option>
+                            <option value="isEmailOn">Email</option>
                 </select>
-                        <button type="submit" class="ui-btn">Update</button>
-                        <button type="button" class="ui-btn">Cancel</button>
+                        <span class="err-msg" data-param="notifPref"></span>
+                        <div class="button-group">
+                            <button type="submit" class="ui-btn bg-child">Update</button>
+                            <a href="#public-home" class="ui-btn btn-cancel bg-child">Cancel</a>
+                        </div>
+
                     </form>
                 </div>
                 <div>
@@ -215,10 +237,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         <div data-role="navbar">
                             <ul data-role="listview">
                                 <li>
-                                    <a href="#notification-page" data-icon="mail"></a>
+                                    <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
                                 </li>
                                 <li>
-                                    <a href="#update-profile-page" data-icon="user"></a>
+                                    <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
+                                </li>
+                                <li>
+                                    <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
                                 </li>
                     </footer>
                     </div>

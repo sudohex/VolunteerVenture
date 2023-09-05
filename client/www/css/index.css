@@ -93,18 +93,93 @@
         font-size: 50px;
     }
     
-    .refresh-notifications {
+    label {
+        font-weight: bold !important;
+    }
+    
+    .button-group {
+        display: flex;
+        margin: 0px auto;
+        margin-top: 20px;
+    }
+    
+    .bg-child {
+        display: inline-block;
+    }
+    
+    .bg-child:first-of-type {
+        margin-right: 15px !important;
+    }
+    
+    .ui-btn-icon-top:after {
+        background-color: #29404d !important;
+    }
+    
+    footer ul.ui-listview a.active {
+        background-color: #29404d !important;
+    }
+    /* Logout Button */
+    
+    .signout-btn {
+        background-color: #5d8195 !important;
+        box-shadow: none !important;
+        border: none !important;
+        color: white !important;
+        text-shadow: none !important;
+    }
+    
+    .refresh-notifications,
+    .ui-btn[type="submit"],
+    .signup-btn,
+    .btn-cancel {
         width: 100px !important;
-        background: slateblue !important;
+        background: #29404d !important;
+        /*#536eb6 !important; */
+        /*Similar color from wireframes */
         text-shadow: none !important;
         color: white !important;
         font-weight: normal !important;
         border: none !important;
+        margin: 0px auto;
+        padding: 8px !important;
+    }
+    
+    .btn-cancel {
+        background-color: #f43838 !important;
+    }
+    
+    .signup-btn {
+        background-color: #5d8195 !important;
+    }
+    
+    .signup-btn {
+        margin-top: 10px !important;
+        width: 160px !important;
+    }
+    
+    #signin-btn {
+        width: 176px !important;
+        margin-top: 30px !important;
+    }
+    
+    .text-center {
+        text-align: center;
     }
     
     .mainmsg {
         font-size: 18px;
         margin-top: 10px;
+    }
+    /* ALL TEXT BOXES */
+    
+    .ui-input-text input,
+    .ui-input-search input {
+        border: 1px solid #ccc !important;
+        /* background: transparent none; */
+        -webkit-appearance: none;
+        -webkit-border-radius: inherit;
+        border-radius: 0px !important;
+        padding: 8px !important;
     }
     
     .submsg {

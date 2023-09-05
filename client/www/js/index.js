@@ -31,7 +31,9 @@ var apiEndPoints = {
     locations: "locations",
     categories: "categories",
     services: "services?q=",
-    notifications: "notifications"
+    notifications: "notifications",
+    profile: "profile",
+
 
     //TO-DO Need to define all the endpoints
 };
@@ -316,8 +318,7 @@ function onDeviceReady() {
     //     });
     // });
 
-    //Sign up initialize
-    $(document).on("pageshow", "#signup-page", function() {
+    function fetchLocations(action = "") {
         // Fetch and populate locations
         $.ajax({
             type: 'GET',
@@ -328,22 +329,55 @@ function onDeviceReady() {
                 data.forEach(function(location) {
                     locationsOptions += '<option value="' + location._id + '">' + location.locationName + '</option>';
                 });
-                $('select[name="locations"]').html(locationsOptions).selectmenu("refresh");
+                if (action == "edit") {
+
+                    $('#update-locations').html(locationsOptions).selectmenu("refresh");
+                } else {
+                    $('select[name="locations"]').html(locationsOptions).selectmenu("refresh");
+                }
+
             }
         });
-        // Fetch and populate categories
+    } //END of fecthLocations
+
+    function fetchAllServices(action = "") {
+
         $.ajax({
             type: 'GET',
             url: baseURL + apiEndPoints.services,
             dataType: 'json',
             success: function(data) {
+
                 var categoriesOptions = '<option value="">Select all that apply</option>';
                 data.forEach(function(category) {
-                    categoriesOptions += '<option value="' + category._id + '">' + category.categoryName + '</option>';
+                    // console.log(category.category._id);
+                    categoriesOptions += '<option value="' + category.category._id + '">' + category.category.categoryName + '</option>';
                 });
-                $('select[name="services"]').html(categoriesOptions).selectmenu("refresh");
+
+                if (action == "edit") {
+                    $("#update-select-services-menu").html(categoriesOptions).selectmenu("refresh");
+                    fetchProfile(); //gets user profile data from server
+
+                } else {
+                    $('select[name="services"]').html(categoriesOptions).selectmenu("refresh");
+                }
+
             }
         });
+
+    }
+
+
+
+
+    //Sign up initialize
+    $(document).on("pageshow", "#signup-page", function() {
+        managePageActive();
+        //1.Fetch and populate locations
+        fetchLocations();
+        //2.Fetch and populate categories
+        fetchAllServices();
+
     }); //END of signup page prerequisites loading
 
     //START of "create volunteer account"
@@ -382,6 +416,45 @@ function onDeviceReady() {
             }, 1000);
         }
     }); //END of create volunteer account
+
+
+    //START of "create volunteer account"
+    $("#update-profile-page").submit(function(event) {
+
+        event.preventDefault();
+        var formId = "update-profile-page";
+        // 1. Validate form finally before submission
+        var isValidForm = finalFormValidation(formId);
+        // 2. Collect data from the form
+        var formData = readFormData(formId);
+        // 3. Proceed to send the POST request 
+        if (isValidForm) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + apiEndPoints.updateVlntrAccount,
+                data: formData,
+                contentType: 'application/json',
+                success: function(response) {
+                    //4.Handle resposne
+                    alert('Profile updated successfully');
+                    $.mobile.changePage("#update-profile-page");
+                },
+                error: function(error) {
+                    if (error.status === 400 && error.responseText.includes("email")) {
+                        alert('Something went wrong!.');
+                    } else {
+                        alert('Error updating profile: ' + error.responseText);
+                    }
+                }
+            });
+
+        } else {
+            $("html, body").animate({
+                scrollTop: $("#" + formId).offset().top,
+            }, 1000);
+        }
+    }); //END of update volunteer account
+
 
 
 
@@ -453,8 +526,20 @@ function onDeviceReady() {
     //     });
     // });
 
+    function managePageActive(currentPage = '') {
+
+        if (currentPage != '') {
+            console.log($("#tab-" + currentPage));
+            $("#" + currentPage + " #tab-" + currentPage).addClass("active");
+        } else {
+            $("footer ul[data-role='listview'] a").removeClass("active");
+        }
+
+    }
     //Services
     $(document).on("pageshow", "#public-home", function() {
+
+        managePageActive("public-home");
         //Only logged in user can see this page 
         checkAuthentication();
 
@@ -493,7 +578,7 @@ function onDeviceReady() {
                 console.log(service);
                 // Convert locations array into a user-friendly list
                 let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
-                console.log("locations are " + locationsList);
+
                 // Category presentation
                 let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
 
@@ -534,15 +619,115 @@ function onDeviceReady() {
     //Notifications 
 
     $(document).on("pageshow", "#notification-page", function() {
+        managePageActive("notification-page");
+        //Only logged in user can see this page 
+        checkAuthentication();
 
         fetchNotifications();
 
     })
 
+    //Fetch Profile
+    $(document).on("pageshow", "#update-profile-page", function() {
+
+        managePageActive("update-profile-page");
+
+        //Only logged in user can see this page 
+        checkAuthentication();
+
+        //1.Fetch and populate locations
+        fetchLocations("edit");
+        //2.Fetch and populate categories
+        fetchAllServices("edit");
+        // ***IMP*** Calling  fetchProfile(); from the fetchServices --
+        // -- function to make sure all services loaded/updated to DOM
+
+
+    })
+
+    //Loggedin User Info
+
+    function getUser() {
+        const token = localStorage.getItem('token');
+        const id = JSON.parse(localStorage.getItem('user'))._id;
+        return { token, id };
+    }
+
+    function fetchProfile() {
+
+        const authDetails = getUser(); //1.Token and Id will be returned
+        const id = authDetails.id;
+
+        const formData = JSON.stringify({ id });
+
+        $.ajax({
+            type: 'POST',
+            url: baseURL + apiEndPoints.profile,
+            data: formData,
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+                'x-auth-token': authDetails.token
+            },
+            success: function(data) {
+                // 2. Handle the response
+                console.log(data);
+
+                if (data) {
+
+                    const user = data[0].user;
+                    const response = data[0].volunteer;
+                    //Saved data
+                    $("#update-email").val(user.email);
+                    $("#update-password").val(response.password);
+                    $("#update-firstName").val(response.firstName);
+                    $("#update-lastName").val(response.lastName);
+                    $("#update-phoneNo").val(response.phoneNo);
+
+                    const isSMSOn = response.isSMSOn;
+                    const isEmailOn = response.isEmailOn;
+
+
+
+                    $.each(response.preferences.locations, function(index, value) {
+                        $("#update-locations option[value='" + value + "']").prop("selected", true);
+                    });
+                    $.each(response.preferences.categories, function(index, value) {
+                        $("#update-select-services-menu option[value='" + value + "']").prop("selected", true);
+                    });
+
+                    $("#update-select-consent option[value='isSMSOn']").prop("selected", isSMSOn);
+                    $("#update-select-consent option[value='isEmailOn']").prop("selected", isEmailOn);
+
+                    $("#update-locations,#update-select-services-menu,#update-select-consent").selectmenu("refresh");
+
+
+                } else {
+
+                    alert("Some error occurred");
+                }
+
+
+
+
+
+            },
+            error: function(error) {
+
+                alert('Error signing in: ' + error.responseJSON.message);
+            }
+        });
+
+    }
+
+
+
+
 } //END of OnDeviceReady
 
 
 //Fetch notifications sent to current user
+
 function fetchNotifications() {
     const token = localStorage.getItem('token');
     const id = JSON.parse(localStorage.getItem('user'))._id;

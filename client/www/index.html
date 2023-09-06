@@ -29,27 +29,101 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 </head>
 
 <body class="body">
+
+
+
     <!-- Signin Page -->
-    <div data-role="page" id="signin-page">
+    <div data-role="page" id="signin-page" data-user="VOLUNTEER">
         <div data-role="header" data-position="fixed">
             <h1>Volunteer Venture</h1>
         </div>
         <div data-role="main" class="ui-content">
+
+            <!-- Forgot password popup -->
+            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
+
+                <form id="forgot-password-vlntr">
+
+                    <div class="reset-pass-window">
+
+                        <h3 class="text-center">Reset Password</h3>
+                        <label for="un" class="ui-hidden-accessible">Email</label>
+                        <input type="text" name="email" id="un" value="" placeholder="Registered Email" data-param="email" data-required="true">
+                        <span class="err-msg" data-param="email"></span>
+                        <span id="reset-pas-response"></span>
+
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button type="submit" class="ui-btn" id="btn-forgotpwd" data-form-id="forgot-password-vlntr">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- //Forgot password popup -->
+
             <form id="signin-form">
                 <h3>Sign In</h3>
                 <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
                 <span class="err-msg" data-param="email"></span>
                 <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
                 <span class="err-msg" data-param="password"></span>
-                <p class=""><a href="#">Forgot Password?</a></p>
+                <p class="forgot-p-link"><a href="#popupLogin" data-rel="popup" data-position-to="window">Forgot Password?</a></p>
                 <!-- TO-DO add page -->
-                <p class="staff-login-link"><a href="#">Login as Staff Member</a></p>
+                <p class="other-login-link"><a href="#signin-page-staff">Login as Staff Member</a></p>
                 <!-- TO-DO add page -->
                 <button type="submit" class="ui-btn signin-btn" id="signin-btn">Sign In</button>
 
             </form>
-            <a href="#signup-page" data-role="button" class="ui-btn">Create New Account</a>
-            <a href="#staff-signin-page" class="w-full text-center block">Staff Sign In</a>
+            <a href="#signup-page" data-role="button" class="ui-btn signup-btn">Create New Account</a>
+
+        </div>
+    </div>
+
+    <!-- Forgot password-->
+
+
+
+    <!-- Signin Page - STAFF-->
+    <div data-role="page" id="signin-page-staff">
+        <div data-role="header" data-position="fixed">
+            <h1>Volunteer Venture</h1>
+        </div>
+        <div data-role="main" class="ui-content">
+
+
+            <!-- Forgot password popup -->
+            <div data-role="popup" id="popupLoginStaff" data-theme="a" class="ui-corner-all">
+
+                <form id="forgot-password-staff">
+
+                    <div class="reset-pass-window">
+
+                        <h3 class="text-center">Reset Password</h3>
+                        <label for="reg-email-staff" class="ui-hidden-accessible">Email</label>
+                        <input type="text" name="email" id="reg-email-staff" value="" placeholder="Registered Email" data-param="email" data-required="true">
+                        <span class="err-msg" data-param="email"></span>
+                        <span id="reset-pas-response"></span>
+
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button type="submit" class="ui-btn" id="btn-forgotpwd-staff" data-form-id="forgot-password-staff">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- //Forgot password popup -->
+
+            <form id="signin-form-staff" data-user="STAFF">
+                <h3>Sign In - Staff</h3>
+                <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
+                <span class="err-msg" data-param="email"></span>
+                <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
+                <span class="err-msg" data-param="password"></span>
+                <p class="forgot-p-link"><a href="#popupLoginStaff" data-rel="popup" data-position-to="window">Forgot Password?</a></p>
+
+                <p class="other-login-link"><a href="#signin-page">Login as Volunteer</a></p>
+
+                <button type="submit" class="ui-btn signin-btn" id="signin-btn-staff" data-user="STAFF">Sign In</button>
+
+            </form>
+            <!-- <a href="#signup-page" data-role="button" class="ui-btn signup-btn">Create New Account</a> -->
+
         </div>
     </div>
 
@@ -253,38 +327,57 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <div data-role="page" id="staff-home-page">
                     <div data-role="header" data-position="fixed">
                         <h1>Staff Home</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-            <button type="button" id="volunteer-list">Access Volunteer List</button>
-            <button type="button" id="edit-services">Edit Services Menu</button>
-            <button type="button" id="past-notif">Past Notifications</button>
-        </div>
-    </div>
+                    </div>
+                    <div data-role="main" class="ui-content">
+                        <button type="button" id="volunteer-list">Access Volunteer List</button>
+                        <button type="button" id="edit-services">Edit Services Menu</button>
+                        <button type="button" id="past-notif">Past Notifications</button>
+                        <button type="button" id="volunteer-list-btn">Access Volunteer List</button>
+                        <button type="button" id="edit-services-btn">Edit Services Menu</button>
+                        <button type="button" id="past-notif-btn">Past Notifications</button>
+                    </div>
+                </div>
 
-    <!-- Staff Signin Page -->
-    <div data-role="page" id="staff-signin-page">
-        <div data-role="header" data-position="fixed">
-            <h1>CQU Staff Login</h1>
-        </div>
-        <!-- ADD to JS -->
-        <div data-role="main" class="ui-content">
-            <form id="signin-form">
-                <input type="email" name="email" placeholder="CQU Email">
-                <input type="password" name="password" placeholder="Password">
-                <button type="submit" class="ui-btn">Sign In</button>
-            </form>
-        </div>
-    </div>
+                <!-- Staff Services Menu -->
+                <div data-role="page" id="staff-services-menu">
+                    <div data-role="header" data-position="fixed">
+                        <h1>Services Menu</h1>
+                        <a href="#staff-home-btn" data-role="button" data-icon="home" data-iconpos="notext" data-position="right"></a>
+                    </div>
+                    <div data-role="main" class="ui-content">
+                        <p>Add New Service</p>
+                        <form class="flex flex-col" id="new-service-form">
+                            <input type="text" name="service-name" id="service-name" placeholder="Service Name">
+                            <label for="set-location">Location</label>
+                            <select data-native-menu="false" name="locations" data-mini="true">
+                        <!-- ADDED WITH JS -->
+                    </select>
+                            <label for="set-services">Category</label>
+                            <select data-native-menu="false" name="services" data-mini="true">
+                    <!--ADDED WITH JS-->
+                </select>
+                            <!-- To choose whether to display in services menu for volunteers or not -->
+                            <label for="slider-flip-m">Display on?</label>
+                            <select name="slider-flip-m" id="slider-flip-m" data-role="slider" data-mini="true">
+                    <option value="off">No</option>
+                    <option value="on" selected="">Yes</option>  
+                </select>
+                        </form>
 
-    <!-- Staff Notifications Archive-->
-    <div data-role="page" id="admin-home-page">
-        <div data-role="header" data-position="fixed">
-            <h1>Past Notifications</h1>
-        </div>
-        <div data-role="main" class="ui-content">
+                        <!-- Need to add a table to populate the back-end services menu -->
 
-        </div>
-    </div>
+                    </div>
+                </div>
+
+                <!-- Staff Notifications Archive-->
+                <div data-role="page" id="admin-home-page">
+                    <div data-role="header" data-position="fixed">
+                        <h1>Past Notifications</h1>
+                    </div>
+                    <div data-role="main" class="ui-content">
+
+                    </div>
+                </div>
 
 
                 <!-- Admin Home Page -->

@@ -1,5 +1,72 @@
     /* CUSTOM CSS WILL BE IN THIS FILE */
     
+    .ui-select a.ui-btn,
+    .ui-page {
+        background-color: white !important;
+        text-shadow: none;
+    }
+    
+    .filter-container {
+        padding: 10px;
+        width: 90%;
+        margin: 0px auto;
+    }
+    
+    .checkbox-holder .ui-checkbox input[type="checkbox"] {
+        left: 0px !important;
+    }
+    
+    .checkbox-holder {
+        width: 15%;
+    }
+    
+    .pagination {
+        display: none;
+        /* TO-DO add some styles to make better*/
+    }
+    
+    .pagination a.active {
+        background-color: #007BFF;
+        color: white;
+    }
+    
+    .my-table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        margin-top: 20px;
+        /* Enable horizontal scrolling */
+    }
+    
+    .my-table-container table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+    
+    th,
+    td {
+        padding: 5px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .headers td {
+        font-weight: bold;
+    }
+    
+    @media (max-width: 320px) {
+        .my-table-container table {
+            font-size: 12px;
+        }
+    }
+    
+    @media screen and (min-width: 331px) {
+        .my-table-container {
+            padding: 10px;
+            /* Adjust the padding value as needed */
+        }
+    }
+    
     .err-msg {
         display: block;
         color: rgb(222, 21, 21);
@@ -7,6 +74,30 @@
     
     .highlight {
         background-color: yellow;
+    }
+    
+    .reset-pass-window {
+        padding: 20px;
+    }
+    
+    .ui-popup-container {
+        z-index: 1100;
+        display: inline-block;
+        position: absolute;
+        padding: 0;
+        outline: 0;
+        width: 75%;
+        margin: 0px auto;
+        left: 0 !important;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80% !important;
+    }
+    
+    .reset-pas-response {
+        color: green;
+        font-size: 16px;
     }
     
     body {

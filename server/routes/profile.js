@@ -12,7 +12,7 @@ router.post("/", auth, async(req, res) => {
         if (!user) {
             return res.status(404).json({ msg: "User not found" });
         } else { //if valid user add email to the response
-            volunteer.email = user.email; //Not updating i don't why
+            volunteer.email = user.email; //Not updating i don't know why
         }
         var response = [{ user, volunteer }];
         if (user.id === req.user.id) {

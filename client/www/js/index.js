@@ -21,7 +21,7 @@ var masterData = [{
         prefServiceCategories: "Please select atleast one option",
         notifPref: "Please select atleast one option.",
     },
-},];
+}, ];
 
 var baseURL = "http://localhost:3000/api/";
 var apiEndPoints = {
@@ -33,6 +33,8 @@ var apiEndPoints = {
     services: "services?q=",
     notifications: "notifications",
     profile: "profile",
+    forgotPassword: "",
+    // TO-DO add url
 
 
     //TO-DO Need to define all the endpoints
@@ -62,7 +64,7 @@ function finalFormValidation(formId) {
     var totalElements = allElements.length;
     var processedElements = 0; //To wait for all iterations to complete
 
-    allElements.each(function () {
+    allElements.each(function() {
         isRequired = $(this).data("required"); //predefined attr for every form element for validation{false if not req}
         if (isRequired == true) {
             inputType = $(this).data("param");
@@ -71,9 +73,9 @@ function finalFormValidation(formId) {
             var isValid = isValidInput(inputType, inputValue);
             if (isValid == false) {
                 allValidInputs = false;
-                setErrorMessage(inputType, false); //Displays respective defined error message
+                setErrorMessage(inputType, false, formId); //Displays respective defined error message
             } else {
-                setErrorMessage(inputType, true); //Erases if any prev error message
+                setErrorMessage(inputType, true, formId); //Erases if any prev error message
             }
         }
         processedElements++; //Increase in number for each iteration
@@ -89,11 +91,12 @@ function finalFormValidation(formId) {
  * To Display/Hide the error messages for all form validations
  * @param {string} inputType
  * @param {boolean} isValid
+ * @param {string} formId 
  */
-function setErrorMessage(inputType, isValid) {
+function setErrorMessage(inputType, isValid, formId = "") {
     var errMsg = masterData[0]["errorMessages"][inputType]; //Custom message defined in masterdata
     var errorMessage = isValid ? "" : "<span>" + errMsg + "</span>";
-    $(".err-msg[data-param='" + inputType + "']").html(errorMessage);
+    $("#" + formId + " .err-msg[data-param='" + inputType + "']").html(errorMessage);
 }
 
 /**
@@ -101,7 +104,7 @@ function setErrorMessage(inputType, isValid) {
  * @param {string} inputType 
  * @param {*} inputValue 
  * @param {string} originalPassword 
- * @returns 
+ * @returns {boolean}
  */
 function isValidInput(inputType, inputValue, originalPassword = "") {
 
@@ -151,7 +154,7 @@ function readFormData(formId) {
     var formData = $("#" + formId).serializeArray();
     var formDataObject = {};
 
-    formData.forEach(function (field) {
+    formData.forEach(function(field) {
         var fieldName = field.name;
         var fieldValue = decodeURIComponent(field.value || "");
 
@@ -199,21 +202,63 @@ function onDeviceReady() {
 
     });
     //SET value to it
-    $('input[name="date-range"]').on('apply.daterangepicker', function (ev, picker) {
+    $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+    });
+
+    $("#btn-forgotpwd,#btn-forgotpwd-staff").on("click", function(e) {
+        e.preventDefault();
+
+        var formId = $(this).attr("data-form-id");
+
+        // 1. Validate form finally before submission
+        var isValidForm = finalFormValidation(formId);
+        // 2. Collect data from the form
+        var formData = readFormData(formId);
+        // 3. Proceed to send the POST request 
+        if (isValidForm) {
+
+            $.ajax({
+                type: 'POST',
+                url: baseURL + apiEndPoints.forgotPassword, //SAME for Volunteer & Staff
+                data: formData,
+                contentType: 'application/json',
+                success: function(response) {
+                    // 4. Handle the response
+
+                    if (response) {
+                        $("#reset-pas-response").html("Your password has been sent to your email.");
+                        $.mobile.changePage();
+                    }
+
+                },
+                error: function(error) {
+
+                    alert('Error sending email: ' + error.responseJSON.message);
+                }
+            });
+
+        } else {
+            // $("html, body").animate({
+            //     scrollTop: $("#" + formId).offset().top,
+            // }, 1000);
+        }
+
+
     });
 
 
     //CHANGES FROM - MAHAMMAD 
 
     //START of "input" JS validation
-    $("input,select").on("blur change", function () {
+    $("input,select").on("blur change", function() {
         //When user finish to input this event will be in action
 
         // Get the current input element and its attributes
         var thisInputElem = $(this); // The input element being interacted with
         var thisInputVal = thisInputElem.val(); // Current value of the input
         var inputParam = thisInputElem.attr("data-param"); // Parameter associated with the input
+        var formId = $(this).closest('form').attr("id");
 
         if (inputParam) { //Proceed only if "data-param" is defined 
 
@@ -231,16 +276,18 @@ function onDeviceReady() {
                 } else {
                     //TO-D0 throw error
                 }
-                setErrorMessage(inputParam, isValid); //Displays/Hide an input error message
+                setErrorMessage(inputParam, isValid, formId); //Displays/Hide an input error message
             } //END of IsEmptyCheck;
         } // END of is data-param attribute defined check
     }); //END of input validation;
 
     //CHANGES FROM - MAHAMMAD 
-    $("#signin-form").submit(async function (event) {
+    $("#signin-form,#signin-form-staff").submit(async function(event) {
         event.preventDefault();
 
-        var formId = "signin-form";
+        var whichLogin = $(this).data("user");
+
+        var formId = $(this).attr("id");
         // 1. Validate form finally before submission
         var isValidForm = finalFormValidation(formId);
         // 2. Collect data from the form
@@ -250,20 +297,30 @@ function onDeviceReady() {
 
             $.ajax({
                 type: 'POST',
-                url: baseURL + apiEndPoints.login,
+                url: baseURL + apiEndPoints.login, //SAME for Volunteer & Staff
                 data: formData,
                 contentType: 'application/json',
-                success: function (response) {
+                success: function(response) {
                     // 4. Handle the response
 
                     localStorage.setItem('token', response.token);
                     localStorage.setItem('user', JSON.stringify(response.user));
 
-                    alert('Successfully signed in!');
-                    $.mobile.changePage("#public-home");
 
+                    if (whichLogin == "STAFF") {
+                        if (response.user.acctType != "volunteer") {
+                            $.mobile.changePage("#staff-home-page");
+                        } else {
+                            $.mobile.changePage("#staff-home-page"); //ONLY FOR DEV MODE
+                            ///alert("Login Failed! No staff account found!");
+                            return;
+                        }
+                    } else {
+                        $.mobile.changePage("#public-home");
+                    }
+                    alert('Successfully signed in!');
                 },
-                error: function (error) {
+                error: function(error) {
 
                     alert('Error signing in: ' + error.responseJSON.message);
                 }
@@ -319,16 +376,23 @@ function onDeviceReady() {
             type: 'GET',
             url: baseURL + apiEndPoints.locations,
             dataType: 'json',
-            success: function (data) {
-                var locationsOptions = '<option value="">Select all that apply</option>';
-                data.forEach(function (location) {
+            success: function(data) {
+
+                if (action == "staff") {
+                    var locationsOptions = '<option value="">Select one option</option>';
+                } else {
+                    var locationsOptions = '<option value="">Select all that apply</option>';
+                }
+
+
+                data.forEach(function(location) {
                     locationsOptions += '<option value="' + location._id + '">' + location.locationName + '</option>';
                 });
                 if (action == "edit") {
 
-                    $('#update-locations').html(locationsOptions).selectmenu("refresh");
+                    $('#update-locations').html(locationsOptions).selectmenu().selectmenu("refresh");
                 } else {
-                    $('select[name="locations"]').html(locationsOptions).selectmenu("refresh");
+                    $('select[name="locations"]').html(locationsOptions).selectmenu().selectmenu("refresh");
                 }
 
             }
@@ -342,19 +406,23 @@ function onDeviceReady() {
             url: baseURL + apiEndPoints.services,
             dataType: 'json',
             success: function(data) {
+                if (action == "staff") {
+                    var categoriesOptions = '<option value="">Select one option</option>';
+                } else {
+                    var categoriesOptions = '<option value="">Select all that apply</option>';
+                }
 
-                var categoriesOptions = '<option value="">Select all that apply</option>';
                 data.forEach(function(category) {
                     // console.log(category.category._id);
                     categoriesOptions += '<option value="' + category.category._id + '">' + category.category.categoryName + '</option>';
                 });
 
                 if (action == "edit") {
-                    $("#update-select-services-menu").html(categoriesOptions).selectmenu("refresh");
+                    $("#update-select-services-menu").html(categoriesOptions).selectmenu().selectmenu("refresh");
                     fetchProfile(); //gets user profile data from server
 
                 } else {
-                    $('select[name="services"]').html(categoriesOptions).selectmenu("refresh");
+                    $('select[name="services"]').html(categoriesOptions).selectmenu().selectmenu("refresh");
                 }
 
             }
@@ -376,7 +444,7 @@ function onDeviceReady() {
     }); //END of signup page prerequisites loading
 
     //START of "create volunteer account"
-    $("#signup-form").submit(function (event) {
+    $("#signup-form").submit(function(event) {
 
         event.preventDefault();
         var formId = "signup-form";
@@ -391,12 +459,12 @@ function onDeviceReady() {
                 url: baseURL + apiEndPoints.createVlntrAccount,
                 data: formData,
                 contentType: 'application/json',
-                success: function (response) {
+                success: function(response) {
                     //4.Handle resposne
                     alert('Successfully signed up!');
                     $.mobile.changePage("#signin-page");
                 },
-                error: function (error) {
+                error: function(error) {
                     if (error.status === 400 && error.responseText.includes("email")) {
                         alert('Email already exists.');
                     } else {
@@ -542,7 +610,7 @@ function onDeviceReady() {
         fetchServices();
 
         // Search form submission
-        $("#search-form").on("submit", function (e) {
+        $("#search-form").on("submit", function(e) {
             e.preventDefault();
             var query = $("#searchForCollapsibleSet").val();
             fetchServices(query);
@@ -554,10 +622,10 @@ function onDeviceReady() {
                 type: 'GET',
                 url: baseURL + apiEndPoints.services + `${query}`,
                 dataType: 'json',
-                success: function (services) {
+                success: function(services) {
                     renderServices(services);
                 },
-                error: function (error) {
+                error: function(error) {
                     console.error("Error fetching services:", error);
                 }
             });
@@ -595,7 +663,7 @@ function onDeviceReady() {
         }
     });
     //Logout
-    $(".signout-btn").click(function (e) {
+    $(".signout-btn").click(function(e) {
         e.preventDefault();
         const decison = window.confirm("Are you sure to logout?");
         if (decison) {
@@ -625,6 +693,16 @@ function onDeviceReady() {
         checkAuthentication();
 
         fetchNotifications();
+
+    })
+
+    $(document).on("pageshow", "#staff-services-menu", function() {
+        //managePageActive("notification-page");
+        //Only logged in user can see this page 
+        checkAuthentication();
+
+        fetchLocations("staff");
+        fetchAllServices("staff");
 
     })
 
@@ -700,7 +778,7 @@ function onDeviceReady() {
                     $("#update-select-consent option[value='isSMSOn']").prop("selected", isSMSOn);
                     $("#update-select-consent option[value='isEmailOn']").prop("selected", isEmailOn);
 
-                    $("#update-locations,#update-select-services-menu,#update-select-consent").selectmenu("refresh");
+                    $("#update-locations,#update-select-services-menu,#update-select-consent").selectmenu().selectmenu("refresh");
 
 
                 } else {
@@ -744,7 +822,7 @@ function fetchNotifications() {
             'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
             'x-auth-token': token
         },
-        success: function (response) {
+        success: function(response) {
             var myNotifications = "";
             if (response && response.length > 0) {
 
@@ -781,7 +859,7 @@ function fetchNotifications() {
 
             //console.log(myNotifications);
         },
-        error: function (error) {
+        error: function(error) {
             console.error("Error fetching notifications:", error);
         }
     });

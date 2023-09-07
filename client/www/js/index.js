@@ -5,6 +5,8 @@ Created: July 17, 2023
 Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 */
 
+const volunteer = require("../../../server/models/volunteer");
+
 /**
  * We can define custom messages to display all over the app
  */
@@ -33,9 +35,8 @@ var apiEndPoints = {
     services: "services?q=",
     notifications: "notifications",
     profile: "profile",
-    forgotPassword: "",
-    // TO-DO add url
-
+    forgotPassword: "", // TO-DO add url
+    filterVolunteers: "",
 
     //TO-DO Need to define all the endpoints
 };
@@ -281,7 +282,7 @@ function onDeviceReady() {
         } // END of is data-param attribute defined check
     }); //END of input validation;
 
-    //CHANGES FROM - MAHAMMAD 
+
     $("#signin-form,#signin-form-staff").submit(async function(event) {
         event.preventDefault();
 
@@ -334,41 +335,7 @@ function onDeviceReady() {
     });
 
 
-    // //Sign in submit
-    // $("#signin-form").submit(function(e) {
-    //     e.preventDefault();
 
-    //     // 1. Collect data from the form
-    //     const email = $("#signin-form input[name='email']").val();
-    //     const password = $("#signin-form input[name='password']").val();
-
-    //     if (!email || !password) {
-    //         alert('Please fill in all the fields.');
-    //         return;
-    //     }
-    //     // 2. Send the POST request
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'http://localhost:3000/api/signin', // update this URL if it's different
-    //         data: JSON.stringify({ email, password }),
-    //         contentType: 'application/json',
-    //         success: function(response) {
-    //             // 3. Handle the response
-
-    //             localStorage.setItem('token', response.token);
-    //             localStorage.setItem('user', JSON.stringify(response.user));
-
-
-    //             alert('Successfully signed in!');
-    //             $.mobile.changePage("#public-home");
-
-    //         },
-    //         error: function(error) {
-
-    //             alert('Error signing in: ' + error.responseJSON.message);
-    //         }
-    //     });
-    // });
 
     function fetchLocations(action = "") {
         // Fetch and populate locations
@@ -442,6 +409,60 @@ function onDeviceReady() {
         fetchAllServices();
 
     }); //END of signup page prerequisites loading
+
+
+    //List of volunteers initialize
+    $(document).on("pageshow", "#volunteer-list-page", function() {
+        checkAuthentication();
+        //1.Fetch and populate locations
+        fetchLocations();
+        //2.Fetch and populate categories
+        fetchAllServices();
+
+    }); //END of volunteers page prerequisites loading
+
+
+    // filter volunteer
+    $("#volunteer-list-page .ui-selectmenu .ui-icon-delete").on("click", function(event, ui) { //When user click on close select options
+
+        var formData = readFormData("filter-volunteers");
+
+        $.ajax({
+            type: 'POST',
+            url: baseURL + apiEndPoints.filterVolunteers,
+            data: formData,
+            contentType: 'application/json',
+            success: function(response) {
+                //4.Handle resposne
+                // TO-DO need to populate from server response
+            },
+            error: function(error) {
+                console.log('Error signing up: ' + error.responseText);
+            }
+        });
+
+    });
+
+    //SELECT-ALL Volunteers
+    $("input[type='checkbox'].select-all").change(function() {
+        if ($(this).is(":checked")) {
+            $(".individual-checkbox").prop("checked", true);
+        } else {
+            $(".individual-checkbox").prop("checked", false);
+        }
+    });
+
+    //SELECT-ALL Volunteers Reverese  
+    $(".individual-checkbox").change(function() {
+        var checkedCount = $(".individual-checkbox:checked").length;
+
+        if (checkedCount === $(".individual-checkbox").length) {
+            $("input[type='checkbox'].select-all").prop("checked", true);
+        } else {
+            $("input[type='checkbox'].select-all").prop("checked", false);
+        }
+    })
+
 
     //START of "create volunteer account"
     $("#signup-form").submit(function(event) {

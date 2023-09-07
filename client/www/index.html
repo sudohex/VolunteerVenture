@@ -35,6 +35,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- Signin Page -->
     <div data-role="page" id="signin-page" data-user="VOLUNTEER">
 
+
         <div data-role="header" data-position="fixed">
             <h1>Volunteer Venture</h1>
         </div>
@@ -390,7 +391,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <button type="button" id="volunteer-list">Access Volunteer List</button>
                 <button type="button" id="edit-services">Edit Services Menu</button>
                 <button type="button" id="past-notif">Past Notifications</button>
-                <button type="button" id="volunteer-list-btn"><a href="#volunteer-list-page">Access Volunteer List</a></button>
+                <button type="button" id="volunteer-list-btn"><a href="#volunteer-list-page"><a href="#volunteer-list-page">Access Volunteer List</a></a></button>
                 <button type="button" id="edit-services-btn">Edit Services Menu</button>
                 <button type="button" id="past-notif-btn">Past Notifications</button>
             </div>
@@ -446,63 +447,113 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 </footer>
             </div>
 
-            <!-- Staff Services Menu -->
-            <div data-role="page" id="staff-services-menu">
+            <!-- List of Volunteers Page-->
+            <div data-role="page" id="volunteer-list-page">
                 <div data-role="header" data-position="fixed">
-                    <h1>Services Menu</h1>
-                    <a href="#staff-home-btn" data-role="button" data-icon="home" data-iconpos="notext" data-position="right"></a>
+                    <h1>Volunteers List</h1>
                 </div>
-                <div data-role="main" class="ui-content">
-                    <p>Add New Service</p>
-                    <form class="flex flex-col" id="new-service-form">
-                        <input type="text" name="service-name" id="service-name" placeholder="Service Name">
-                        <label for="set-location">Location</label>
-                        <select data-native-menu="false" name="locations" data-mini="true">
+                <div class="filter-container">
+                    <form id="filter-volunteers">
+                        <label for="select-locations">Locations</label>
+                        <select data-native-menu="false" multiple="multiple" name="locations" data-mini="true" data-required="false"><!--data-param="prefLocation"-->
                         <!-- ADDED WITH JS -->
                     </select>
-                        <label for="set-services">Category</label>
-                        <select data-native-menu="false" name="services" data-mini="true">
+
+                        <label for="select-services">Service Categories</label>
+                        <select multiple="multiple" data-native-menu="false" name="services" data-mini="true" data-required="false"><!--data-param="prefServiceCategories"-->
+                        <!--ADDED WITH JS-->
+                    </select>
+                    </form>
+                    <!-- END filter form-->
+                </div>
+                <div class="my-table-container">
+                    <table>
+                        <tr class="headers">
+                            <td class="checkbox-holder"><span><input type="checkbox" class="select-all"/></span></td>
+                            <td><span>Name</span></td>
+                            <td><span>Location</span></td>
+                            <td><span>Services</span></td>
+                            <td><span>Email</span></td>
+                            <td><span>SMS</span></td>
+                        </tr>
+                        <tr>
+                            <td class="checkbox-holder"><span class="custom-checkbox"><input type="checkbox" class="individual-checkbox"/></span></td>
+                            <td><span>Mahammad Shaik</span></td>
+                            <td><span>Brisbane</span></td>
+                            <td><span>Haircut</span></td>
+                            <td><span>Y</span></td>
+                            <td><span>N</span></td>
+                        </tr>
+                    </table>
+                    <div class="pagination">
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <!-- TO-DO Need to implement based on records -->
+                    </div>
+
+                    <footer data-role="footer" data-position="fixed" id="foort">
+                        SEND MESSAGE
+                    </footer>
+                </div>
+
+                <!-- Staff Services Menu -->
+                <div data-role="page" id="staff-services-menu">
+                    <div data-role="header" data-position="fixed">
+                        <h1>Services Menu</h1>
+                        <a href="#staff-home-btn" data-role="button" data-icon="home" data-iconpos="notext" data-position="right"></a>
+                    </div>
+                    <div data-role="main" class="ui-content">
+                        <p>Add New Service</p>
+                        <form class="flex flex-col" id="new-service-form">
+                            <input type="text" name="service-name" id="service-name" placeholder="Service Name">
+                            <label for="set-location">Location</label>
+                            <select data-native-menu="false" name="locations" data-mini="true">
+                        <!-- ADDED WITH JS -->
+                    </select>
+                            <label for="set-services">Category</label>
+                            <select data-native-menu="false" name="services" data-mini="true">
                     <!--ADDED WITH JS-->
                 </select>
-                        <!-- To choose whether to display in services menu for volunteers or not -->
-                        <label for="slider-flip-m">Display on?</label>
-                        <select name="slider-flip-m" id="slider-flip-m" data-role="slider" data-mini="true">
+                            <!-- To choose whether to display in services menu for volunteers or not -->
+                            <label for="slider-flip-m">Display on?</label>
+                            <select name="slider-flip-m" id="slider-flip-m" data-role="slider" data-mini="true">
                     <option value="off">No</option>
                     <option value="on" selected="">Yes</option>  
                 </select>
-                    </form>
+                        </form>
 
-                    <!-- Need to add a table to populate the back-end services menu -->
+                        <!-- Need to add a table to populate the back-end services menu -->
 
+                    </div>
                 </div>
-            </div>
 
-            <!-- Staff Notifications Archive-->
-            <div data-role="page" id="admin-home-page">
-                <div data-role="header" data-position="fixed">
-                    <h1>Past Notifications</h1>
+                <!-- Staff Notifications Archive-->
+                <div data-role="page" id="admin-home-page">
+                    <div data-role="header" data-position="fixed">
+                        <h1>Past Notifications</h1>
+                    </div>
+                    <div data-role="main" class="ui-content">
+
+                    </div>
                 </div>
-                <div data-role="main" class="ui-content">
 
+
+                <!-- Admin Home Page -->
+                <div data-role="page" id="admin-home-page">
+                    <div data-role="header" data-position="fixed">
+                        <h1>App Admin</h1>
+                    </div>
+                    <div data-role="main" class="ui-content">
+                        <button type="button" id="volunteer-list">Access Volunteer List</button>
+                        <button type="button" id="edit-services">Edit Services Menu</button>
+                        <button type="button" id="past-notif">Past Notifications</button>
+                        <button type="button" id="manage-staff-accts">Update Profiles</button>
+                    </div>
                 </div>
-            </div>
 
-
-            <!-- Admin Home Page -->
-            <div data-role="page" id="admin-home-page">
-                <div data-role="header" data-position="fixed">
-                    <h1>App Admin</h1>
-                </div>
-                <div data-role="main" class="ui-content">
-                    <button type="button" id="volunteer-list">Access Volunteer List</button>
-                    <button type="button" id="edit-services">Edit Services Menu</button>
-                    <button type="button" id="past-notif">Past Notifications</button>
-                    <button type="button" id="manage-staff-accts">Update Profiles</button>
-                </div>
-            </div>
-
-            <script src="cordova.js"></script>
-            <script src="js/index.js"></script>
+                <script src="cordova.js"></script>
+                <script src="js/index.js"></script>
 </body>
 
 </html>

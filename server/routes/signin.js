@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
-
+console.log("API TESTING");
   try {
     const user = await User.findOne({ email });
 

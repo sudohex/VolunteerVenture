@@ -5,7 +5,6 @@ Created: July 17, 2023
 Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 */
 
-const volunteer = require("../../../server/models/volunteer");
 
 /**
  * We can define custom messages to display all over the app

@@ -37,6 +37,11 @@
         /* Enable horizontal scrolling */
     }
     
+    .volunteer-list-page {
+        display: none;
+        /* This feature is automated with server */
+    }
+    
     .my-table-container table {
         width: 100%;
         border-collapse: collapse;
@@ -267,7 +272,7 @@
     .ui-input-search input {
         border: 1px solid #ccc !important;
         /* background: transparent none; */
-        -webkit-appearance: none;
+        appearance: none;
         -webkit-border-radius: inherit;
         border-radius: 0px !important;
         padding: 8px !important;
@@ -300,7 +305,7 @@
         word-wrap: normal;
         direction: ltr;
         vertical-align: middle;
-        -webkit-font-feature-settings: 'liga';
+        font-feature-settings: 'liga';
         -webkit-font-smoothing: antialiased;
     }
     

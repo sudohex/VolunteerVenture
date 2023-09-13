@@ -24,14 +24,14 @@ var masterData = [{
     },
 }, ];
 
-var baseURL = "http://localhost:3000/api/";
+var baseURL = "https://volunteerventureserver.onrender.com/";
 var apiEndPoints = {
-    login: "signin",
+    login: "login",
     createVlntrAccount: "signup",
-    updateVlntrAccount: "dummy_url",
-    locations: "locations",
-    categories: "categories",
-    services: "services?q=",
+    updateVlntrAccount: "volunteer/",
+    locations: "location",
+    categories: "category",
+    services: "service?q=",
     notifications: "notifications",
     profile: "profile",
     forgotPassword: "", // TO-DO add url
@@ -71,6 +71,7 @@ function finalFormValidation(formId) {
             inputValue = $(this).val();
             console.log(inputType + " " + inputValue);
             var isValid = isValidInput(inputType, inputValue);
+            console.log(inputType + inputValue);
             if (isValid == false) {
                 allValidInputs = false;
                 setErrorMessage(inputType, false, formId); //Displays respective defined error message
@@ -79,12 +80,14 @@ function finalFormValidation(formId) {
             }
         }
         processedElements++; //Increase in number for each iteration
+        console.log(allValidInputs);
     });
     if (processedElements === totalElements) {
         //Creates a wait to finish the .each();
         return allValidInputs;
     }
 } //END of final form validation :: common for entire application
+
 
 
 /**
@@ -252,6 +255,7 @@ function onDeviceReady() {
 
     //START of "input" JS validation
     $("input,select").on("blur change", function() {
+
         //When user finish to input this event will be in action
 
         // Get the current input element and its attributes
@@ -262,7 +266,8 @@ function onDeviceReady() {
 
         if (inputParam) { //Proceed only if "data-param" is defined 
 
-            var isEmpty = thisInputVal.trim() === "" ? true : false;
+            var isEmpty = typeof thisInputVal === "string" && thisInputVal.trim() === "" ? true : false;
+
 
             if (isEmpty == false) {
                 //IsEmptyCheck ::To avoid showing error message without submission or filling the input.
@@ -344,7 +349,7 @@ function onDeviceReady() {
             dataType: 'json',
             success: function(data) {
 
-                if (action == "staff") {
+                if (action == "staff" || action == "volunteer") {
                     var locationsOptions = '<option value="">Select one option</option>';
                 } else {
                     var locationsOptions = '<option value="">Select all that apply</option>';
@@ -358,7 +363,7 @@ function onDeviceReady() {
 
                     $('#update-locations').html(locationsOptions).selectmenu().selectmenu("refresh");
                 } else {
-                    $('select[name="locations"]').html(locationsOptions).selectmenu().selectmenu("refresh");
+                    $('select[name="preferred_locations"]').html(locationsOptions).selectmenu().selectmenu("refresh");
                 }
 
             }
@@ -367,9 +372,10 @@ function onDeviceReady() {
 
     function fetchAllServices(action = "") {
 
+
         $.ajax({
             type: 'GET',
-            url: baseURL + apiEndPoints.services,
+            url: baseURL + apiEndPoints.categories, //previously apiEndPoints.services
             dataType: 'json',
             success: function(data) {
                 if (action == "staff") {
@@ -379,8 +385,8 @@ function onDeviceReady() {
                 }
 
                 data.forEach(function(category) {
-                    // console.log(category.category._id);
-                    categoriesOptions += '<option value="' + category.category._id + '">' + category.category.categoryName + '</option>';
+                    //console.log(category);
+                    categoriesOptions += '<option value="' + category._id + '">' + category.categoryName + '</option>';
                 });
 
                 if (action == "edit") {
@@ -388,7 +394,7 @@ function onDeviceReady() {
                     fetchProfile(); //gets user profile data from server
 
                 } else {
-                    $('select[name="services"]').html(categoriesOptions).selectmenu().selectmenu("refresh");
+                    $('select[name="preferred_categories"]').html(categoriesOptions).selectmenu().selectmenu("refresh");
                 }
 
             }
@@ -400,14 +406,16 @@ function onDeviceReady() {
 
 
     //Sign up initialize
-    $(document).on("pageshow", "#signup-page", function() {
+    $(document).on("pagecreate", "#signup-page", function() {
         managePageActive();
         //1.Fetch and populate locations
-        fetchLocations();
+        fetchLocations("volunteer");
         //2.Fetch and populate categories
         fetchAllServices();
 
     }); //END of signup page prerequisites loading
+
+
 
 
     //List of volunteers initialize
@@ -423,9 +431,7 @@ function onDeviceReady() {
 
     // filter volunteer
     $("#volunteer-list-page .ui-selectmenu .ui-icon-delete").on("click", function(event, ui) { //When user click on close select options
-
         var formData = readFormData("filter-volunteers");
-
         $.ajax({
             type: 'POST',
             url: baseURL + apiEndPoints.filterVolunteers,
@@ -444,6 +450,7 @@ function onDeviceReady() {
 
     //SELECT-ALL Volunteers
     $("input[type='checkbox'].select-all").change(function() {
+        console.log("Inside change");
         if ($(this).is(":checked")) {
             $(".individual-checkbox").prop("checked", true);
         } else {
@@ -453,6 +460,7 @@ function onDeviceReady() {
 
     //SELECT-ALL Volunteers Reverese  
     $(".individual-checkbox").change(function() {
+        console.log("Inside change jill individual checkbox");
         var checkedCount = $(".individual-checkbox:checked").length;
 
         if (checkedCount === $(".individual-checkbox").length) {
@@ -473,6 +481,7 @@ function onDeviceReady() {
         // 2. Collect data from the form
         var formData = readFormData(formId);
         // 3. Proceed to send the POST request 
+        console.log(isValidForm);
         if (isValidForm) {
             $.ajax({
                 type: 'POST',
@@ -501,7 +510,7 @@ function onDeviceReady() {
     }); //END of create volunteer account
 
 
-    //START of "create volunteer account"
+    //START of "update volunteer account"
     $("#update-profile-page").submit(function(event) {
 
         event.preventDefault();
@@ -510,11 +519,15 @@ function onDeviceReady() {
         var isValidForm = finalFormValidation(formId);
         // 2. Collect data from the form
         var formData = readFormData(formId);
-        // 3. Proceed to send the POST request 
+        //3.Loggedin User Id
+        const volunteer = getUser();
+        const userId = volunteer.id;
+        // 4. Proceed to send the POST request 
+
         if (isValidForm) {
             $.ajax({
                 type: 'POST',
-                url: baseURL + apiEndPoints.updateVlntrAccount,
+                url: baseURL + apiEndPoints.updateVlntrAccount + userId,
                 data: formData,
                 contentType: 'application/json',
                 success: function(response) {
@@ -552,8 +565,8 @@ function onDeviceReady() {
     //     var phoneNo = $('#phoneNo').val();
     //     var isSMSOn = $('#select-consent option[value="isSMSOn"]').is(':selected');
     //     var isEmailOn = $('#select-consent option[value="isEmailOn"]').is(':selected');
-    //     var locations = $('select[name="locations"]').val();
-    //     var categories = $('select[name="services"]').val();
+    //     var locations = $('select[name="preferred_locations"]').val();
+    //     var categories = $('select[name="preferred_categories"]').val();
 
     //     // Validation
     //     if (!email || !password || !firstName || !lastName || !phoneNo) {
@@ -643,6 +656,7 @@ function onDeviceReady() {
                 url: baseURL + apiEndPoints.services + `${query}`,
                 dataType: 'json',
                 success: function(services) {
+                    console.log(services);
                     renderServices(services);
                 },
                 error: function(error) {

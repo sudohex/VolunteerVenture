@@ -410,19 +410,29 @@ const addService = async (req, res) => {
 };
 
 const getService = async (req, res) => {
-    if (req.authType !== 'staff') {
-        return sendError(res, 403, 'Only staff members can view services');
+    if (req.authType === 'staff') {
+        try {
+            const services = await Service.find()
+                .populate('category', 'categoryName')  
+                .populate('location', 'locationName');  
+    
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, 'Server error: ' + err);
+        }
+    }else if(req.authType === "volunteer"){
+        try {
+            const services = await Service.find({status:"online"})
+                .populate('category', 'categoryName') 
+                .populate('location', 'locationName'); 
+    
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, 'Server error: ' + err);
+        }
     }
 
-    try {
-        const services = await Service.find()
-            .populate('category', 'categoryName')  // Assuming you want the category name
-            .populate('location', 'locationName');  // Assuming you want the location name
-
-        res.json(services);
-    } catch (err) {
-        sendError(res, 500, 'Server error: ' + err);
-    }
+   
 };
 
 const getAllVolunteers = async (req, res) => {

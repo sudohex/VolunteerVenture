@@ -2,6 +2,9 @@ const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
+const fs = require('fs');
+const https = require('https');
+
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
@@ -410,37 +413,94 @@ const addService = async (req, res) => {
 };
 
 const getService = async (req, res) => {
+    const query = req.query.q ? new RegExp(req.query.q, 'i') : {};
+
+    let conditions = query ? [
+        { serviceName: query },
+        { description: query },
+        { 'category.categoryName': query },
+        { 'location.locationName': query }
+    ] : {};
+
+    const baseQuery = query ? { $or: conditions } : {};
+
     if (req.authType === 'staff') {
         try {
-            const services = await Service.find()
-                .populate('category', 'categoryName')  
-                .populate('location', 'locationName');  
-    
+            const services = await Service.find(baseQuery)
+                .populate('category', 'categoryName')
+                .populate('location', 'locationName');
+
             res.json(services);
         } catch (err) {
             sendError(res, 500, 'Server error: ' + err);
         }
-    }else if(req.authType === "volunteer"){
+    } else if (req.authType === "volunteer") {
         try {
-            const services = await Service.find({status:"online"})
-                .populate('category', 'categoryName') 
-                .populate('location', 'locationName'); 
-    
+            const services = await Service.find({ ...baseQuery, status: "online" })
+                .populate('category', 'categoryName')
+                .populate('location', 'locationName');
+
             res.json(services);
         } catch (err) {
             sendError(res, 500, 'Server error: ' + err);
         }
     }
-
-   
 };
+const getServiceByDateRange = async (req, res) => {
+    const startDate = req.query.startDate ? new Date(req.query.startDate) : {};
+    const endDate = req.query.endDate ? new Date(req.query.endDate) : {};
+
+    let dateConditions = {};
+
+    if (startDate && endDate) {
+        dateConditions.expireDate = {
+            $gte: startDate,
+            $lte: endDate
+        };
+    } else if (startDate) {
+        dateConditions.expireDate = {
+            $gte: startDate
+        };
+    } else if (endDate) {
+        dateConditions.expireDate = {
+            $lte: endDate
+        };
+    }
+
+    if (req.authType === 'staff') {
+        try {
+            const services = await Service.find(dateConditions)
+                .populate('category', 'categoryName')
+                .populate('location', 'locationName');
+
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, 'Server error: ' + err);
+        }
+    } else if (req.authType === "volunteer") {
+        try {
+            const services = await Service.find({ ...dateConditions, status: "online" })
+                .populate('category', 'categoryName')
+                .populate('location', 'locationName');
+
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, 'Server error: ' + err);
+        }
+    }
+};
+
+
+
+
+
 
 const getAllVolunteers = async (req, res) => {
     if (req.authType !== 'admin') {
         sendError(res, 403, 'Only admins can view volunteers');
     } else {
         try {
-            const volunteers = await Volunteer.find(); // Fetch all volunteers from the database
+            const volunteers = await Volunteer.find(); 
             res.status(200).json(volunteers);
         } catch (err) {
             sendError(res, 500, 'Server error: ' + err);
@@ -462,6 +522,7 @@ app.post('/department', auth, addDepartment);
 app.post('/staff', auth, addStaff);
 app.get('/staff', auth, getAllStaff);
 app.get('/service', auth, getService);
+app.get('/service/date', auth, getServiceByDateRange);
 app.post('/service', auth, addService);
 app.get('/volunteer', auth, getAllVolunteers);
 

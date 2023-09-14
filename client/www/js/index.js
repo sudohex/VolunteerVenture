@@ -1,14 +1,3 @@
-/*
-App: Volunteer Venture
-Main JS 
-Created: July 17, 2023
-Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
-*/
-
-
-/**
- * We can define custom messages to display all over the app
- */
 var masterData = [{
     errorMessages: {
         email: "Please enter a valid email.",
@@ -41,14 +30,6 @@ var apiEndPoints = {
     //TO-DO Need to define all the endpoints
 };
 
-
-var routes = {
-    vlntrLogin: "",
-    vlntrHome: "",
-    vlntrNotif: "",
-    vlntrUpdateAcc: "",
-    //TO-DO Need to define all the routes
-};
 
 /**
  *
@@ -118,10 +99,10 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue);
 
         case "mobile":
-            return /^\d{10}$/.test(inputValue);
+            return true;
 
         case "password":
-            return inputValue.length >= 8; //TO-DO need to fix the length after discussion(8)
+            return inputValue.length >= 6; //TO-DO need to fix the length after discussion(8)
 
         case "cPassword":
             return originalPassword === inputValue;
@@ -205,43 +186,6 @@ function readFormData(formId) {
 }
 
 
-
-
-// function readFormData(formId) {
-//     var formData = $("#" + formId).serializeArray();
-//     var formDataObject = {};
-
-//     formData.forEach(function(field) {
-//         var fieldName = field.name;
-//         var fieldValue = decodeURIComponent(field.value || "");
-
-//         // Checking if the field already exists in the object
-//         if (formDataObject.hasOwnProperty(fieldName)) {
-
-//             if (Array.isArray(formDataObject[fieldName])) {
-//                 if (fieldName == 'preferred_channels') { //if this is NOTIFCATION preference
-//                     if (fieldValue == 'isSMSOn') {
-//                         formDataObject['isSMSOn'] = [formDataObject['isSMSOn'], true];
-//                     } else if (fieldValue == 'isEmailOn') {
-//                         formDataObject['isEmailOn'] = [formDataObject['isEmailOn'], true];
-//                     }
-//                 } else { //all other inputs with multiple values
-//                     formDataObject[fieldName].push(fieldValue);
-//                 }
-
-//             } else {
-
-//                 formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
-//             }
-//         } else {
-
-//             formDataObject[fieldName] = fieldValue;
-//         }
-//     });
-//     var formDataJSON = JSON.stringify(formDataObject);
-
-//     return formDataJSON;
-// }
 
 // document.addEventListener('deviceready', onDeviceReady, false);
 $(document).ready(onDeviceReady)
@@ -611,75 +555,6 @@ function onDeviceReady() {
 
 
 
-
-    // //Sign up submit
-    // $("#signup-form").submit(function(e) {
-    //     e.preventDefault();
-
-    //     var email = $('#email').val();
-    //     var password = $('#password').val();
-    //     var firstName = $('#firstName').val();
-    //     var lastName = $('#lastName').val();
-    //     var phoneNo = $('#phoneNo').val();
-    //     var isSMSOn = $('#select-consent option[value="isSMSOn"]').is(':selected');
-    //     var isEmailOn = $('#select-consent option[value="isEmailOn"]').is(':selected');
-    //     var locations = $('select[name="preferred_locations"]').val();
-    //     var categories = $('select[name="preferred_categories"]').val();
-
-    //     // Validation
-    //     if (!email || !password || !firstName || !lastName || !phoneNo) {
-    //         alert('Please fill in all the fields.');
-    //         return;
-    //     }
-
-    //     if (password.length < 8) {
-    //         alert('Password should be at least 8 characters.');
-    //         return;
-    //     }
-
-    //     if (!locations || !locations.length) {
-    //         alert('Please select your preferred locations.');
-    //         return;
-    //     }
-
-    //     if (!categories || !categories.length) {
-    //         alert('Please select your preferred service categories.');
-    //         return;
-    //     }
-
-    //     var formData = {
-    //         email: email,
-    //         password: password,
-    //         firstName: firstName,
-    //         lastName: lastName,
-    //         phoneNo: phoneNo,
-    //         isSMSOn: isSMSOn,
-    //         isEmailOn: isEmailOn,
-    //         preferences: {
-    //             locations: locations,
-    //             categories: categories
-    //         }
-    //     };
-
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'http://localhost:3000/api/signup',
-    //         data: JSON.stringify(formData),
-    //         contentType: 'application/json',
-    //         success: function(response) {
-    //             alert('Successfully signed up!');
-    //             $.mobile.changePage("#signin-page");
-    //         },
-    //         error: function(error) {
-    //             if (error.status === 400 && error.responseText.includes("email")) {
-    //                 alert('Email already exists.');
-    //             } else {
-    //                 alert('Error signing up: ' + error.responseText);
-    //             }
-    //         }
-    //     });
-    // });
-
     function managePageActive(currentPage = '') {
 
         if (currentPage != '') {
@@ -738,21 +613,21 @@ function onDeviceReady() {
 
                 console.log(service);
                 // Convert locations array into a user-friendly list
-                let locationsList = service.location; //NEW-CHANGE-MAHAMMAD
+                let locationDisplay = service.location?.locationName; //NEW-CHANGE-MAHAMMAD
                 //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
 
                 // Category presentation
                 //let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
 
-                let categoryDisplay = service.category; //NEW-CHANGE-MAHAMMAD
+                let categoryDisplay = service.category?.categoryName; //NEW-CHANGE-MAHAMMAD
                 var serviceCollapsible = `
         <div data-role="collapsible">
             <h3>${service.serviceName}<p>${formatDateTime(service.expireDate,false)}</p></h3>
             <p>${service.description}</p>
-            ${categoryDisplay}
-            <p><strong>Locations:</strong></p>
+            
             <ul>
-                ${locationsList}
+            <li>Category: ${categoryDisplay}</li>
+            <li>Location: ${locationDisplay}</li>
             </ul>
         </div>
     `;
@@ -1017,9 +892,4 @@ function checkAuthentication() {
         alert('You need to be logged in to access this page.');
         $.mobile.changePage("#signin-page");
     }
-
-    // if (!token || !user) {
-    //     alert('You need to be logged in to access this page.');
-    //     $.mobile.changePage("#signin-page");
-    // }
 }

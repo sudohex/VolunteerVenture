@@ -28,12 +28,12 @@ var baseURL = "https://volunteerventureserver.onrender.com/";
 var apiEndPoints = {
     login: "login",
     createVlntrAccount: "signup",
-    updateVlntrAccount: "volunteer/",
+    updateVlntrAccount: "profile", //PUT
     locations: "location",
     categories: "category",
-    services: "service?q=",
+    services: "service", //service?q=
     notifications: "notifications",
-    profile: "profile",
+    profile: "profile", //GET
     forgotPassword: "", // TO-DO add url
     filterVolunteers: "",
 
@@ -154,28 +154,30 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
  */
 
 function readFormData(formId) {
-    var formData = $("#" + formId).serializeArray();
+
+
+
+
+
+    var thisForm = $("#" + formId);
+    var disabled = thisForm.find(':input:disabled').removeAttr('disabled');
+    var formData = thisForm.serializeArray();
+    disabled.attr('disabled', 'disabled');
     var formDataObject = {};
     var preferredChannels = [];
+
+
 
     formData.forEach(function(field) {
         var fieldName = field.name;
         var fieldValue = decodeURIComponent(field.value || "");
 
-        if (fieldName === "preferred_categories" || fieldName === "preferred_locations") {
-            // If the field is 'preferred_categories' or 'preferred_locations',
-            // always push it into an array
+        if (fieldName === "preferred_categories" || fieldName === "preferred_locations" || fieldName === "preferred_channels") {
+
             if (!formDataObject[fieldName]) {
                 formDataObject[fieldName] = [fieldValue];
             } else {
                 formDataObject[fieldName].push(fieldValue);
-            }
-        } else if (fieldName === "preferred_channels") {
-            // Handle 'preferred_channels' separately
-            if (fieldValue === 'isSMSOn') {
-                preferredChannels.push("SMS");
-            } else if (fieldValue === 'isEmailOn') {
-                preferredChannels.push("EMAIL");
             }
         } else {
             // For other fields, check if they already exist in the object
@@ -194,7 +196,7 @@ function readFormData(formId) {
         }
     });
 
-    formDataObject.preferred_channels = preferredChannels.join(" &| ");
+    //formDataObject.preferred_channels = preferredChannels.join(" &| ");
 
     var formDataJSON = JSON.stringify(formDataObject);
 
@@ -360,17 +362,8 @@ function onDeviceReady() {
                     // 4. Handle the response
 
                     localStorage.setItem('token', response.token);
-                    localStorage.setItem('user', JSON.stringify(response.user));
-
-
                     if (whichLogin == "STAFF") {
-                        if (response.user.acctType != "volunteer") {
-                            $.mobile.changePage("#staff-home-page");
-                        } else {
-                            $.mobile.changePage("#staff-home-page"); //ONLY FOR DEV MODE
-                            ///alert("Login Failed! No staff account found!");
-                            return;
-                        }
+                        $.mobile.changePage("#staff-home-page");
                     } else {
                         $.mobile.changePage("#public-home");
                     }
@@ -471,7 +464,7 @@ function onDeviceReady() {
 
 
     //List of volunteers initialize
-    $(document).on("pageshow", "#volunteer-list-page", function() {
+    $(document).on("pagecreate", "#volunteer-list-page", function() {
         checkAuthentication();
         //1.Fetch and populate locations
         fetchLocations();
@@ -563,25 +556,30 @@ function onDeviceReady() {
 
 
     //START of "update volunteer account"
-    $("#update-profile-page").submit(function(event) {
+    $("#update-profile-form").submit(function(event) {
 
         event.preventDefault();
-        var formId = "update-profile-page";
+        var formId = "update-profile-form";
         // 1. Validate form finally before submission
         var isValidForm = finalFormValidation(formId);
         // 2. Collect data from the form
         var formData = readFormData(formId);
         //3.Loggedin User Id
-        const volunteer = getUser();
-        const userId = volunteer.id;
+        const authDetails = getUser();
+        // const userId = volunteer.id;//no longer needed
         // 4. Proceed to send the POST request 
-
+        console.log(formData);
         if (isValidForm) {
             $.ajax({
-                type: 'POST',
-                url: baseURL + apiEndPoints.updateVlntrAccount + userId,
+                type: 'PUT',
+                url: baseURL + apiEndPoints.updateVlntrAccount, //userid no longer needed
                 data: formData,
-                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                contentType: false, // Set contentType to false for FormData
+                processData: false,
                 success: function(response) {
                     //4.Handle resposne
                     alert('Profile updated successfully');
@@ -703,10 +701,16 @@ function onDeviceReady() {
 
         // Function to fetch services based on query
         function fetchServices(query = "") {
+            const authDetails = getUser(); //1.Token and Id will be returned
+
             $.ajax({
                 type: 'GET',
                 url: baseURL + apiEndPoints.services + `${query}`,
                 dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
                 success: function(services) {
                     console.log(services);
                     renderServices(services);
@@ -793,7 +797,7 @@ function onDeviceReady() {
     })
 
     //Fetch Profile
-    $(document).on("pageshow", "#update-profile-page", function() {
+    $(document).on("pagecreate", "#update-profile-page", function() {
 
         managePageActive("update-profile-page");
 
@@ -821,49 +825,45 @@ function onDeviceReady() {
     function fetchProfile() {
 
         const authDetails = getUser(); //1.Token and Id will be returned
-        const id = authDetails.id;
 
-        const formData = JSON.stringify({ id });
+
+        //  const id = authDetails.id;const formData = JSON.stringify({ id }); //API-UPDATE:no longer needed
 
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: baseURL + apiEndPoints.profile,
-            data: formData,
+            //data: formData,//API-UPDATE:no longer needed
             contentType: 'application/json',
             headers: {
-                'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+                'Authorization': 'Bearer ' + authDetails.token,
                 'x-auth-token': authDetails.token
             },
             success: function(data) {
                 // 2. Handle the response
-                console.log(data);
+
 
                 if (data) {
 
-                    const user = data[0].user;
-                    const response = data[0].volunteer;
+                    //const user = ; //API-UPDATE:Change in reposne format ->data[0].user
+                    const response = data; //data[0].volunteer
                     //Saved data
-                    $("#update-email").val(user.email);
-                    $("#update-password").val(response.password);
+                    $("#update-email").val(response.email);
+
                     $("#update-firstName").val(response.firstName);
                     $("#update-lastName").val(response.lastName);
-                    $("#update-phoneNo").val(response.phoneNo);
-
-                    const isSMSOn = response.isSMSOn;
-                    const isEmailOn = response.isEmailOn;
+                    $("#update-phoneNo").val(response.phone);
 
 
 
-                    $.each(response.preferences.locations, function(index, value) {
-                        $("#update-locations option[value='" + value + "']").prop("selected", true);
+                    $.each(response.preferred_locations, function(index, value) {
+                        $("#update-locations option[value='" + value._id + "']").prop("selected", true);
                     });
-                    $.each(response.preferences.categories, function(index, value) {
-                        $("#update-select-services-menu option[value='" + value + "']").prop("selected", true);
+                    $.each(response.preferred_categories, function(index, value) {
+                        $("#update-select-services-menu option[value='" + value._id + "']").prop("selected", true);
                     });
-
-                    $("#update-select-consent option[value='isSMSOn']").prop("selected", isSMSOn);
-                    $("#update-select-consent option[value='isEmailOn']").prop("selected", isEmailOn);
-
+                    $.each(response.preferred_channels, function(index, value) {
+                        $("#update-select-consent option[value='" + value + "']").prop("selected", true);
+                    });
                     $("#update-locations,#update-select-services-menu,#update-select-consent").selectmenu().selectmenu("refresh");
 
 
@@ -885,7 +885,56 @@ function onDeviceReady() {
 
     }
 
+    function fetchNotifications() {
 
+        const authDetails = getUser(); //localStorage.getItem('token');
+        //const formData = JSON.stringify({ id });
+
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.profile,
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(response) {
+                var myNotifications = "";
+                console.log(response);
+                if (response && response.length > 0) {
+
+                    response.notifications.forEach((item) => {
+                        var notifSubject = item.subject;
+                        var notifMessage = item.message;
+                        var notifSentBy = item.createdBy;
+                        var notifSentOn = formatDateTime(item.dateSent);
+                        var notifSentThrough = item.channelType;
+                        myNotifications += '<div class="each-notification">' +
+                            '<p class = "notif-subject">' + notifSubject + '</p>' +
+                            '<p class = "notif-message">' + notifMessage + '</p>' +
+                            '<span class = "sent-timedate">' +
+                            '<span class = "material-symbols-sharp"> schedule</span>' +
+                            '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
+                            '</span >' +
+                            '<span class = "sent-by">' +
+                            '<span class = "material-symbols-sharp">account_circle</span>' +
+                            '<span class = "notif-sentby">' + notifSentBy + '</span>' +
+                            '</span></div>';
+                    });
+                    $(".voluntr-notif").html(myNotifications); //append to the parent div
+                } else {
+
+                    alert("Zero notifications found!");
+                }
+
+                //console.log(myNotifications);
+            },
+            error: function(error) {
+                console.error("Error fetching notifications:", error);
+            }
+        });
+    }
 
 
 } //END of OnDeviceReady
@@ -893,63 +942,7 @@ function onDeviceReady() {
 
 //Fetch notifications sent to current user
 
-function fetchNotifications() {
-    const token = localStorage.getItem('token');
-    const id = JSON.parse(localStorage.getItem('user'))._id;
-    const formData = JSON.stringify({ id });
 
-
-    $.ajax({
-        type: 'POST',
-        url: baseURL + apiEndPoints.notifications,
-        data: formData,
-        contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
-            'x-auth-token': token
-        },
-        success: function(response) {
-            var myNotifications = "";
-            if (response && response.length > 0) {
-
-                response.forEach((item) => {
-                    var notifSubject = item.subject;
-                    var notifMessage = item.message;
-                    var notifSentBy = item.createdBy;
-                    var notifSentOn = formatDateTime(item.dateSent);
-                    var notifSentThrough = item.channelType;
-                    myNotifications += '<div class="each-notification">' +
-                        '<p class = "notif-subject">' + notifSubject + '</p>' +
-                        '<p class = "notif-message">' + notifMessage + '</p>' +
-                        '<span class = "sent-timedate">' +
-                        '<span class = "material-symbols-sharp"> schedule</span>' +
-                        '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
-                        '</span >' +
-                        '<span class = "sent-by">' +
-                        '<span class = "material-symbols-sharp">account_circle</span>' +
-                        '<span class = "notif-sentby">' + notifSentBy + '</span>' +
-                        '</span></div>';
-                });
-                $(".voluntr-notif").html(myNotifications); //append to the parent div
-            } else {
-                //No notoifications found KEEP CALM
-                // myNotifications += '<div class="no-notifications">' +
-                //     '<span class="material-symbols-sharp">notifications_active</span>' +
-                //     '<h4 class="mainmsg">No notifications yet.</h4>' +
-                //     '<p class="submsg">When you get notifications,they\'ll show up here</p>' +
-                //     '<button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>' +
-                //     '</div>';
-
-                alert("Zero notifications found!");
-            }
-
-            //console.log(myNotifications);
-        },
-        error: function(error) {
-            console.error("Error fetching notifications:", error);
-        }
-    });
-}
 
 function formatDateTime(dateString = '') {
 

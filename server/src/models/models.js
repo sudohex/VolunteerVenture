@@ -63,6 +63,7 @@ const volunteerSchema = new mongoose.Schema({
         {
             subject: String,
             message: String,
+            serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
         }
     ]
 

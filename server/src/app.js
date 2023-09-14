@@ -390,8 +390,9 @@ const addService = async (req, res) => {
 
         // Define the notification
         const notification = {
-            subject: 'New Service Available',
-            message: `A new service named ${serviceName} is available in your preferred category and location.`
+            subject: serviceName,
+            message: `A new service named ${serviceName} is available in your preferred category and location.`,
+            serviceId: service._id
         };
 
         // Add the notification to all matching volunteers in a single operation
@@ -443,6 +444,23 @@ const getService = async (req, res) => {
         }
     }
 };
+const getServiceById = async (req, res) => {
+    try {
+        const service = await Service.findById(req.params.id)
+            .populate('category', 'categoryName')
+            .populate('location', 'locationName');
+
+        if (!service) {
+            return sendError(res, 404, 'Service not found');
+        }
+
+        res.json(service);
+    } catch (err) {
+        sendError(res, 500, 'Server error: ' + err);
+    }
+};
+
+
 const getServiceByDateRange = async (req, res) => {
     const startDate = req.query.startDate ? new Date(req.query.startDate) : {};
     const endDate = req.query.endDate ? new Date(req.query.endDate) : {};
@@ -514,6 +532,7 @@ app.post('/staff', auth, addStaff);
 app.get('/staff', auth, getAllStaff);
 app.get('/service', auth, getService);
 app.get('/service/date', auth, getServiceByDateRange);
+app.get('/service/:id', auth, getServiceById);
 app.post('/service', auth, addService);
 app.get('/volunteer', auth, getAllVolunteers);
 

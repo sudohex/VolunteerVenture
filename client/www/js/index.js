@@ -156,38 +156,89 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
 function readFormData(formId) {
     var formData = $("#" + formId).serializeArray();
     var formDataObject = {};
+    var preferredChannels = [];
 
     formData.forEach(function(field) {
         var fieldName = field.name;
         var fieldValue = decodeURIComponent(field.value || "");
 
-        // Checking if the field already exists in the object
-        if (formDataObject.hasOwnProperty(fieldName)) {
-
-            if (Array.isArray(formDataObject[fieldName])) {
-                if (fieldName == 'select-consent') { //if this is NOTIFCATION preference
-                    if (fieldValue == 'isSMSOn') {
-                        formDataObject['isSMSOn'] = [formDataObject['isSMSOn'], true];
-                    } else if (fieldValue == 'isEmailOn') {
-                        formDataObject['isEmailOn'] = [formDataObject['isEmailOn'], true];
-                    }
-                } else { //all other inputs with multiple values
-                    formDataObject[fieldName].push(fieldValue);
-                }
-
+        if (fieldName === "preferred_categories" || fieldName === "preferred_locations") {
+            // If the field is 'preferred_categories' or 'preferred_locations',
+            // always push it into an array
+            if (!formDataObject[fieldName]) {
+                formDataObject[fieldName] = [fieldValue];
             } else {
-
-                formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
+                formDataObject[fieldName].push(fieldValue);
+            }
+        } else if (fieldName === "preferred_channels") {
+            // Handle 'preferred_channels' separately
+            if (fieldValue === 'isSMSOn') {
+                preferredChannels.push("SMS");
+            } else if (fieldValue === 'isEmailOn') {
+                preferredChannels.push("EMAIL");
             }
         } else {
-
-            formDataObject[fieldName] = fieldValue;
+            // For other fields, check if they already exist in the object
+            if (formDataObject.hasOwnProperty(fieldName)) {
+                if (Array.isArray(formDataObject[fieldName])) {
+                    // If it's an array, push the value
+                    formDataObject[fieldName].push(fieldValue);
+                } else {
+                    // If it's not an array, convert it to an array
+                    formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
+                }
+            } else {
+                // If the field doesn't exist, create a new entry
+                formDataObject[fieldName] = fieldValue;
+            }
         }
     });
+
+    formDataObject.preferred_channels = preferredChannels.join(" &| ");
+
     var formDataJSON = JSON.stringify(formDataObject);
 
     return formDataJSON;
 }
+
+
+
+
+// function readFormData(formId) {
+//     var formData = $("#" + formId).serializeArray();
+//     var formDataObject = {};
+
+//     formData.forEach(function(field) {
+//         var fieldName = field.name;
+//         var fieldValue = decodeURIComponent(field.value || "");
+
+//         // Checking if the field already exists in the object
+//         if (formDataObject.hasOwnProperty(fieldName)) {
+
+//             if (Array.isArray(formDataObject[fieldName])) {
+//                 if (fieldName == 'preferred_channels') { //if this is NOTIFCATION preference
+//                     if (fieldValue == 'isSMSOn') {
+//                         formDataObject['isSMSOn'] = [formDataObject['isSMSOn'], true];
+//                     } else if (fieldValue == 'isEmailOn') {
+//                         formDataObject['isEmailOn'] = [formDataObject['isEmailOn'], true];
+//                     }
+//                 } else { //all other inputs with multiple values
+//                     formDataObject[fieldName].push(fieldValue);
+//                 }
+
+//             } else {
+
+//                 formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
+//             }
+//         } else {
+
+//             formDataObject[fieldName] = fieldValue;
+//         }
+//     });
+//     var formDataJSON = JSON.stringify(formDataObject);
+
+//     return formDataJSON;
+// }
 
 // document.addEventListener('deviceready', onDeviceReady, false);
 $(document).ready(onDeviceReady)
@@ -326,8 +377,8 @@ function onDeviceReady() {
                     alert('Successfully signed in!');
                 },
                 error: function(error) {
-
-                    alert('Error signing in: ' + error.responseJSON.message);
+                    console.log(error);
+                    alert('Error signing in: ' + error.responseJSON.msg);
                 }
             });
 
@@ -407,6 +458,7 @@ function onDeviceReady() {
 
     //Sign up initialize
     $(document).on("pagecreate", "#signup-page", function() {
+        console.log("inside page create");
         managePageActive();
         //1.Fetch and populate locations
         fetchLocations("volunteer");

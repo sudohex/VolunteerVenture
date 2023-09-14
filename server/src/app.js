@@ -411,16 +411,18 @@ const addService = async (req, res) => {
     }
 };
 const getService = async (req, res) => {
-    const query = req.query.q ? new RegExp(req.query.q, 'i') : {};
+    let conditions = [];
+    if (req.query.q) {
+        const query = new RegExp(req.query.q, 'i');
+        conditions = [
+            { serviceName: query },
+            { description: query },
+            { 'category.categoryName': query },
+            { 'location.locationName': query }
+        ];
+    }
 
-    let conditions = query ? [
-        { serviceName: query },
-        { description: query },
-        { 'category.categoryName': query },
-        { 'location.locationName': query }
-    ] : {};
-
-    const baseQuery = query ? { $or: conditions } : {};
+    const baseQuery = conditions.length ? { $or: conditions } : {};
 
     if (req.authType === 'staff') {
         try {
@@ -444,6 +446,7 @@ const getService = async (req, res) => {
         }
     }
 };
+
 const getServiceById = async (req, res) => {
     try {
         const service = await Service.findById(req.params.id)

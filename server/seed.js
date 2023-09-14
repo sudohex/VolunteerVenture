@@ -1,14 +1,8 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-const User = require('./models/user');
-const Volunteer = require('./models/volunteer');
-const Service = require('./models/service');
-const Location = require('./models/location');
-const Notification = require('./models/notification');
-const Staff = require('./models/staff');
-const Department = require('./models/department');
-const Category = require('./models/category');
+const {User, Volunteer, Department, Location, Category, Service} = require('./src/models/models');
+
 
 mongoose.connect(process.env.DB_URI, {
   useNewUrlParser: true,
@@ -21,116 +15,92 @@ mongoose.connect(process.env.DB_URI, {
 
 const saltRounds = 10;
 
+//ChatGPT: Write complete data here
 const users = [
   new User({
-    email: 'john@example.com',
-    password: bcrypt.hashSync('john1234', saltRounds),
-    acctType: 'admin',
-    lastLogin: new Date(),
-    acctCreationDate: new Date()
+    email: 'staff@cqu.com',
+    password: bcrypt.hashSync('staffstaff', saltRounds),
+    acctType: 'staff',
   }),
-  new User({
-    email: 'jane@example.com',
-    password: bcrypt.hashSync('jane1234', saltRounds),
-    acctType: 'user',
-    lastLogin: new Date(),
-    acctCreationDate: new Date()
-  }),
-  // ... Add more users as needed...
 ];
-
 const departments = [
-  new Department({
-    departmentName: 'Human Resources'
-  }),
-  new Department({
-    departmentName: 'Operations'
-  }),
-  // ... Add more departments as needed...
+  new Department({ departmentName: 'Hair & Beauty' }),
+  new Department({ departmentName: 'Hospitality' }),
+  new Department({ departmentName: 'Health Care' }),
 ];
 
 const locations = [
-  new Location({
-    locationName: 'Headquarters',
-    locationDetails: '123 Main St, City, Country'
-  }),
-  new Location({
-    locationName: 'Branch Office',
-    locationDetails: '456 Side St, City, Country'
-  }),
-  // ... Add more locations as needed...
+  new Location({ locationName: 'Gladstone', abbreviation: 'GTN' }),
+  new Location({ locationName: 'Mackay', abbreviation: 'MKY' }),
+  new Location({ locationName: 'Rockhampton', abbreviation: 'RKH' }),
+  new Location({ locationName: 'Brisbane', abbreviation: 'BNE' }),
 ];
 
 const categories = [
-  new Category({
-    categoryName: 'Medical'
-  }),
-  new Category({
-    categoryName: 'Teaching'
-  }),
-  // ... Add more categories as needed...
-];
-
-const staffs = [
-  new Staff({
-    department: departments[0]._id,
-    location: locations[0]._id,
-    user: users[1]._id,
-    firstName: 'Jane',
-    lastName: 'Doe',
-    phoneNo: '987-654-3210',
-    isAdmin: false
-  }),
-  // ... Add more staff as needed...
+  new Category({ categoryName: 'Hairdressing' }),
+  new Category({ categoryName: 'Beauty' }),
+  new Category({ categoryName: 'Catering' }),
+  new Category({ categoryName: 'Restaurant' }),
+  new Category({ categoryName: 'Chiropractic' }),
+  new Category({ categoryName: 'Physiotherapy' }),
+  new Category({ categoryName: 'Oral Health' }),
+  new Category({ categoryName: 'Occupational Therapy' }),
+  new Category({ categoryName: 'Speech Pathology' }),
+  new Category({ categoryName: 'Podiatry' }),
 ];
 
 const services = [
-  new Service({
-    category: categories[0]._id,
-    location: [locations[0]._id],
-    serviceName: 'First Aid',
-    inDisplay: true,
-    description: 'First aid services for events.'
-  }),
-  new Service({
-    category: categories[1]._id,
-    location: [locations[1]._id],
-    serviceName: 'Math Tutoring',
-    inDisplay: true,
-    description: 'Tutoring services for high school students.'
-  }),
-  
-  // ... Add more services as needed...
+  // Hair & Beauty - Gladstone
+  new Service({ serviceName: 'Colour', category: categories[0]._id, location: locations[0]._id }),
+  new Service({ serviceName: 'Cut', category: categories[0]._id, location: locations[0]._id }),
+  new Service({ serviceName: 'Permanant Wave', category: categories[0]._id, location: locations[0]._id }),
+  new Service({ serviceName: 'Straightening', category: categories[0]._id, location: locations[0]._id }),
+
+  // Hair & Beauty - Mackay
+  new Service({ serviceName: 'Waxing', category: categories[1]._id, location: locations[1]._id }),
+  new Service({ serviceName: 'Tinting', category: categories[1]._id, location: locations[1]._id }),
+  new Service({ serviceName: 'Nail Treatments', category: categories[1]._id, location: locations[1]._id }),
+  new Service({ serviceName: 'Facials', category: categories[1]._id, location: locations[1]._id }),
+  new Service({ serviceName: 'Massage', category: categories[1]._id, location: locations[1]._id }),
+  new Service({ serviceName: 'Tanning', category: categories[1]._id, location: locations[1]._id }),
+
+  // Hospitality - Mackay
+  new Service({ serviceName: 'Event Management', category: categories[2]._id, location: locations[1]._id }),
+
+  // Hospitality - Rockhampton
+  new Service({ serviceName: 'Dine-in Reservation', category: categories[3]._id, location: locations[2]._id }),
+
+  // Health Care - Mackay
+  new Service({ serviceName: 'Initial Diagnosis Session', category: categories[4]._id, location: locations[1]._id }),
+  new Service({ serviceName: 'Treatment Session', category: categories[4]._id, location: locations[1]._id }),
+
+  // Health Care - Rockhampton
+  new Service({ serviceName: 'Taping', category: categories[5]._id, location: locations[2]._id }),
+  new Service({ serviceName: 'Sports injuries', category: categories[5]._id, location: locations[2]._id }),
+  new Service({ serviceName: 'Headahes', category: categories[5]._id, location: locations[2]._id }),
+  new Service({ serviceName: 'Exercise classes', category: categories[5]._id, location: locations[2]._id }),
+  new Service({ serviceName: 'Strength Programs', category: categories[5]._id, location: locations[2]._id }),
+  new Service({ serviceName: 'Gait assessments', category: categories[5]._id, location: locations[2]._id }),
+
+  // Health Care - Brisbane
+  new Service({ serviceName: 'Hygiene Advice', category: categories[6]._id, location: locations[3]._id }),
+  new Service({ serviceName: 'Examination', category: categories[6]._id, location: locations[3]._id }),
+  new Service({ serviceName: 'Flouride Treatment', category: categories[6]._id, location: locations[3]._id }),
+  new Service({ serviceName: 'Scaling and Clen', category: categories[6]._id, location: locations[3]._id }),
+  new Service({ serviceName: 'Mouthgaurds', category: categories[6]._id, location: locations[3]._id }),
+  new Service({ serviceName: 'Fillings', category: categories[6]._id, location: locations[3]._id }),
+
+  // Health Care - General (not location specific)
+  new Service({ serviceName: 'Paediatric Services', category: categories[7]._id }),
+  new Service({ serviceName: 'Adult Support', category: categories[7]._id }),
+  new Service({ serviceName: 'Individual Session', category: categories[8]._id }),
+  new Service({ serviceName: 'Group Sessions', category: categories[8]._id }),
+  new Service({ serviceName: 'Outreach visits', category: categories[8]._id }),
+  new Service({ serviceName: 'Orthotic therapy', category: categories[9]._id }),
+  new Service({ serviceName: 'Nail Surgey', category: categories[9]._id }),
+  new Service({ serviceName: 'Biomechanical assessment', category: categories[9]._id }),
 ];
 
-
-const volunteers = [
-  new Volunteer({
-    user: users[0]._id,
-    firstName: 'John',
-    lastName: 'Doe',
-    phoneNo: '123-456-7890',
-    isSMSOn: true,
-    isEmailOn: true,
-    preferences: {
-      categories: [categories[0]._id],
-      locations: [locations[0]._id]
-    }
-  }),
-  // ... Add more volunteers as needed...
-];
-const notifications = [
-  new Notification({
-    createdBy: staffs[0]._id,
-    sentTo:[volunteers[0]._id],
-    subject: 'Welcome to our platform',
-    message: 'Thank you for joining us!',
-    dateSent: new Date(),
-    channelType: 'Email'
-  }),
-  
-  // ... Add more notifications as needed...
-];
 
 
 
@@ -139,11 +109,9 @@ async function cleanDB() {
     await User.deleteMany({});
     await Department.deleteMany({});
     await Location.deleteMany({});
-    await Staff.deleteMany({});
     await Category.deleteMany({});
     await Service.deleteMany({});
     await Volunteer.deleteMany({});
-    await Notification.deleteMany({});
     
     console.log('Database cleaned!');
   } catch (err) {
@@ -159,11 +127,8 @@ async function seedDB() {
     await User.insertMany(users);
     await Department.insertMany(departments);
     await Location.insertMany(locations);
-    await Staff.insertMany(staffs);
     await Category.insertMany(categories);
     await Service.insertMany(services);
-    await Volunteer.insertMany(volunteers);
-    await Notification.insertMany(notifications);
     
     console.log('Sample data seeded!');
     mongoose.connection.close();

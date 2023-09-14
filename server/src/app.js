@@ -2,8 +2,6 @@ const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
-const fs = require('fs');
-const https = require('https');
 
 const compression = require("compression");
 const bodyParser = require("body-parser");
@@ -135,7 +133,7 @@ const login = async (req, res) => {
             }
         });
 
-        res.json({ token });
+        res.json({ token, user: { id: user.id, acctType: user.acctType } });
     } catch (err) {
         sendError(res, 500, 'Server error: ' + err);
     }
@@ -411,7 +409,6 @@ const addService = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-
 const getService = async (req, res) => {
     const query = req.query.q ? new RegExp(req.query.q, 'i') : {};
 
@@ -489,18 +486,12 @@ const getServiceByDateRange = async (req, res) => {
         }
     }
 };
-
-
-
-
-
-
 const getAllVolunteers = async (req, res) => {
     if (req.authType !== 'admin') {
         sendError(res, 403, 'Only admins can view volunteers');
     } else {
         try {
-            const volunteers = await Volunteer.find(); 
+            const volunteers = await Volunteer.find();
             res.status(200).json(volunteers);
         } catch (err) {
             sendError(res, 500, 'Server error: ' + err);

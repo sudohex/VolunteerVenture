@@ -24,7 +24,7 @@ var masterData = [{
     },
 }, ];
 
-var baseURL = "https://volunteerventureserver.onrender.com/";
+var baseURL = "http://localhost:3000/";
 var apiEndPoints = {
     login: "login",
     createVlntrAccount: "signup",
@@ -34,6 +34,7 @@ var apiEndPoints = {
     services: "service", //service?q=
     notifications: "notifications",
     profile: "profile", //GET
+    volunteers: "/volunteer", //GET
     forgotPassword: "", // TO-DO add url
     filterVolunteers: "",
 
@@ -290,7 +291,7 @@ function onDeviceReady() {
                 },
                 error: function(error) {
 
-                    alert('Error sending email: ' + error.responseJSON.message);
+                    alert('Error sending email: ' + error.msg);
                 }
             });
 
@@ -370,8 +371,9 @@ function onDeviceReady() {
                     alert('Successfully signed in!');
                 },
                 error: function(error) {
-                    console.log(error);
-                    alert('Error signing in: ' + error.responseJSON.msg);
+
+
+                    alert('Error signing in: ' + readAPIError(error));
                 }
             });
 
@@ -471,12 +473,18 @@ function onDeviceReady() {
         //2.Fetch and populate categories
         fetchAllServices();
 
+        //  fetchVolunteers();//API-NOT-READY
+
+
     }); //END of volunteers page prerequisites loading
 
 
     // filter volunteer
     $("#volunteer-list-page .ui-selectmenu .ui-icon-delete").on("click", function(event, ui) { //When user click on close select options
         var formData = readFormData("filter-volunteers");
+
+
+
         $.ajax({
             type: 'POST',
             url: baseURL + apiEndPoints.filterVolunteers,
@@ -487,7 +495,7 @@ function onDeviceReady() {
                 // TO-DO need to populate from server response
             },
             error: function(error) {
-                console.log('Error signing up: ' + error.responseText);
+                console.log('Error signing up: ' + readAPIError(error));
             }
         });
 
@@ -730,14 +738,16 @@ function onDeviceReady() {
 
                 console.log(service);
                 // Convert locations array into a user-friendly list
-                let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
+                let locationsList = service.location; //NEW-CHANGE-MAHAMMAD
+                //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
 
                 // Category presentation
-                let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
+                //let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
 
+                let categoryDisplay = service.category; //NEW-CHANGE-MAHAMMAD
                 var serviceCollapsible = `
         <div data-role="collapsible">
-            <h3>${service.serviceName}</h3>
+            <h3>${service.serviceName}<p>${formatDateTime(service.expireDate,false)}</p></h3>
             <p>${service.description}</p>
             ${categoryDisplay}
             <p><strong>Locations:</strong></p>
@@ -818,14 +828,14 @@ function onDeviceReady() {
 
     function getUser() {
         const token = localStorage.getItem('token');
-        const id = JSON.parse(localStorage.getItem('user'))._id;
-        return { token, id };
+        //const id = JSON.parse(localStorage.getItem('user'))._id;
+        return { token };
     }
-
+    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMzExM2YxZDZiMDlhMzhhNGRmNjU3IiwiYWNjdFR5cGUiOiJ2b2x1bnRlZXIifSwiaWF0IjoxNjk0NzAwMzMxLCJleHAiOjE2OTQ3MzYzMzF9.tWYLNYFu9XBUNs1Zuz74biZguW8xj_ufboU26TUAPxM
     function fetchProfile() {
 
         const authDetails = getUser(); //1.Token and Id will be returned
-
+        console.log(authDetails);
 
         //  const id = authDetails.id;const formData = JSON.stringify({ id }); //API-UPDATE:no longer needed
 
@@ -877,12 +887,35 @@ function onDeviceReady() {
 
 
             },
-            error: function(error) {
+            error: function(errors) {
 
-                alert('Error signing in: ' + error.responseJSON.message);
+                alert('Error: ' + errors.msg);
             }
         });
 
+    }
+
+    function fetchVolunteers() {
+        authDetails = getUser();
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.volunteers,
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            contentType: 'application/json',
+            success: function(response) {
+                console.log(response);
+                //4.Handle resposne
+                // TO-DO need to populate from server response
+            },
+            error: function(error) {
+                console.log('Error : ' + readAPIError(error));
+            }
+        });
     }
 
     function fetchNotifications() {
@@ -943,8 +976,13 @@ function onDeviceReady() {
 //Fetch notifications sent to current user
 
 
+function readAPIError(error) {
+    errorMsg = error.responseJSON.errors[0].msg;
+    return errorMsg;
+}
 
-function formatDateTime(dateString = '') {
+
+function formatDateTime(dateString = '', includeTime = true) {
 
     if (dateString != '') {
 
@@ -957,22 +995,31 @@ function formatDateTime(dateString = '') {
         const minute = dateObject.getMinutes();
         const amOrPm = hour >= 12 ? "PM" : "AM";
         const formattedDate = `${day}/${month}/${year}`;
-        const formattedTime = `${(hour % 12 || 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${amOrPm}`;
-        const formattedDateTime = `${formattedDate} ${formattedTime}`;
-        return formattedDateTime;
 
+        if (includeTime) {
+            const formattedTime = `${(hour % 12 || 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${amOrPm}`;
+            return `${formattedDate} ${formattedTime}`;
+        } else {
+            return formattedDate;
+        }
     } else {
         return "";
     }
-
 }
 
-function checkAuthentication() {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
 
-    if (!token || !user) {
+function checkAuthentication() {
+
+    const token = localStorage.getItem('token');
+    //const user = localStorage.getItem('user');
+
+    if (!token) {
         alert('You need to be logged in to access this page.');
         $.mobile.changePage("#signin-page");
     }
+
+    // if (!token || !user) {
+    //     alert('You need to be logged in to access this page.');
+    //     $.mobile.changePage("#signin-page");
+    // }
 }

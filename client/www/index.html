@@ -30,55 +30,52 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 
 <body class="body">
 
+    <!-- Signin Page VOLUNTEER -->
+        <div data-role="page" id="signin-page" data-user="VOLUNTEER">
 
-
-    <!-- Signin Page -->
-    <div data-role="page" id="signin-page" data-user="VOLUNTEER">
-
-
-        <div data-role="header" data-position="fixed">
-            <h1>Volunteer Venture</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-
-            <!-- Forgot password popup -->
-            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
-
-                <form id="forgot-password-vlntr">
-
-                    <div class="reset-pass-window">
-
-                        <h3 class="text-center">Reset Password</h3>
-                        <label for="un" class="ui-hidden-accessible">Email</label>
-                        <input type="text" name="email" id="un" value="" placeholder="Registered Email" data-param="email" data-required="true">
-                        <span class="err-msg" data-param="email"></span>
-                        <span id="reset-pas-response"></span>
-
-                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-                        <button type="submit" class="ui-btn" id="btn-forgotpwd" data-form-id="forgot-password-vlntr">Submit</button>
-                    </div>
-                </form>
+            <div data-role="header" data-position="fixed">
+                <h1>Volunteer Venture</h1>
             </div>
-            <!-- //Forgot password popup -->
+            <div data-role="main" class="ui-content">
 
-            <form id="signin-form">
-                <h3>Sign In</h3>
-                <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
-                <span class="err-msg" data-param="email"></span>
-                <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
-                <span class="err-msg" data-param="password"></span>
-                <p class="forgot-p-link"><a href="#popupLogin" data-rel="popup" data-position-to="window">Forgot Password?</a></p>
-                <!-- TO-DO add page -->
-                <p class="other-login-link"><a href="#signin-page-staff">Login as Staff Member</a></p>
-                <!-- TO-DO add page -->
-                <button type="submit" class="ui-btn signin-btn" id="signin-btn">Sign In</button>
+                <!-- Forgot password popup -->
+                <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
 
-            </form>
-            <a href="#signup-page" data-role="button" class="ui-btn signup-btn">Create New Account</a>
+                    <form id="forgot-password-vlntr">
 
+                        <div class="reset-pass-window">
+
+                            <h3 class="text-center">Reset Password</h3>
+                            <label for="un" class="ui-hidden-accessible">Email</label>
+                            <input type="text" name="email" id="un" value="" placeholder="Registered Email" data-param="email" data-required="true">
+                            <span class="err-msg" data-param="email"></span>
+                            <span id="reset-pas-response"></span>
+
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <button type="submit" class="ui-btn" id="btn-forgotpwd" data-form-id="forgot-password-vlntr">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- //Forgot password popup -->
+
+                <form id="signin-form">
+                    <h3>Sign In</h3>
+                    <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
+                    <span class="err-msg" data-param="email"></span>
+                    <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
+                    <span class="err-msg" data-param="password"></span>
+                    <p class="forgot-p-link"><a href="#popupLogin" data-rel="popup" data-position-to="window">Forgot Password?</a></p>
+                    <!-- TO-DO add page -->
+                    <p class="other-login-link"><a href="#signin-page-staff">Login as Staff Member</a></p>
+                    <!-- TO-DO add page -->
+                    <button type="submit" class="ui-btn signin-btn" id="signin-btn">Sign In</button>
+
+                </form>
+                <a href="#signup-page" data-role="button" class="ui-btn signup-btn">Create New Account</a>
+
+            </div>
         </div>
-    </div>
-
+        <!-- END Signin Page VOLUNTEER-->
 
     <!-- Signin Page - STAFF-->
     <div data-role="page" id="signin-page-staff">
@@ -119,64 +116,66 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 
                 <button type="submit" class="ui-btn signin-btn" id="signin-btn-staff" data-user="STAFF">Sign In</button>
 
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
+        <!-- END Signin Page - STAFF-->
 
-    <!-- Sign Up Page -->
-    <div data-role="page" id="signup-page">
-        <div data-role="header" data-position="fixed">
-            <h1>Sign Up</h1>
-        </div>
-        <div data-role="main" class="ui-content">
-            <form class="flex flex-col" id="signup-form">
-                <label for="email">Email * 
-                                        <input type="email" name="email" id="email" data-param="email" data-required="true">
-                    <span class="err-msg" data-param="email"></span>
-                </label>
-                <label for="password">Password *
-                    <input type="password" name="password" id="password" data-param="password" data-required="true">
-                    <span class="err-msg" data-param="password"></span>
-                </label>
-                <label for="firstName">First Name *
+    <!-- Create Account Page -->
+        <div data-role="page" id="signup-page">
+            <div data-role="header" data-position="fixed">
+                <h1>Sign Up</h1>
+            </div>
+            <div data-role="main" class="ui-content">
+                <form class="flex flex-col" id="signup-form">
+                    <label for="email">Email * 
+                        <input type="email" name="email" id="email" data-param="email" data-required="true">
+                        <span class="err-msg" data-param="email"></span>
+                    </label>
+                    <label for="password">Password *
+                        <input type="password" name="password" id="password" data-param="password" data-required="true">
+                        <span class="err-msg" data-param="password"></span>
+                    </label>
+                    <label for="firstName">First Name *
                     <input type="text" name="firstName" id="firstName" data-param="firstName" data-required="true">
-                    <span class="err-msg" data-param="firstName"></span>
-                </label>
-                <label for="lastName">Last Name *
+                        <span class="err-msg" data-param="firstName"></span>
+                    </label>
+                    <label for="lastName">Last Name *
                     <input type="text" name="lastName" id="lastName" data-param="lastName" data-required="true">
-                    <span class="err-msg" data-param="lastName"></span>
-                </label>
-                <label for="phoneNo">Phone *
-                    <input type="text" name="phone" id="phoneNo" data-param="mobile" data-required="true">
-                    <span class="err-msg" data-param="mobile"></span>
-                </label>
-                <label for="select-location">Preferred Locations:</label>
-                <select data-native-menu="false" name="preferred_locations" data-mini="true" data-param="prefLocation" data-required="true">
-                    <!-- ADDED WITH JS -->
-                </select>
-                <span class="err-msg" data-param="prefLocation"></span>
-                <label for="select-services">Preferred Service Categories:</label>
-                <select multiple="multiple" data-native-menu="false" name="preferred_categories" data-mini="true" data-param="prefServiceCategories" data-required="true">
-                    <!--ADDED WITH JS-->
-                </select>
-                <span class="err-msg" data-param="prefServiceCategories"></span>
-                <label for="select-consent">Notification Preferences: </label>
+                        <span class="err-msg" data-param="lastName"></span>
+                    </label>
+                    <label for="phoneNo">Phone *
+                        <input type="text" name="phone" id="phoneNo" data-param="mobile" data-required="true">
+                        <span class="err-msg" data-param="mobile"></span>
+                    </label>
+                    <label for="select-location">Preferred Locations:</label>
+                    <select data-native-menu="false" name="preferred_locations" data-mini="true" data-param="prefLocation" data-required="true">
+                        <!-- ADDED WITH JS -->
+                    </select>
+                    <span class="err-msg" data-param="prefLocation"></span>
+                    <label for="select-services">Preferred Service Categories:</label>
+                    <select multiple="multiple" data-native-menu="false" name="preferred_categories" data-mini="true" data-param="prefServiceCategories" data-required="true">
+                        <!--ADDED WITH JS-->
+                    </select>
+                    <span class="err-msg" data-param="prefServiceCategories"></span>
+                    <label for="select-consent">Notification Preferences: </label>
 
-                <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="preferred_channels" id="select-consent" data-mini="true">
-                    <option value="">Select all that apply</option>
-                    <option value="isSMSOn">SMS</option>
-                    <option value="isEmailOn">Email</option>
-                </select>
-                <span class="err-msg" data-param="notifPref"></span>
-                <button type="submit" class="ui-btn">Submit</button>
-            </form>
-            <p class="text-center">Already a member?</p>
-            <a href="#signin-page" class="w-full text-center block">Sign In</a>
+                    <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="preferred_channels" id="select-consent" data-mini="true">
+                        <option value="">Select all that apply</option>
+                        <option value="isSMSOn">SMS</option>
+                        <option value="isEmailOn">Email</option>
+                    </select>
+                    <span class="err-msg" data-param="notifPref"></span>
+                    <button type="submit" class="ui-btn">Submit</button>
+                </form>
+                <p class="text-center">Already a member?</p>
+                <a href="#signin-page" class="w-full text-center block">Sign In</a>
+            </div>
         </div>
-    </div>
+        <!-- END Create Account page -->
 
     <!-- Public Home Page -->
-    <div data-role="page" id="public-home">
+        <div data-role="page" id="public-home">
         <div data-role="header" data-position="fixed">
             <h1>Services</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
@@ -207,143 +206,144 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         <li>
                             <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
                         </li>
+                    </ul>
+                </div>
+            </footer>
+        </div>
+        </div>
+        <!-- END Public Home-->
+
+    <!-- Notifications Page -->
+        <div data-role="page" id="notification-page">
+        <div data-role="header" data-position="fixed">
+            <h1>Notifications</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content voluntr-notif">
+            <div class="no-notifications">
+                <span class="material-symbols-sharp">
+                    notifications_active
+                    </span>
+                <h4 class="mainmsg">No notifications yet.</h4>
+                <p class="submsg">When you get notifications,they'll show up here</p>
+                <button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>
+            </div>
+        </div>
+        <div>
+            <footer data-role="footer" data-position="fixed" id="foort">
+                <div data-role="navbar">
+                    <ul data-role="listview">
+                        <li>
+                            <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
+                        </li>
+                        <li>
+                            <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
+                        </li>
+                        <li>
+                            <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
+                        </li>
+                    </ul>
+                </div>
+            </footer>
+
+            </div>
+        </div>
+        <!-- END Notifications Page -->
+
+    <!-- Update Profile Page -->
+        <div data-role="page" id="update-profile-page">
+        <div data-role="header" data-position="fixed">
+            <h1>Update Profile</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+            <form class="flex flex-col" id="update-profile-form">
+                <label for="update-email">Email *
+            <input type="email" name="email" id="update-email" data-param="email" data-required="true">
+            <span class="err-msg" data-param="email"></span>
+            </label>
+                <!-- <label for="update-password">Password 
+            <input type="password" name="password" id="update-password" disabled="true">
+        </label> -->
+                <label for="update-firstName">First Name 
+            <input type="text" name="firstName" id="update-firstName" disabled="true">
+        </label>
+                <label for="update-lastName">Last Name 
+            <input type="text" name="lastName" id="update-lastName" disabled="true">
+        </label>
+                <label for="update-phoneNo">Phone *
+            <input type="text" name="phoneNo" id="update-phoneNo" data-param="mobile" data-required="true">
+            <span class="err-msg" data-param="mobile"></span>
+        </label>
+                <label for="update-select-location">Preferred Locations: *</label>
+                <select id="update-locations" data-native-menu="false" name="locations" data-param="prefLocation" data-required="true" data-mini="true">
+            <!-- ADDED WITH JS -->
+        </select>
+                <span class="err-msg" data-param="prefLocation"></span>
+                <label for="select-services">Preferred Service Categories:</label>
+                <select multiple="multiple" data-native-menu="false" name="services" data-mini="true" data-param="prefServiceCategories" data-required="true" id="update-select-services-menu">
+            <!--ADDED WITH JS-->
+        </select>
+                <span class="err-msg" data-param="prefServiceCategories"></span>
+                <label for="update-select-consent">Notification Preferences: *</label>
+                <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="update-select-consent" id="update-select-consent" data-mini="true">
+                    <option value="">Select all that apply</option>
+                    <option value="isSMSOn">SMS</option>
+                    <option value="isEmailOn">Email</option>
+        </select>
+                <span class="err-msg" data-param="notifPref"></span>
+                <div class="button-group">
+                    <button type="submit" class="ui-btn bg-child">Update</button>
+                    <a href="#public-home" class="ui-btn btn-cancel bg-child">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+        <div>
+            <footer data-role="footer" data-position="fixed" id="foort">
+                <div data-role="navbar">
+                    <ul data-role="listview">
+                        <li>
+                            <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
+                        </li>
+                        <li>
+                            <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
+                        </li>
+                        <li>
+                            <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
+                        </li>
+                    </ul>
+                </div>
             </footer>
             </div>
         </div>
+        <!-- END Update Profile Page -->
 
-        <!-- Notifications Page -->
-        <div data-role="page" id="notification-page">
-            <div data-role="header" data-position="fixed">
-                <h1>Notifications</h1>
-                <a href="#" class="ui-btn ui-btn-right signout-btn">
-                    <span class="material-symbols-sharp">
-                        logout
-                        </span>
-                </a>
-            </div>
-            <div data-role="main" class="ui-content voluntr-notif">
-                <div class="no-notifications">
-                    <span class="material-symbols-sharp">
-                        notifications_active
-                        </span>
-                    <h4 class="mainmsg">No notifications yet.</h4>
-                    <p class="submsg">When you get notifications,they'll show up here</p>
-                    <button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>
-                </div>
-            </div>
-            <div>
-                <footer data-role="footer" data-position="fixed" id="foort">
-                    <div data-role="navbar">
-                        <ul data-role="listview">
-                            <li>
-                                <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
-                            </li>
-                            <li>
-                                <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
-                            </li>
-                            <li>
-                                <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
-                            </li>
-                </footer>
-
-                </div>
-            </div>
-
-            <!-- Update Profile Page -->
-            <div data-role="page" id="update-profile-page">
+    <!-- Staff Home Page -->
+        <div data-role="page" id="staff-home-page">
                 <div data-role="header" data-position="fixed">
-                    <h1>Update Profile</h1>
-                    <a href="#" class="ui-btn ui-btn-right signout-btn">
-                        <span class="material-symbols-sharp">
-                            logout
-                            </span>
-                    </a>
+                    <h1>Staff Home</h1>
                 </div>
-                <div data-role="main" class="ui-content">
-                    <form class="flex flex-col" id="update-profile-form">
-                        <label for="update-email">Email *
-                    <input type="email" name="email" id="update-email" data-param="email" data-required="true">
-                    <span class="err-msg" data-param="email"></span>
-                    </label>
-                        <!-- <label for="update-password">Password 
-                    <input type="password" name="password" id="update-password" disabled="true">
-                </label> -->
-                        <label for="update-firstName">First Name 
-                    <input type="text" name="firstName" id="update-firstName" disabled="true">
-                </label>
-                        <label for="update-lastName">Last Name 
-                    <input type="text" name="lastName" id="update-lastName" disabled="true">
-                </label>
-                        <label for="update-phoneNo">Phone *
-                    <input type="text" name="phoneNo" id="update-phoneNo" data-param="mobile" data-required="true">
-                    <span class="err-msg" data-param="mobile"></span>
-                </label>
-                        <label for="update-select-location">Preferred Locations: *</label>
-                        <select id="update-locations" data-native-menu="false" name="locations" data-param="prefLocation" data-required="true" data-mini="true">
-                    <!-- ADDED WITH JS -->
-                </select>
-                        <span class="err-msg" data-param="prefLocation"></span>
-                        <label for="select-services">Preferred Service Categories:</label>
-                        <select multiple="multiple" data-native-menu="false" name="services" data-mini="true" data-param="prefServiceCategories" data-required="true" id="update-select-services-menu">
-                    <!--ADDED WITH JS-->
-                </select>
-                        <span class="err-msg" data-param="prefServiceCategories"></span>
-                        <label for="update-select-consent">Notification Preferences: *</label>
-                        <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="update-select-consent" id="update-select-consent" data-mini="true">
-                            <option value="">Select all that apply</option>
-                            <option value="isSMSOn">SMS</option>
-                            <option value="isEmailOn">Email</option>
-                </select>
-                        <span class="err-msg" data-param="notifPref"></span>
-                        <div class="button-group">
-                            <button type="submit" class="ui-btn bg-child">Update</button>
-                            <a href="#public-home" class="ui-btn btn-cancel bg-child">Cancel</a>
-                        </div>
-
-                    </form>
-                </div>
-                <div>
-                    <footer data-role="footer" data-position="fixed" id="foort">
-                        <div data-role="navbar">
-                            <ul data-role="listview">
-                                <li>
-                                    <a href="#public-home" id="tab-public-home" data-icon="home" data-iconshadow="true"></a>
-                                </li>
-                                <li>
-                                    <a href="#notification-page" id="tab-notification-page" data-icon="mail" data-iconshadow="true"></a>
-                                </li>
-                                <li>
-                                    <a href="#update-profile-page" id="tab-update-profile-page" data-icon="user"></a>
-                                </li>
-                    </footer>
-                    </div>
-                </div>
-
-                <!-- Staff Home Page -->
-                <div data-role="page" id="staff-home-page">
-                    <div data-role="header" data-position="fixed">
-                        <h1>Staff Home</h1>
-                    </div>
-                    <div data-role="main" class="ui-content">
-                        <button type="button" id="volunteer-list">Access Volunteer List</button>
-                        <button type="button" id="edit-services">Edit Services Menu</button>
-                        <button type="button" id="past-notif">Past Notifications</button>
-                    </div>
-                </div>
-            </div>
             <div data-role="main" class="ui-content">
-                <button type="button" id="volunteer-list">Access Volunteer List</button>
-                <button type="button" id="edit-services">Edit Services Menu</button>
-                <button type="button" id="past-notif">Past Notifications</button>
-                <button type="button" id="volunteer-list-btn"><a href="#volunteer-list-page"><a href="#volunteer-list-page">Access Volunteer List</a></a></button>
-                <button type="button" id="edit-services-btn">Edit Services Menu</button>
-                <button type="button" id="past-notif-btn">Past Notifications</button>
+                <a href="#volunteer-list-page" data-role="button" class="ui-btn">Access Volunteer List</a>
+                <a href="#manage-services-menu" data-role="button" class="ui-btn">Edit Services Menu</a>
+                <a href="#staff-sent-notif" data-role="button" class="ui-btn">Sent Notifications</a>
             </div>
         </div>
+        <!-- END Staff Home Page -->
 
-        <!-- List of Volunteers Page-->
+    <!-- Staff List of Volunteers Page-->
         <div data-role="page" id="volunteer-list-page">
             <div data-role="header" data-position="fixed">
+                <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
                 <h1>Volunteers List</h1>
             </div>
             <div class="filter-container">
@@ -387,10 +387,109 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 </div>
 
                 <footer data-role="footer" data-position="fixed" id="foort">
-                    SEND MESSAGE
+                    <div data-role="navbar">
+                        <!-- I want to work on this make icon to the left-->
+                        <a href="#create-message" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send Message to selected popupLoginStaff</a>
+                    </div>
                 </footer>
+           </div>
+        </div>
+        <!-- END Volunteer List Page-->
+
+    <!-- Staff Create Message -->
+        <div data-role="page" id="create-message">
+            <div data-role="header" data-position="fixed">
+                <h1>New Message</h1>
+                <p>*Message will be sent to selected Volunteer List</p>
+            </div>
+            <div>
+                <form id="create-msg-form">
+                    <label for="notif-subject">Subject:</label>
+                    <input type="text" for="notif-subject" id="notif-subject">
+                    <label for="notif-msg">Enter Message:</label>
+                    <textarea name="notif-msg" id="notif-msg"></textarea>
+                    
+                    <label for="send-SMS">SMS:</label>
+                    <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
+                    <option value="off">No</option>
+                    <option value="on">Yes</option>
+                    </select>
+                    <label for="send-Email">Email:</label>
+                    <select name="send-Email" id="send-Email" data-role="flipswitch" data-mini="true">
+                    <option value="off">No</option>
+                    <option value="on">Yes</option>
+                    </select>
+                </form>
+
+                <a href="#" data-role="button" class="ui-btn">Send</a>
+                <a href="#volunteer-list-page" data-role="button" class="ui-btn">Cancel</a>
             </div>
 
+        </div>    
+        <!-- END Staff Create Message-->
+
+    <!-- Staff Sent Notifications -->
+        <div data-role="page" id="staff-sent-notif">
+            <div data-role="header" data-position="fixed">
+                <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
+                <h1>Sent Notifications</h1>
+            </div>
+            <div>
+                <div data-role="main" class="ui-content staff-notif">
+                    <div class="no-notifications">
+                        <span class="material-symbols-sharp">
+                            notifications_active
+                            </span>
+                        <h4 class="mainmsg">No messages have been sent yet</h4>
+                        <p class="submsg">After you send a message to voluteers, it will appear here</p>
+                        <button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>
+                    </div>
+                </div>               
+            </div>
+            <footer>
+                <div data-role="navbar">
+                    <ul data-role="listview">
+                        <li> <!-- I want to work on this make icon to the left-->
+                            <a href="#volunteer-list-page" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send MSG to new list</a>
+                    </ul>
+                </div>
+            </footer>
+        </div>    
+        <!-- END Sent Notifications-->
+
+    <!-- Staff Services Menu -->
+        <div data-role="page" id="services-menu">
+            <div data-role="header" data-position="fixed">
+                <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
+                <h1>Services Menu</h1>
+            </div>
+            <div data-role="main" class="ui-content staff-notif">
+                <h3>Add new service opportunity:</h3>
+                <form id="add-new-service">
+                    <label for="service-name">Service Name:</label>
+                    <input type="text" for="service-name" id="service-name">
+
+                    <label for="select-location">Location</label>
+                    <select data-native-menu="false" name="service_loc" data-mini="true" data-param="addServiceLocation" data-required="true">
+                    </select>
+
+                    <label for="select-services">Service Category:</label>
+                    <select data-native-menu="false" name="service-cat" data-mini="true" data-param="addServiceCategories" data-required="true">
+                    </select>
+                    
+                    <label for="send-SMS">Display to public?</label>
+                    <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
+                    <option value="off">No</option>
+                    <option value="on">Yes</option>
+                    </select>
+                </form>
+                <a href="#" data-role="button" class="ui-btn">Save</a>
+            </div>
+            <div>
+                <!-- TODO NEED TO ADD SERVICES LIST TABLE HERE -->
+            </div>
+        </div>    
+        <!-- END Services Menu-->
 
 
             <script src="cordova.js"></script>

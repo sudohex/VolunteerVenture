@@ -24,30 +24,23 @@ var masterData = [{
     },
 }, ];
 
-var baseURL = "https://volunteerventureserver.onrender.com/";
+var baseURL = "http://localhost:3000/";
 var apiEndPoints = {
     login: "login",
     createVlntrAccount: "signup",
-    updateVlntrAccount: "volunteer/",
+    updateVlntrAccount: "profile", //PUT
     locations: "location",
     categories: "category",
-    services: "service?q=",
+    services: "service", //service?q=
     notifications: "notifications",
-    profile: "profile",
+    profile: "profile", //GET
+    volunteers: "/volunteer", //GET
     forgotPassword: "", // TO-DO add url
     filterVolunteers: "",
 
     //TO-DO Need to define all the endpoints
 };
 
-
-var routes = {
-    vlntrLogin: "",
-    vlntrHome: "",
-    vlntrNotif: "",
-    vlntrUpdateAcc: "",
-    //TO-DO Need to define all the routes
-};
 
 /**
  *
@@ -117,10 +110,10 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue);
 
         case "mobile":
-            return /^\d{10}$/.test(inputValue);
+            return true;
 
         case "password":
-            return inputValue.length >= 8; //TO-DO need to fix the length after discussion(8)
+            return inputValue.length >= 6; //TO-DO need to fix the length after discussion(8)
 
         case "cPassword":
             return originalPassword === inputValue;
@@ -154,40 +147,56 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
  */
 
 function readFormData(formId) {
-    var formData = $("#" + formId).serializeArray();
+
+
+
+
+
+    var thisForm = $("#" + formId);
+    var disabled = thisForm.find(':input:disabled').removeAttr('disabled');
+    var formData = thisForm.serializeArray();
+    disabled.attr('disabled', 'disabled');
     var formDataObject = {};
+    var preferredChannels = [];
+
+
 
     formData.forEach(function(field) {
         var fieldName = field.name;
         var fieldValue = decodeURIComponent(field.value || "");
 
-        // Checking if the field already exists in the object
-        if (formDataObject.hasOwnProperty(fieldName)) {
+        if (fieldName === "preferred_categories" || fieldName === "preferred_locations" || fieldName === "preferred_channels") {
 
-            if (Array.isArray(formDataObject[fieldName])) {
-                if (fieldName == 'select-consent') { //if this is NOTIFCATION preference
-                    if (fieldValue == 'isSMSOn') {
-                        formDataObject['isSMSOn'] = [formDataObject['isSMSOn'], true];
-                    } else if (fieldValue == 'isEmailOn') {
-                        formDataObject['isEmailOn'] = [formDataObject['isEmailOn'], true];
-                    }
-                } else { //all other inputs with multiple values
-                    formDataObject[fieldName].push(fieldValue);
-                }
-
+            if (!formDataObject[fieldName]) {
+                formDataObject[fieldName] = [fieldValue];
             } else {
-
-                formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
+                formDataObject[fieldName].push(fieldValue);
             }
         } else {
-
-            formDataObject[fieldName] = fieldValue;
+            // For other fields, check if they already exist in the object
+            if (formDataObject.hasOwnProperty(fieldName)) {
+                if (Array.isArray(formDataObject[fieldName])) {
+                    // If it's an array, push the value
+                    formDataObject[fieldName].push(fieldValue);
+                } else {
+                    // If it's not an array, convert it to an array
+                    formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
+                }
+            } else {
+                // If the field doesn't exist, create a new entry
+                formDataObject[fieldName] = fieldValue;
+            }
         }
     });
+
+    //formDataObject.preferred_channels = preferredChannels.join(" &| ");
+
     var formDataJSON = JSON.stringify(formDataObject);
 
     return formDataJSON;
 }
+
+
 
 // document.addEventListener('deviceready', onDeviceReady, false);
 $(document).ready(onDeviceReady)
@@ -207,7 +216,10 @@ function onDeviceReady() {
     //SET value to it
     $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+        $("#search-form").submit();
+        console.log("Going to submit");
     });
+
 
     $("#btn-forgotpwd,#btn-forgotpwd-staff").on("click", function(e) {
         e.preventDefault();
@@ -237,7 +249,7 @@ function onDeviceReady() {
                 },
                 error: function(error) {
 
-                    alert('Error sending email: ' + error.responseJSON.message);
+                    alert('Error sending email: ' + error.msg);
                 }
             });
 
@@ -309,17 +321,8 @@ function onDeviceReady() {
                     // 4. Handle the response
 
                     localStorage.setItem('token', response.token);
-                    localStorage.setItem('user', JSON.stringify(response.user));
-
-
                     if (whichLogin == "STAFF") {
-                        if (response.user.acctType != "volunteer") {
-                            $.mobile.changePage("#staff-home-page");
-                        } else {
-                            $.mobile.changePage("#staff-home-page"); //ONLY FOR DEV MODE
-                            ///alert("Login Failed! No staff account found!");
-                            return;
-                        }
+                        $.mobile.changePage("#staff-home-page");
                     } else {
                         $.mobile.changePage("#public-home");
                     }
@@ -327,7 +330,8 @@ function onDeviceReady() {
                 },
                 error: function(error) {
 
-                    alert('Error signing in: ' + error.responseJSON.message);
+
+                    alert('Error signing in: ' + readAPIError(error));
                 }
             });
 
@@ -407,6 +411,7 @@ function onDeviceReady() {
 
     //Sign up initialize
     $(document).on("pagecreate", "#signup-page", function() {
+        console.log("inside page create");
         managePageActive();
         //1.Fetch and populate locations
         fetchLocations("volunteer");
@@ -419,12 +424,15 @@ function onDeviceReady() {
 
 
     //List of volunteers initialize
-    $(document).on("pageshow", "#volunteer-list-page", function() {
+    $(document).on("pagecreate", "#volunteer-list-page", function() {
         checkAuthentication();
         //1.Fetch and populate locations
         fetchLocations();
         //2.Fetch and populate categories
         fetchAllServices();
+
+        //  fetchVolunteers();//API-NOT-READY
+
 
     }); //END of volunteers page prerequisites loading
 
@@ -432,6 +440,9 @@ function onDeviceReady() {
     // filter volunteer
     $("#volunteer-list-page .ui-selectmenu .ui-icon-delete").on("click", function(event, ui) { //When user click on close select options
         var formData = readFormData("filter-volunteers");
+
+
+
         $.ajax({
             type: 'POST',
             url: baseURL + apiEndPoints.filterVolunteers,
@@ -442,7 +453,7 @@ function onDeviceReady() {
                 // TO-DO need to populate from server response
             },
             error: function(error) {
-                console.log('Error signing up: ' + error.responseText);
+                console.log('Error signing up: ' + readAPIError(error));
             }
         });
 
@@ -511,25 +522,30 @@ function onDeviceReady() {
 
 
     //START of "update volunteer account"
-    $("#update-profile-page").submit(function(event) {
+    $("#update-profile-form").submit(function(event) {
 
         event.preventDefault();
-        var formId = "update-profile-page";
+        var formId = "update-profile-form";
         // 1. Validate form finally before submission
-        var isValidForm = finalFormValidation(formId);
+        var isValidForm = true; //Bypass for demo//finalFormValidation(formId);
         // 2. Collect data from the form
         var formData = readFormData(formId);
         //3.Loggedin User Id
-        const volunteer = getUser();
-        const userId = volunteer.id;
+        const authDetails = getUser();
+        // const userId = volunteer.id;//no longer needed
         // 4. Proceed to send the POST request 
-
+        console.log(formData);
         if (isValidForm) {
             $.ajax({
-                type: 'POST',
-                url: baseURL + apiEndPoints.updateVlntrAccount + userId,
+                type: 'PUT',
+                url: baseURL + apiEndPoints.updateVlntrAccount, //userid no longer needed
                 data: formData,
-                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                contentType: false, // Set contentType to false for FormData
+                processData: false,
                 success: function(response) {
                     //4.Handle resposne
                     alert('Profile updated successfully');
@@ -553,75 +569,6 @@ function onDeviceReady() {
 
 
 
-
-    // //Sign up submit
-    // $("#signup-form").submit(function(e) {
-    //     e.preventDefault();
-
-    //     var email = $('#email').val();
-    //     var password = $('#password').val();
-    //     var firstName = $('#firstName').val();
-    //     var lastName = $('#lastName').val();
-    //     var phoneNo = $('#phoneNo').val();
-    //     var isSMSOn = $('#select-consent option[value="isSMSOn"]').is(':selected');
-    //     var isEmailOn = $('#select-consent option[value="isEmailOn"]').is(':selected');
-    //     var locations = $('select[name="preferred_locations"]').val();
-    //     var categories = $('select[name="preferred_categories"]').val();
-
-    //     // Validation
-    //     if (!email || !password || !firstName || !lastName || !phoneNo) {
-    //         alert('Please fill in all the fields.');
-    //         return;
-    //     }
-
-    //     if (password.length < 8) {
-    //         alert('Password should be at least 8 characters.');
-    //         return;
-    //     }
-
-    //     if (!locations || !locations.length) {
-    //         alert('Please select your preferred locations.');
-    //         return;
-    //     }
-
-    //     if (!categories || !categories.length) {
-    //         alert('Please select your preferred service categories.');
-    //         return;
-    //     }
-
-    //     var formData = {
-    //         email: email,
-    //         password: password,
-    //         firstName: firstName,
-    //         lastName: lastName,
-    //         phoneNo: phoneNo,
-    //         isSMSOn: isSMSOn,
-    //         isEmailOn: isEmailOn,
-    //         preferences: {
-    //             locations: locations,
-    //             categories: categories
-    //         }
-    //     };
-
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'http://localhost:3000/api/signup',
-    //         data: JSON.stringify(formData),
-    //         contentType: 'application/json',
-    //         success: function(response) {
-    //             alert('Successfully signed up!');
-    //             $.mobile.changePage("#signin-page");
-    //         },
-    //         error: function(error) {
-    //             if (error.status === 400 && error.responseText.includes("email")) {
-    //                 alert('Email already exists.');
-    //             } else {
-    //                 alert('Error signing up: ' + error.responseText);
-    //             }
-    //         }
-    //     });
-    // });
-
     function managePageActive(currentPage = '') {
 
         if (currentPage != '') {
@@ -644,17 +591,47 @@ function onDeviceReady() {
 
         // Search form submission
         $("#search-form").on("submit", function(e) {
+
             e.preventDefault();
+
+
+            const dateRange = $("input[name='date-range']").val();
+            var dateRangeString = "";
+            if (dateRange.trim() === '') {
+                console.log('The dateRange is empty.'); //keep calm
+            } else {
+                // Split the dateRange string into start and end date parts
+                const [startDateStr, endDateStr] = dateRange.split(' - ');
+
+                // Convert the start and end dates to the desired format
+                const formattedStartDate = "startDate=" + startDateStr.split('/').reverse().join('-');
+                const formattedEndDate = "endDate=" + endDateStr.split('/').reverse().join('-');
+
+                // Create the final string
+                dateRangeString = formattedStartDate + "&" + formattedEndDate;
+
+                console.log(dateRangeString);
+            }
+
             var query = $("#searchForCollapsibleSet").val();
+            if (dateRangeString != '') {
+                query = query + "/date?" + dateRangeString;
+            }
             fetchServices(query);
         });
 
         // Function to fetch services based on query
         function fetchServices(query = "") {
+            const authDetails = getUser(); //1.Token and Id will be returned
+
             $.ajax({
                 type: 'GET',
                 url: baseURL + apiEndPoints.services + `${query}`,
                 dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
                 success: function(services) {
                     console.log(services);
                     renderServices(services);
@@ -667,26 +644,35 @@ function onDeviceReady() {
 
         // Function to render services in the collapsible set
         function renderServices(services) {
+
             var $collapsibleSet = $("#collapsiblesetForFilter");
             $collapsibleSet.empty(); // Clear existing services
 
             services.forEach(service => {
 
-                console.log(service);
                 // Convert locations array into a user-friendly list
-                let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
+                let locationDisplay = service.location ? "<li><p><strong>Location: </strong>" + service.location.locationName + " </p></li>" : "<p><strong>Location: N/A</strong></p>";
+                //NEW-CHANGE-MAHAMMAD
+                //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
 
                 // Category presentation
-                let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
+                let categoryDisplay = service.category ? `<p><strong>Category: </strong> ${service.category.categoryName}</p>` : "<p><strong>Category: N/A</strong></p>";
+
+                //let categoryDisplay = service.category ? .categoryName; //NEW-CHANGE-MAHAMMAD
+                //let categoryDisplay = "";
 
                 var serviceCollapsible = `
         <div data-role="collapsible">
-            <h3>${service.serviceName}</h3>
-            <p>${service.description}</p>
-            ${categoryDisplay}
-            <p><strong>Locations:</strong></p>
+            <h3>
+            ${service.serviceName}
+            <p class="expirydate">${formatDateTime(service.expireDate,false)}</p>
+            </h3>
+            <p class="service-description">
+            ${service.description}
+            </p>
             <ul>
-                ${locationsList}
+            <li>${categoryDisplay}</li>
+            ${locationDisplay}
             </ul>
         </div>
     `;
@@ -741,7 +727,7 @@ function onDeviceReady() {
     })
 
     //Fetch Profile
-    $(document).on("pageshow", "#update-profile-page", function() {
+    $(document).on("pagecreate", "#update-profile-page", function() {
 
         managePageActive("update-profile-page");
 
@@ -762,56 +748,52 @@ function onDeviceReady() {
 
     function getUser() {
         const token = localStorage.getItem('token');
-        const id = JSON.parse(localStorage.getItem('user'))._id;
-        return { token, id };
+        //const id = JSON.parse(localStorage.getItem('user'))._id;
+        return { token };
     }
-
+    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMzExM2YxZDZiMDlhMzhhNGRmNjU3IiwiYWNjdFR5cGUiOiJ2b2x1bnRlZXIifSwiaWF0IjoxNjk0NzAwMzMxLCJleHAiOjE2OTQ3MzYzMzF9.tWYLNYFu9XBUNs1Zuz74biZguW8xj_ufboU26TUAPxM
     function fetchProfile() {
 
         const authDetails = getUser(); //1.Token and Id will be returned
-        const id = authDetails.id;
+        console.log(authDetails);
 
-        const formData = JSON.stringify({ id });
+        //  const id = authDetails.id;const formData = JSON.stringify({ id }); //API-UPDATE:no longer needed
 
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: baseURL + apiEndPoints.profile,
-            data: formData,
+            //data: formData,//API-UPDATE:no longer needed
             contentType: 'application/json',
             headers: {
-                'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+                'Authorization': 'Bearer ' + authDetails.token,
                 'x-auth-token': authDetails.token
             },
             success: function(data) {
                 // 2. Handle the response
-                console.log(data);
+
 
                 if (data) {
 
-                    const user = data[0].user;
-                    const response = data[0].volunteer;
+                    //const user = ; //API-UPDATE:Change in reposne format ->data[0].user
+                    const response = data; //data[0].volunteer
                     //Saved data
-                    $("#update-email").val(user.email);
-                    $("#update-password").val(response.password);
+                    $("#update-email").val(response.email);
+
                     $("#update-firstName").val(response.firstName);
                     $("#update-lastName").val(response.lastName);
-                    $("#update-phoneNo").val(response.phoneNo);
-
-                    const isSMSOn = response.isSMSOn;
-                    const isEmailOn = response.isEmailOn;
+                    $("#update-phoneNo").val(response.phone);
 
 
 
-                    $.each(response.preferences.locations, function(index, value) {
-                        $("#update-locations option[value='" + value + "']").prop("selected", true);
+                    $.each(response.preferred_locations, function(index, value) {
+                        $("#update-locations option[value='" + value._id + "']").prop("selected", true);
                     });
-                    $.each(response.preferences.categories, function(index, value) {
-                        $("#update-select-services-menu option[value='" + value + "']").prop("selected", true);
+                    $.each(response.preferred_categories, function(index, value) {
+                        $("#update-select-services-menu option[value='" + value._id + "']").prop("selected", true);
                     });
-
-                    $("#update-select-consent option[value='isSMSOn']").prop("selected", isSMSOn);
-                    $("#update-select-consent option[value='isEmailOn']").prop("selected", isEmailOn);
-
+                    $.each(response.preferred_channels, function(index, value) {
+                        $("#update-select-consent option[value='" + value + "']").prop("selected", true);
+                    });
                     $("#update-locations,#update-select-services-menu,#update-select-consent").selectmenu().selectmenu("refresh");
 
 
@@ -825,15 +807,89 @@ function onDeviceReady() {
 
 
             },
-            error: function(error) {
+            error: function(errors) {
 
-                alert('Error signing in: ' + error.responseJSON.message);
+                alert('Error: ' + errors.msg);
             }
         });
 
     }
 
+    function fetchVolunteers() {
+        authDetails = getUser();
 
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.volunteers,
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            contentType: 'application/json',
+            success: function(response) {
+                console.log(response);
+                //4.Handle resposne
+                // TO-DO need to populate from server response
+            },
+            error: function(error) {
+                console.log('Error : ' + readAPIError(error));
+            }
+        });
+    }
+
+    function fetchNotifications() {
+
+        const authDetails = getUser(); //localStorage.getItem('token');
+        //const formData = JSON.stringify({ id });
+
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.profile,
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(response) {
+                var myNotifications = "";
+                console.log(response);
+                // console.log(response.firstName);
+                // console.log(response.notifications);
+                if (response.notifications && response.notifications.length > 0) {
+
+                    response.notifications.forEach((item) => {
+                        var notifSubject = item.subject;
+                        var notifMessage = item.message;
+                        var notifSentBy = "CQU Staff"; // item.createdBy;
+                        var notifSentOn = formatDateTime(item.dateSent);
+                        var notifSentThrough = item.channelType;
+                        myNotifications += '<div class="each-notification">' +
+                            '<p class = "notif-subject">' + notifSubject + '</p>' +
+                            '<p class = "notif-message">' + notifMessage + '</p>' +
+                            '<span class = "sent-timedate">' +
+                            '<span class = "material-symbols-sharp"> schedule</span>' +
+                            '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
+                            '</span >' +
+                            '<span class = "sent-by">' +
+                            '<span class = "material-symbols-sharp">account_circle</span>' +
+                            '<span class = "notif-sentby">' + notifSentBy + '</span>' +
+                            '</span></div>';
+                    });
+                    $(".voluntr-notif").html(myNotifications); //append to the parent div
+                } else {
+
+                    alert("Zero notifications found!");
+                }
+
+                //console.log(myNotifications);
+            },
+            error: function(error) {
+                console.error("Error fetching notifications:", error);
+            }
+        });
+    }
 
 
 } //END of OnDeviceReady
@@ -841,65 +897,14 @@ function onDeviceReady() {
 
 //Fetch notifications sent to current user
 
-function fetchNotifications() {
-    const token = localStorage.getItem('token');
-    const id = JSON.parse(localStorage.getItem('user'))._id;
-    const formData = JSON.stringify({ id });
 
-
-    $.ajax({
-        type: 'POST',
-        url: baseURL + apiEndPoints.notifications,
-        data: formData,
-        contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
-            'x-auth-token': token
-        },
-        success: function(response) {
-            var myNotifications = "";
-            if (response && response.length > 0) {
-
-                response.forEach((item) => {
-                    var notifSubject = item.subject;
-                    var notifMessage = item.message;
-                    var notifSentBy = item.createdBy;
-                    var notifSentOn = formatDateTime(item.dateSent);
-                    var notifSentThrough = item.channelType;
-                    myNotifications += '<div class="each-notification">' +
-                        '<p class = "notif-subject">' + notifSubject + '</p>' +
-                        '<p class = "notif-message">' + notifMessage + '</p>' +
-                        '<span class = "sent-timedate">' +
-                        '<span class = "material-symbols-sharp"> schedule</span>' +
-                        '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
-                        '</span >' +
-                        '<span class = "sent-by">' +
-                        '<span class = "material-symbols-sharp">account_circle</span>' +
-                        '<span class = "notif-sentby">' + notifSentBy + '</span>' +
-                        '</span></div>';
-                });
-                $(".voluntr-notif").html(myNotifications); //append to the parent div
-            } else {
-                //No notoifications found KEEP CALM
-                // myNotifications += '<div class="no-notifications">' +
-                //     '<span class="material-symbols-sharp">notifications_active</span>' +
-                //     '<h4 class="mainmsg">No notifications yet.</h4>' +
-                //     '<p class="submsg">When you get notifications,they\'ll show up here</p>' +
-                //     '<button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>' +
-                //     '</div>';
-
-                alert("Zero notifications found!");
-            }
-
-            //console.log(myNotifications);
-        },
-        error: function(error) {
-            console.error("Error fetching notifications:", error);
-        }
-    });
+function readAPIError(error) {
+    errorMsg = error.responseJSON.errors[0].msg;
+    return errorMsg;
 }
 
-function formatDateTime(dateString = '') {
+
+function formatDateTime(dateString = '', includeTime = true) {
 
     if (dateString != '') {
 
@@ -912,21 +917,25 @@ function formatDateTime(dateString = '') {
         const minute = dateObject.getMinutes();
         const amOrPm = hour >= 12 ? "PM" : "AM";
         const formattedDate = `${day}/${month}/${year}`;
-        const formattedTime = `${(hour % 12 || 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${amOrPm}`;
-        const formattedDateTime = `${formattedDate} ${formattedTime}`;
-        return formattedDateTime;
 
+        if (includeTime) {
+            const formattedTime = `${(hour % 12 || 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${amOrPm}`;
+            return `${formattedDate} ${formattedTime}`;
+        } else {
+            return formattedDate;
+        }
     } else {
         return "";
     }
-
 }
 
-function checkAuthentication() {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
 
-    if (!token || !user) {
+function checkAuthentication() {
+
+    const token = localStorage.getItem('token');
+    //const user = localStorage.getItem('user');
+
+    if (!token) {
         alert('You need to be logged in to access this page.');
         $.mobile.changePage("#signin-page");
     }

@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
  * @param {string} password - The plain text password.
  * @returns {Promise<string>} - The hashed password.
  */
-const hashPassword = async (password) => {
+const hashPassword = async(password) => {
     const salt = await bcrypt.genSalt(SALT_ROUNDS);
     return bcrypt.hash(password, salt);
 };
@@ -20,7 +20,7 @@ const hashPassword = async (password) => {
  * @param {string} hashedPassword - The hashed password.
  * @returns {Promise<boolean>} - True if they match, false otherwise.
  */
-const comparePassword = async (password, hashedPassword) => {
+const comparePassword = async(password, hashedPassword) => {
     return bcrypt.compare(password, hashedPassword);
 };
 
@@ -35,7 +35,7 @@ const generateToken = (payload, expiresIn = 36000) => {
 };
 const verifyToken = (token) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        return jwt.verify(token, "secret");
     } catch (err) {
         throw new Error('Invalid token');
     }

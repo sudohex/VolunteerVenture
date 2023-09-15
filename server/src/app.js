@@ -392,7 +392,8 @@ const addService = async (req, res) => {
         const notification = {
             subject: serviceName,
             message: `A new service named ${serviceName} is available in your preferred category and location.`,
-            serviceId: service._id
+            serviceId: service._id,
+            sentOn: new Date(), // Current date and time
         };
 
         // Add the notification to all matching volunteers in a single operation
@@ -404,12 +405,12 @@ const addService = async (req, res) => {
             { $push: { notifications: notification } }
         );
 
-
         res.status(201).json(service);
     } catch (err) {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
+
 const getService = async (req, res) => {
     let conditions = [];
     if (req.query.q) {

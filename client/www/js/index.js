@@ -23,7 +23,7 @@ var apiEndPoints = {
     services: "service", //service?q=
     notifications: "notifications",
     profile: "profile", //GET
-    volunteers: "/volunteer", //GET
+    volunteers: "volunteer", //GET
     forgotPassword: "", // TO-DO add url
     filterVolunteers: "",
 
@@ -186,6 +186,22 @@ function readFormData(formId) {
 }
 
 
+//GLOBAL Variables
+var allLocations = [];
+var allCategories = [];
+
+
+
+function toCreateMessage() {
+    var SelectedVolnteerIds = [];
+
+    $(".individual-checkbox:checked").each(function() {
+        SelectedVolnteerIds.push($(this).data("id"));
+    });
+    console.log(SelectedVolnteerIds);
+    localStorage.setItem("SelectedVolnteerIds", JSON.stringify(SelectedVolnteerIds));
+    $.mobile.changePage("#create-message");
+}
 
 // document.addEventListener('deviceready', onDeviceReady, false);
 $(document).ready(onDeviceReady)
@@ -208,6 +224,8 @@ function onDeviceReady() {
         $("#search-form").submit();
         console.log("Going to submit");
     });
+
+
 
 
     $("#btn-forgotpwd,#btn-forgotpwd-staff").on("click", function(e) {
@@ -256,6 +274,7 @@ function onDeviceReady() {
 
     //START of "input" JS validation
     $("input,select").on("blur change", function() {
+
 
         //When user finish to input this event will be in action
 
@@ -342,6 +361,8 @@ function onDeviceReady() {
             dataType: 'json',
             success: function(data) {
 
+                allLocations = data; //setting value for globally use
+
                 if (action == "staff" || action == "volunteer") {
                     var locationsOptions = '<option value="">Select one option</option>';
                 } else {
@@ -371,6 +392,7 @@ function onDeviceReady() {
             url: baseURL + apiEndPoints.categories, //previously apiEndPoints.services
             dataType: 'json',
             success: function(data) {
+                allCategories = data; //setting value for globally use
                 if (action == "staff") {
                     var categoriesOptions = '<option value="">Select one option</option>';
                 } else {
@@ -420,7 +442,7 @@ function onDeviceReady() {
         //2.Fetch and populate categories
         fetchAllServices();
 
-        //  fetchVolunteers();//API-NOT-READY
+        fetchVolunteers(); //API-NOT-READY
 
 
     }); //END of volunteers page prerequisites loading
@@ -434,10 +456,11 @@ function onDeviceReady() {
 
         $.ajax({
             type: 'POST',
-            url: baseURL + apiEndPoints.filterVolunteers,
+            url: baseURL + apiEndPoints.volunteers,
             data: formData,
             contentType: 'application/json',
             success: function(response) {
+
                 //4.Handle resposne
                 // TO-DO need to populate from server response
             },
@@ -448,27 +471,29 @@ function onDeviceReady() {
 
     });
 
-    //SELECT-ALL Volunteers
-    $("input[type='checkbox'].select-all").change(function() {
-        console.log("Inside change");
-        if ($(this).is(":checked")) {
-            $(".individual-checkbox").prop("checked", true);
-        } else {
-            $(".individual-checkbox").prop("checked", false);
-        }
-    });
+    function bindCheckboxesAfterDomLoad() {
+        //SELECT-ALL Volunteers
+        $("input[type='checkbox'].select-all").change(function() {
 
-    //SELECT-ALL Volunteers Reverese  
-    $(".individual-checkbox").change(function() {
-        console.log("Inside change jill individual checkbox");
-        var checkedCount = $(".individual-checkbox:checked").length;
+            if ($(this).is(":checked")) {
+                $(".individual-checkbox").prop("checked", true);
+            } else {
+                $(".individual-checkbox").prop("checked", false);
+            }
+        });
 
-        if (checkedCount === $(".individual-checkbox").length) {
-            $("input[type='checkbox'].select-all").prop("checked", true);
-        } else {
-            $("input[type='checkbox'].select-all").prop("checked", false);
-        }
-    })
+        //SELECT-ALL Volunteers Reverese  
+        $(".individual-checkbox").change(function() {
+            console.log("Inside change jill individual checkbox");
+            var checkedCount = $(".individual-checkbox:checked").length;
+
+            if (checkedCount === $(".individual-checkbox").length) {
+                $("input[type='checkbox'].select-all").prop("checked", true);
+            } else {
+                $("input[type='checkbox'].select-all").prop("checked", false);
+            }
+        })
+    }
 
 
     //START of "create volunteer account"
@@ -807,6 +832,36 @@ function onDeviceReady() {
 
     }
 
+
+    //AI
+
+
+
+    // Create a function to replace IDs with names
+    function replaceIdsWithNames(volunteer, locations, categories) {
+        const updatedVolunteer = {...volunteer };
+
+        volunteer.forEach((item, index) => {
+            // Replace preferred locations IDs with names
+            updatedVolunteer[index].preferred_locations = volunteer[index].preferred_locations.map(locationId => {
+                const location = locations.find(loc => loc._id === locationId);
+                return location ? location.locationName : 'Unknown';
+            });
+            // Replace preferred categories IDs with names
+            updatedVolunteer[index].preferred_categories = volunteer[index].preferred_categories.map(categoryId => {
+                const category = categories.find(cat => cat._id === categoryId);
+                return category ? category.categoryName : 'Unknown';
+            });
+        })
+
+        return updatedVolunteer;
+    }
+
+
+
+
+
+
     function fetchVolunteers() {
         authDetails = getUser();
 
@@ -820,15 +875,63 @@ function onDeviceReady() {
             },
             contentType: 'application/json',
             success: function(response) {
-                console.log(response);
+
+                var volunteers = response;
+                // Rearrange the volunteers data with location and category names
+                const rearrangedVolunteers = replaceIdsWithNames(volunteers, allLocations, allCategories);
                 //4.Handle resposne
-                // TO-DO need to populate from server response
+                renderVolunteers(rearrangedVolunteers);
+                bindCheckboxesAfterDomLoad(); //make sure all events binded to checkboxes
             },
             error: function(error) {
                 console.log('Error : ' + readAPIError(error));
             }
         });
     }
+
+
+
+    //Render volunteers list
+
+    function renderVolunteers(volunteersList) {
+
+        var volunteersListHtml = "";
+
+
+        volunteersListHtml = +"<table>" +
+            '<tr class="headers">' +
+            '<td class="checkbox-holder"><span><input type="checkbox"  class="select-all"/></span></td>' +
+            '<td><span>Name</span></td>' +
+            '<td><span>Location</span></td>' +
+            '<td><span>Services</span></td>' +
+            '<td><span>Email</span></td>' +
+            '<td><span>SMS</span></td>' +
+            '</tr>';
+        console.log(volunteersList);
+        Object.keys(volunteersList).forEach((index) => {
+            volunteer = volunteersList[index];
+            var servicesHtml = volunteer.preferred_categories.map(function(category) {
+                return category + '</br>';
+            }).join('');
+            var SMSOn = volunteer.preferred_channels.indexOf("SMS") !== -1 ? "Y" : "N";
+            var EmailOn = volunteer.preferred_channels.indexOf("EMAIL") !== -1 ? "Y" : "N";
+
+            volunteersListHtml = volunteersListHtml + '<tr>' +
+                '<td class="checkbox-holder"><span class="custom-checkbox"><input type="checkbox" data-id="' + volunteer._id + '" class="individual-checkbox"/></span></td>' +
+                '<td><span>' + volunteer.firstName + ' ' + volunteer.lastName + '</span></td>' +
+                '<td><span>' + volunteer.preferred_locations[0] + '</span></td>' +
+                '<td><span>' + servicesHtml + '</span></td>' +
+                '<td><span>' + SMSOn + '</span></td>' +
+                '<td><span>' + EmailOn + '</span></td>' +
+                '</tr>';
+        });
+
+        volunteersListHtml = volunteersListHtml + '</table>';
+        $("#volunteer-list-container").html(volunteersListHtml);
+
+    } //END volunteer list
+
+
 
     function fetchNotifications() {
 

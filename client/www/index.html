@@ -77,7 +77,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     </div>
     <!-- END Signin Page VOLUNTEER-->
 
-    <!-- Signin Page - STAFF--> 
+    <!-- Signin Page - STAFF-->
     <div data-role="page" id="signin-page-staff">
         <div data-role="header" data-position="fixed">
             <h1>Volunteer Venture</h1>
@@ -347,54 +347,45 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Volunteers List</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div class="filter-container">
             <form id="filter-volunteers">
                 <label for="select-locations">Locations</label>
-                <select data-native-menu="false" multiple="multiple" name="preferred_locations" data-mini="true" data-required="false"><!--data-param="prefLocation"-->
+                <select data-native-menu="false" multiple="multiple" id="filter_volunteer_locations" name="preferred_locations" data-mini="true" data-required="false"><!--data-param="prefLocation"-->
                         <!-- ADDED WITH JS -->
                     </select>
 
                 <label for="select-services">Service Categories</label>
-                <select multiple="multiple" data-native-menu="false" name="preferred_categories" data-mini="true" data-required="false"><!--data-param="prefServiceCategories"-->
+                <select multiple="multiple" data-native-menu="false" id="filter_volunteer_categories" name="preferred_categories" data-mini="true" data-required="false"><!--data-param="prefServiceCategories"-->
                         <!--ADDED WITH JS-->
                     </select>
             </form>
             <!-- END filter form-->
         </div>
-        <div class="my-table-container">
-            <table>
-                <tr class="headers">
-                    <td class="checkbox-holder"><span><input type="checkbox" class="select-all"/></span></td>
-                    <td><span>Name</span></td>
-                    <td><span>Location</span></td>
-                    <td><span>Services</span></td>
-                    <td><span>Email</span></td>
-                    <td><span>SMS</span></td>
-                </tr>
-                <tr>
-                    <td class="checkbox-holder"><span class="custom-checkbox"><input type="checkbox" class="individual-checkbox"/></span></td>
-                    <td><span>Mahammad Shaik</span></td>
-                    <td><span>Brisbane</span></td>
-                    <td><span>Haircut</span></td>
-                    <td><span>Y</span></td>
-                    <td><span>N</span></td>
-                </tr>
-            </table>
-            <div class="pagination">
-                <a href="#" class="active">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <!-- TO-DO Need to implement based on records -->
-            </div>
+        <div class="my-table-container" id="volunteer-list-container">
 
-            <footer data-role="footer" data-position="fixed" id="foort">
-                <div data-role="navbar">
-                    <!-- I want to work on this make icon to the left-->
-                    <a href="#create-message" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send Message to selected popupLoginStaff</a>
-                </div>
-            </footer>
+
+
+
         </div>
+        <!-- END of list container-->
+        <!-- <div class="pagination">
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+           
+    </div> -->
+        <footer data-role="footer" data-position="fixed" id="foort">
+            <div data-role="navbar">
+                <!-- I want to work on this make icon to the left-->
+                <a href="#" onclick="toCreateMessage()" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send Message to selected popupLoginStaff</a>
+            </div>
+        </footer>
     </div>
     <!-- END Volunteer List Page-->
 
@@ -435,6 +426,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Sent Notifications</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div>
             <div data-role="main" class="ui-content staff-notif">
@@ -461,10 +457,15 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Sent Notifications-->
 
     <!-- Staff Services Menu -->
-    <div data-role="page" id="services-menu">
+    <div data-role="page" id="manage-services-menu">
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Services Menu</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div data-role="main" class="ui-content staff-notif">
             <h3>Add new service opportunity:</h3>
@@ -489,7 +490,26 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <a href="#" data-role="button" class="ui-btn">Save</a>
         </div>
         <div>
-            <!-- TODO NEED TO ADD SERVICES LIST TABLE HERE -->
+            <div><h3>Current Menu Data:</h3></div>
+            <div class="services-table-container">
+                <table>
+                    <tr class="headers">
+                        <td><span>Service</span></td>
+                        <td><span>Category</span></td>
+                        <td><span>Location</span></td>
+                        <td><span>Display</span></td>
+                    </tr>
+                    <tr>
+                        <td><span>Hair Colour</span></td>
+                        <td><span>Hairdressing</span></td>
+                        <td><span>Rockhampton</span></td>
+                        <td><span><select name="service-displayed" id="service-displayed" data-role="flipswitch" data-mini="true">
+                            <option value="off">Off</option>
+                            <option value="on">On</option>
+                            </select></span></td>
+                    </tr>
+                </table>
+
         </div>
     </div>
     <!-- END Services Menu-->

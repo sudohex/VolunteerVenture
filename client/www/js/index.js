@@ -1,14 +1,3 @@
-/*
-App: Volunteer Venture
-Main JS 
-Created: July 17, 2023
-Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
-*/
-
-
-/**
- * We can define custom messages to display all over the app
- */
 var masterData = [{
     errorMessages: {
         email: "Please enter a valid email.",
@@ -41,14 +30,6 @@ var apiEndPoints = {
     //TO-DO Need to define all the endpoints
 };
 
-
-var routes = {
-    vlntrLogin: "",
-    vlntrHome: "",
-    vlntrNotif: "",
-    vlntrUpdateAcc: "",
-    //TO-DO Need to define all the routes
-};
 
 /**
  *
@@ -118,10 +99,10 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue);
 
         case "mobile":
-            return /^\d{10}$/.test(inputValue);
+            return true;
 
         case "password":
-            return inputValue.length >= 8; //TO-DO need to fix the length after discussion(8)
+            return inputValue.length >= 6; //TO-DO need to fix the length after discussion(8)
 
         case "cPassword":
             return originalPassword === inputValue;
@@ -206,43 +187,6 @@ function readFormData(formId) {
 
 
 
-
-// function readFormData(formId) {
-//     var formData = $("#" + formId).serializeArray();
-//     var formDataObject = {};
-
-//     formData.forEach(function(field) {
-//         var fieldName = field.name;
-//         var fieldValue = decodeURIComponent(field.value || "");
-
-//         // Checking if the field already exists in the object
-//         if (formDataObject.hasOwnProperty(fieldName)) {
-
-//             if (Array.isArray(formDataObject[fieldName])) {
-//                 if (fieldName == 'preferred_channels') { //if this is NOTIFCATION preference
-//                     if (fieldValue == 'isSMSOn') {
-//                         formDataObject['isSMSOn'] = [formDataObject['isSMSOn'], true];
-//                     } else if (fieldValue == 'isEmailOn') {
-//                         formDataObject['isEmailOn'] = [formDataObject['isEmailOn'], true];
-//                     }
-//                 } else { //all other inputs with multiple values
-//                     formDataObject[fieldName].push(fieldValue);
-//                 }
-
-//             } else {
-
-//                 formDataObject[fieldName] = [formDataObject[fieldName], fieldValue];
-//             }
-//         } else {
-
-//             formDataObject[fieldName] = fieldValue;
-//         }
-//     });
-//     var formDataJSON = JSON.stringify(formDataObject);
-
-//     return formDataJSON;
-// }
-
 // document.addEventListener('deviceready', onDeviceReady, false);
 $(document).ready(onDeviceReady)
 
@@ -261,7 +205,10 @@ function onDeviceReady() {
     //SET value to it
     $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+        $("#search-form").submit();
+        console.log("Going to submit");
     });
+
 
     $("#btn-forgotpwd,#btn-forgotpwd-staff").on("click", function(e) {
         e.preventDefault();
@@ -569,7 +516,7 @@ function onDeviceReady() {
         event.preventDefault();
         var formId = "update-profile-form";
         // 1. Validate form finally before submission
-        var isValidForm = finalFormValidation(formId);
+        var isValidForm = true; //Bypass for demo//finalFormValidation(formId);
         // 2. Collect data from the form
         var formData = readFormData(formId);
         //3.Loggedin User Id
@@ -611,75 +558,6 @@ function onDeviceReady() {
 
 
 
-
-    // //Sign up submit
-    // $("#signup-form").submit(function(e) {
-    //     e.preventDefault();
-
-    //     var email = $('#email').val();
-    //     var password = $('#password').val();
-    //     var firstName = $('#firstName').val();
-    //     var lastName = $('#lastName').val();
-    //     var phoneNo = $('#phoneNo').val();
-    //     var isSMSOn = $('#select-consent option[value="isSMSOn"]').is(':selected');
-    //     var isEmailOn = $('#select-consent option[value="isEmailOn"]').is(':selected');
-    //     var locations = $('select[name="preferred_locations"]').val();
-    //     var categories = $('select[name="preferred_categories"]').val();
-
-    //     // Validation
-    //     if (!email || !password || !firstName || !lastName || !phoneNo) {
-    //         alert('Please fill in all the fields.');
-    //         return;
-    //     }
-
-    //     if (password.length < 8) {
-    //         alert('Password should be at least 8 characters.');
-    //         return;
-    //     }
-
-    //     if (!locations || !locations.length) {
-    //         alert('Please select your preferred locations.');
-    //         return;
-    //     }
-
-    //     if (!categories || !categories.length) {
-    //         alert('Please select your preferred service categories.');
-    //         return;
-    //     }
-
-    //     var formData = {
-    //         email: email,
-    //         password: password,
-    //         firstName: firstName,
-    //         lastName: lastName,
-    //         phoneNo: phoneNo,
-    //         isSMSOn: isSMSOn,
-    //         isEmailOn: isEmailOn,
-    //         preferences: {
-    //             locations: locations,
-    //             categories: categories
-    //         }
-    //     };
-
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'http://localhost:3000/api/signup',
-    //         data: JSON.stringify(formData),
-    //         contentType: 'application/json',
-    //         success: function(response) {
-    //             alert('Successfully signed up!');
-    //             $.mobile.changePage("#signin-page");
-    //         },
-    //         error: function(error) {
-    //             if (error.status === 400 && error.responseText.includes("email")) {
-    //                 alert('Email already exists.');
-    //             } else {
-    //                 alert('Error signing up: ' + error.responseText);
-    //             }
-    //         }
-    //     });
-    // });
-
     function managePageActive(currentPage = '') {
 
         if (currentPage != '') {
@@ -702,8 +580,32 @@ function onDeviceReady() {
 
         // Search form submission
         $("#search-form").on("submit", function(e) {
+
             e.preventDefault();
+
+
+            const dateRange = $("input[name='date-range']").val();
+            var dateRangeString = "";
+            if (dateRange.trim() === '') {
+                console.log('The dateRange is empty.'); //keep calm
+            } else {
+                // Split the dateRange string into start and end date parts
+                const [startDateStr, endDateStr] = dateRange.split(' - ');
+
+                // Convert the start and end dates to the desired format
+                const formattedStartDate = "startDate=" + startDateStr.split('/').reverse().join('-');
+                const formattedEndDate = "endDate=" + endDateStr.split('/').reverse().join('-');
+
+                // Create the final string
+                dateRangeString = formattedStartDate + "&" + formattedEndDate;
+
+                console.log(dateRangeString);
+            }
+
             var query = $("#searchForCollapsibleSet").val();
+            if (dateRangeString != '') {
+                query = query + "/date?" + dateRangeString;
+            }
             fetchServices(query);
         });
 
@@ -731,28 +633,35 @@ function onDeviceReady() {
 
         // Function to render services in the collapsible set
         function renderServices(services) {
+
             var $collapsibleSet = $("#collapsiblesetForFilter");
             $collapsibleSet.empty(); // Clear existing services
 
             services.forEach(service => {
 
-                console.log(service);
                 // Convert locations array into a user-friendly list
-                let locationsList = service.location; //NEW-CHANGE-MAHAMMAD
+                let locationDisplay = service.location ? "<li><p><strong>Location: </strong>" + service.location.locationName + " </p></li>" : "<p><strong>Location: N/A</strong></p>";
+                //NEW-CHANGE-MAHAMMAD
                 //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
 
                 // Category presentation
-                //let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
+                let categoryDisplay = service.category ? `<p><strong>Category: </strong> ${service.category.categoryName}</p>` : "<p><strong>Category: N/A</strong></p>";
 
-                let categoryDisplay = service.category; //NEW-CHANGE-MAHAMMAD
+                //let categoryDisplay = service.category ? .categoryName; //NEW-CHANGE-MAHAMMAD
+                //let categoryDisplay = "";
+
                 var serviceCollapsible = `
         <div data-role="collapsible">
-            <h3>${service.serviceName}<p>${formatDateTime(service.expireDate,false)}</p></h3>
-            <p>${service.description}</p>
-            ${categoryDisplay}
-            <p><strong>Locations:</strong></p>
+            <h3>
+            ${service.serviceName}
+            <p class="expirydate">${formatDateTime(service.expireDate,false)}</p>
+            </h3>
+            <p class="service-description">
+            ${service.description}
+            </p>
             <ul>
-                ${locationsList}
+            <li>${categoryDisplay}</li>
+            ${locationDisplay}
             </ul>
         </div>
     `;
@@ -935,12 +844,14 @@ function onDeviceReady() {
             success: function(response) {
                 var myNotifications = "";
                 console.log(response);
-                if (response && response.length > 0) {
+                // console.log(response.firstName);
+                // console.log(response.notifications);
+                if (response.notifications && response.notifications.length > 0) {
 
                     response.notifications.forEach((item) => {
                         var notifSubject = item.subject;
                         var notifMessage = item.message;
-                        var notifSentBy = item.createdBy;
+                        var notifSentBy = "CQU Staff"; // item.createdBy;
                         var notifSentOn = formatDateTime(item.dateSent);
                         var notifSentThrough = item.channelType;
                         myNotifications += '<div class="each-notification">' +
@@ -1017,9 +928,4 @@ function checkAuthentication() {
         alert('You need to be logged in to access this page.');
         $.mobile.changePage("#signin-page");
     }
-
-    // if (!token || !user) {
-    //     alert('You need to be logged in to access this page.');
-    //     $.mobile.changePage("#signin-page");
-    // }
 }

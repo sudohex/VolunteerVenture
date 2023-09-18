@@ -382,7 +382,6 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     </div> -->
         <footer data-role="footer" data-position="fixed" id="foort">
             <div data-role="navbar">
-                <!-- I want to work on this make icon to the left-->
                 <a href="#" onclick="toCreateMessage()" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send Message to selected popupLoginStaff</a>
             </div>
         </footer>
@@ -489,7 +488,238 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </form>
             <a href="#" data-role="button" class="ui-btn">Save</a>
         </div>
-        <div>
+         <div><h3>Current Menu Data:</h3></div>
+        <div class="services-table-container">
+            <table>
+                <tr class="headers">
+                    <td><span>Service</span></td>
+                    <td><span>Category</span></td>
+                    <td><span>Location</span></td>
+                    <td><span>Display</span></td>
+                </tr>
+                <tr>
+                    <td><span>Hair Colour</span></td>
+                    <td><span>Hairdressing</span></td>
+                    <td><span>Rockhampton</span></td>
+                    <td><span><select name="service-displayed" id="service-displayed" data-role="flipswitch" data-mini="true">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                        </select></span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- END Services Menu-->
+
+    <!-- Admin Home Page -->
+    <div data-role="page" id="admin-home-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Staff Home</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+            <a href="#volunteer-list-page" data-role="button" class="ui-btn">Access Volunteer List</a>
+            <a href="#admin-services-menu" data-role="button" class="ui-btn">Edit Services Menu</a>
+            <a href="#staff-sent-notif" data-role="button" class="ui-btn">Sent Notifications</a>
+            <a href="#manage-user-accounts" data-role="button" class="ui-btn">Manage Accounts</a> <!--THIS button is the only difference from Staff Home Page-->
+        </div>
+    </div>
+    <!-- END Admin Home Page -->
+
+    <!-- Admin Manage Accounts Page -->
+    <div data-role="page" id="manage-user-accounts">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Manage Accounts</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+
+            <!-- Admin Edit Staff Popup -->
+            <div data-role="popup" id="popupEditStaff" data-theme="a" class="ui-corner-all">    
+                <form id="edit-staff-user">
+                    <div class="edit-staff-user">
+                        <h3>Edit/Remove Staff Account</h3>
+                        <p>Bob Smith</p>
+                        <label for="edit-staff-dept">Department</label>
+                        <select name="edit-staff-dept" id="edit-staff-dept" data-mini="true"></select>
+                        <label for="edit-staff-loc">Location</label>
+                        <select name="edit-staff-loc" id="edit-staff-loc" data-mini="true"></select>
+                        <label for="edit-staff-type">Account Type</label>
+                        <select name="edit-staff-type" id="edit-staff-type" data-mini="true"></select>
+                            <button class="ui-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+                <!-- // Admin Edit Staff Popup -->
+
+            <a href="#create-staff-acct" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plus" id="new-staff-account">Add New</a>
+            <input data-type="search" id="searchForStaff" placeholder="Search Name, Dept., Location, or type ">
+            <div>
+                <div><h3>Staff Accounts:</h3></div>
+                <div class="staff-table-container">
+                    <table>
+                        <tr class="headers">
+                            <td><span>Edit</span></td>
+                            <td><span>Name</span></td>
+                            <td><span>Dept.</span></td>
+                            <td><span>Loc.</span></td>
+                            <td><span>Type</span></td>
+                        </tr>
+                        <tr>
+                            <td><span><a href="#popupEditStaff" class="ui-icon-edit" data-role="button" data-icon="edit" data-iconpos="notext" data-rel="popup"></a></span></td>
+                            <td><span>B.Smith</span></td>
+                            <td><span>Hair & Beauty</span></td>
+                            <td><span>BNE</span></td>
+                            <td><span>Admin</span></td>
+                        </tr>
+                        <tr>
+                            <td><span><a href="#popupEditStaff" class="ui-icon-edit" data-role="button" data-icon="edit" data-iconpos="notext" data-rel="popup"></a></span></td>
+                            <td><span>R.Jones</span></td>
+                            <td><span>Catering</span></td>
+                            <td><span>RKM</span></td>
+                            <td><span>Staff</span></td>
+                        </tr>
+                    </table>
+                </div>    
+            </div>
+        </div>
+    </div>
+    <!-- END Admin Manage Accounts Page -->
+
+    <!-- Admin Create Staff -->
+    <div data-role="page" id="create-staff-acct">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Create New Staff User</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+            <form class="flex flex-col" id="new-staff-form">
+                <label for="email">Email * 
+                        <input type="email" name="email" id="email" data-param="email" data-required="true">
+                        <span class="err-msg" data-param="email"></span>
+                    </label>
+                <label for="password">Password *
+                        <input type="password" name="password" id="password" data-param="password" data-required="true">
+                        <span class="err-msg" data-param="password"></span>
+                    </label>
+                <label for="firstName">First Name *
+                    <input type="text" name="firstName" id="firstName" data-param="firstName" data-required="true">
+                        <span class="err-msg" data-param="firstName"></span>
+                    </label>
+                <label for="lastName">Last Name *
+                    <input type="text" name="lastName" id="lastName" data-param="lastName" data-required="true">
+                        <span class="err-msg" data-param="lastName"></span>
+                    </label>
+                <label for="phoneNo">Phone *
+                        <input type="text" name="phone" id="phoneNo" data-param="mobile" data-required="true">
+                        <span class="err-msg" data-param="mobile"></span>
+                    </label>
+
+                <label for="select-department">Department</label>
+                    <select name="select-department" id="select-department" data-mini="true"></select>
+
+                <label for="select-location">Location</label>
+                    <select name="select-location" id="select-location" data-mini="true"></select>
+                    
+                <label for="select-type">Account Type</label>
+                    <select name="select-type" id="select-type" data-mini="true"></select>
+
+                <button type="submit" class="ui-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- END Admin Create Staff-->
+
+    <!-- Admin Services Menu -->
+    <div data-role="page" id="admin-services-menu">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Services Menu</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">           
+
+            <!-- Admin New Service Popup -->
+            <div data-role="popup" id="popupNewService" data-theme="a" class="ui-corner-all">    
+                <form id="add-new-service">
+                    <div class="admin-new-service">
+                        <h3>New service:</h3>
+                        <label for="service-name">Service Name:</label>
+                        <input type="text" for="service-name" id="service-name">
+
+                        <label for="select-location">Location</label>
+                        <select data-native-menu="false" name="service_loc" data-mini="true" data-param="addServiceLocation" data-required="true">
+                            </select>
+
+                        <label for="select-services">Service Category:</label>
+                        <select data-native-menu="false" name="service-cat" data-mini="true" data-param="addServiceCategories" data-required="true">
+                            </select>
+
+                        <label for="send-SMS">Display to public?</label>
+                        <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
+                            <option value="off">No</option>
+                            <option value="on">Yes</option>
+                            </select>
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn">Save</button>
+                    </div>    
+                </form>
+            </div>
+              <!-- //Admin New Service Popup -->
+
+            <!-- Admin New Category Popup -->
+            <div data-role="popup" id="popupNewCategory" data-theme="a" class="ui-corner-all">    
+                <form id="add-new-category">
+                    <div class="admin-new-category">
+                        <h3>New Category:</h3>
+                        <input type="text" for="category-name" id="category-name" placeholder="Category Name">
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+                <!-- // Admin New Category Popup -->
+
+            <!-- Admin New Location Popup -->
+            <div data-role="popup" id="popupNewLocation" data-theme="a" class="ui-corner-all">
+                <form id="add-new-location">
+                    <div class="admin-new-location">
+                    <h3>New Location:</h3>
+                    <input type="text" for="location-name" id="location-name" placeholder="Location Name">
+                    <input type="text" for="location-name" id="location-name" placeholder="Location Abbreviation XXX">
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <button class="ui-btn">Save</button>
+                </div>
+                </form>
+            </div>
+                <!-- // Admin New Location Popup -->
+
+            <div>
+                <p><a href="#popupNewService" class="ui-btn" data-role="button" data-rel="popup">+ Service</a></p>
+                <p><a href="#popupNewCategory" class="ui-btn" data-role="button" data-rel="popup">+ Category</a></p>
+                <p><a href="#popupNewLocation" class="ui-btn" data-role="button" data-rel="popup">+ Location</a></p>
+            </div>
+
             <div><h3>Current Menu Data:</h3></div>
             <div class="services-table-container">
                 <table>
@@ -498,21 +728,23 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         <td><span>Category</span></td>
                         <td><span>Location</span></td>
                         <td><span>Display</span></td>
+                        <td><span>Delete</span></td>
                     </tr>
                     <tr>
                         <td><span>Hair Colour</span></td>
-                        <td><span>Hairdressing</span></td>
-                        <td><span>Rockhampton</span></td>
+                        <td><span>Hair</span></td>
+                        <td><span>RKM</span></td>
                         <td><span><select name="service-displayed" id="service-displayed" data-role="flipswitch" data-mini="true">
                             <option value="off">Off</option>
                             <option value="on">On</option>
                             </select></span></td>
+                        <td><span><a href="#" class="ui-icon-delete" data-role="button" data-icon="delete" data-iconpos="notext"></a></span></td>
                     </tr>
                 </table>
-
+            </div>
         </div>
     </div>
-    <!-- END Services Menu-->
+    <!-- END Admin Services Menu-->    
 
 
     <script src="cordova.js"></script>

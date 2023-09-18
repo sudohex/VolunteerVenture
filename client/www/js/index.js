@@ -205,7 +205,10 @@ function onDeviceReady() {
     //SET value to it
     $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+        $("#search-form").submit();
+        console.log("Going to submit");
     });
+
 
     $("#btn-forgotpwd,#btn-forgotpwd-staff").on("click", function(e) {
         e.preventDefault();
@@ -512,7 +515,7 @@ function onDeviceReady() {
         var formId = "update-profile-form";
         // 1. Validate form finally before submission
         var isValidForm = finalFormValidation(formId);
-    
+
         // 2. Collect data from the form
         const formData = {
             firstName: $("#update-firstName").val(),
@@ -522,7 +525,7 @@ function onDeviceReady() {
             preferred_locations: [$("#update-locations").val()], // Wrap single value inside an array
             preferred_channels: $("#update-select-consent").val()
         };
-    
+
         //3.Loggedin User Id
         const authDetails = getUser();
         // 4. Proceed to send the POST request 
@@ -556,7 +559,7 @@ function onDeviceReady() {
             }, 1000);
         }
     }); //END of update volunteer account
-    
+
 
     function managePageActive(currentPage = '') {
 
@@ -580,8 +583,32 @@ function onDeviceReady() {
 
         // Search form submission
         $("#search-form").on("submit", function(e) {
+
             e.preventDefault();
+
+
+            const dateRange = $("input[name='date-range']").val();
+            var dateRangeString = "";
+            if (dateRange.trim() === '') {
+                console.log('The dateRange is empty.'); //keep calm
+            } else {
+                // Split the dateRange string into start and end date parts
+                const [startDateStr, endDateStr] = dateRange.split(' - ');
+
+                // Convert the start and end dates to the desired format
+                const formattedStartDate = "startDate=" + startDateStr.split('/').reverse().join('-');
+                const formattedEndDate = "endDate=" + endDateStr.split('/').reverse().join('-');
+
+                // Create the final string
+                dateRangeString = formattedStartDate + "&" + formattedEndDate;
+
+                console.log(dateRangeString);
+            }
+
             var query = $("#searchForCollapsibleSet").val();
+            if (dateRangeString != '') {
+                query = query + "/date?" + dateRangeString;
+            }
             fetchServices(query);
         });
 
@@ -609,28 +636,35 @@ function onDeviceReady() {
 
         // Function to render services in the collapsible set
         function renderServices(services) {
+
             var $collapsibleSet = $("#collapsiblesetForFilter");
             $collapsibleSet.empty(); // Clear existing services
 
             services.forEach(service => {
 
-                console.log(service);
                 // Convert locations array into a user-friendly list
-                let locationDisplay = service.location?.locationName; //NEW-CHANGE-MAHAMMAD
+                let locationDisplay = service.location ? "<li><p><strong>Location: </strong>" + service.location.locationName + " </p></li>" : "<p><strong>Location: N/A</strong></p>";
+                //NEW-CHANGE-MAHAMMAD
                 //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
 
                 // Category presentation
-                //let categoryDisplay = service.category ? `<p><strong>Category:</strong> ${service.category.categoryName}</p>` : '';
+                let categoryDisplay = service.category ? `<p><strong>Category: </strong> ${service.category.categoryName}</p>` : "<p><strong>Category: N/A</strong></p>";
 
-                let categoryDisplay = service.category?.categoryName; //NEW-CHANGE-MAHAMMAD
+                //let categoryDisplay = service.category ? .categoryName; //NEW-CHANGE-MAHAMMAD
+                //let categoryDisplay = "";
+
                 var serviceCollapsible = `
         <div data-role="collapsible">
-            <h3>${service.serviceName}<p>${formatDateTime(service.expireDate,false)}</p></h3>
-            <p>${service.description}</p>
-            
+            <h3>
+            ${service.serviceName}
+            <p class="expirydate">${formatDateTime(service.expireDate,false)}</p>
+            </h3>
+            <p class="service-description">
+            ${service.description}
+            </p>
             <ul>
-            <li>Category: ${categoryDisplay}</li>
-            <li>Location: ${locationDisplay}</li>
+            <li>${categoryDisplay}</li>
+            ${locationDisplay}
             </ul>
         </div>
     `;
@@ -813,12 +847,14 @@ function onDeviceReady() {
             success: function(response) {
                 var myNotifications = "";
                 console.log(response);
-                if (response && response.length > 0) {
+                // console.log(response.firstName);
+                // console.log(response.notifications);
+                if (response.notifications && response.notifications.length > 0) {
 
                     response.notifications.forEach((item) => {
                         var notifSubject = item.subject;
                         var notifMessage = item.message;
-                        var notifSentBy = item.createdBy;
+                        var notifSentBy = "CQU Staff"; // item.createdBy;
                         var notifSentOn = formatDateTime(item.dateSent);
                         var notifSentThrough = item.channelType;
                         myNotifications += '<div class="each-notification">' +

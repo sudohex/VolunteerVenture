@@ -59,14 +59,12 @@ const volunteerSchema = new mongoose.Schema({
         type: String,
         enum: ['SMS', 'EMAIL', 'PUSH']
     }],
-    notifications: [
-        {
-            subject: String,
-            message: String,
-            serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
-            sentOn: Date,
-        }
-    ]
+    notifications: [{
+        subject: String,
+        message: String,
+        serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
+        sentOn: Date,
+    }]
 
 }, options);
 

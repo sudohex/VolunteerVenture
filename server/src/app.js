@@ -6,14 +6,16 @@ const cors = require("cors");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
-const { Category
-    , Department
-    , Location
-    , Notification
-    , Service
-    , Staff
-    , User
-    , Volunteer } = require('./models/models');
+const {
+    Category,
+    Department,
+    Location,
+    Notification,
+    Service,
+    Staff,
+    User,
+    Volunteer
+} = require('./models/models');
 const { validateRequestBody, hashPassword, generateToken, sendError, comparePassword } = require('./utils/helper'); // Import the hashPassword function
 const auth = require('./middlware/auth')
 
@@ -30,19 +32,17 @@ app.use(bodyParser.json()); // Parses incoming request bodies
 connectDB();
 app.use(express.json());
 
-const addDefaultAdmin = async () => {
+const addDefaultAdmin = async() => {
     const defaultAdminEmail = "admin@cqu.com";
     const defaultAdminPassword = "adminadmin";
 
     try {
-        await User.findOneAndUpdate(
-            { email: defaultAdminEmail }, // find a document with this filter
+        await User.findOneAndUpdate({ email: defaultAdminEmail }, // find a document with this filter
             {
                 email: defaultAdminEmail,
                 password: await hashPassword(defaultAdminPassword),
                 acctType: "admin"
-            },
-            {
+            }, {
                 upsert: true, // if not exist, create it
                 new: true, // return the updated document
                 setDefaultsOnInsert: true // use the model's default values if set
@@ -57,7 +57,7 @@ const addDefaultAdmin = async () => {
 addDefaultAdmin();
 
 /** Functions for handling requests */
-const signup = async (req, res) => {
+const signup = async(req, res) => {
     const requiredFields = ['email', 'password', 'firstName', 'lastName', 'phone', 'preferred_categories', 'preferred_locations', 'preferred_channels'];
     const validation = validateRequestBody(req.body, requiredFields);
 
@@ -117,7 +117,7 @@ const signup = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const login = async (req, res) => {
+const login = async(req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -138,7 +138,7 @@ const login = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const getVolunteerProfile = async (req, res) => {
+const getVolunteerProfile = async(req, res) => {
     try {
         const user = await User.findById(req.userId).select('-password');
         if (!user || user.acctType !== 'volunteer') {
@@ -147,8 +147,8 @@ const getVolunteerProfile = async (req, res) => {
 
         // Fetch volunteer data from the Volunteer model
         const volunteerData = await Volunteer.findById(req.userId)
-            .populate('preferred_categories')  // Assuming you want detailed category info
-            .populate('preferred_locations');  // Assuming you want detailed location info
+            .populate('preferred_categories') // Assuming you want detailed category info
+            .populate('preferred_locations'); // Assuming you want detailed location info
 
         if (!volunteerData) {
             return sendError(res, 404, 'Volunteer data not found');
@@ -156,9 +156,9 @@ const getVolunteerProfile = async (req, res) => {
 
         // Combine user and volunteer data
         const combinedData = {
-            ...user._doc,  // Spread user data
-            ...volunteerData._doc,  // Spread volunteer data
-            password: undefined  // Ensure password is not included
+            ...user._doc, // Spread user data
+            ...volunteerData._doc, // Spread volunteer data
+            password: undefined // Ensure password is not included
         };
 
         res.json(combinedData);
@@ -166,7 +166,7 @@ const getVolunteerProfile = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const updateVolunteerProfile = async (req, res) => {
+const updateVolunteerProfile = async(req, res) => {
     const requiredFields = ['firstName', 'lastName', 'phone', 'preferred_categories', 'preferred_locations', 'preferred_channels'];
     const validation = validateRequestBody(req.body, requiredFields);
 
@@ -212,7 +212,7 @@ const updateVolunteerProfile = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const addCategory = async (req, res) => {
+const addCategory = async(req, res) => {
     if (req.authType !== 'admin') {
         return sendError(res, 403, 'Only admins can add categories');
     }
@@ -236,7 +236,7 @@ const addCategory = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const getAllCategories = async (req, res) => {
+const getAllCategories = async(req, res) => {
     try {
         const categories = await Category.find();
         res.json(categories);
@@ -244,7 +244,7 @@ const getAllCategories = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const addLocation = async (req, res) => {
+const addLocation = async(req, res) => {
     if (req.authType !== 'admin') {
         return sendError(res, 403, 'Only admins can add locations');
     }
@@ -268,7 +268,7 @@ const addLocation = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const getAllLocations = async (req, res) => {
+const getAllLocations = async(req, res) => {
     try {
         const locations = await Location.find();
         res.json(locations);
@@ -276,7 +276,7 @@ const getAllLocations = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const addDepartment = async (req, res) => {
+const addDepartment = async(req, res) => {
     if (req.authType !== 'admin') {
         return sendError(res, 403, 'Only admins can add departments');
     }
@@ -300,7 +300,7 @@ const addDepartment = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const getAllDepartments = async (req, res) => {
+const getAllDepartments = async(req, res) => {
     try {
         const departments = await Department.find();
         res.json(departments);
@@ -308,7 +308,7 @@ const getAllDepartments = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const addStaff = async (req, res) => {
+const addStaff = async(req, res) => {
     if (req.authType !== 'admin') {
         return sendError(res, 403, 'Only admins can add staff members');
     }
@@ -353,7 +353,7 @@ const addStaff = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const getAllStaff = async (req, res) => {
+const getAllStaff = async(req, res) => {
     try {
         const staffMembers = await Staff.find()
             .populate('department')
@@ -363,7 +363,7 @@ const getAllStaff = async (req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
-const addService = async (req, res) => {
+const addService = async(req, res) => {
     if (req.authType !== 'staff') {
         return sendError(res, 403, 'Only staff members can add services');
     }
@@ -397,13 +397,10 @@ const addService = async (req, res) => {
         };
 
         // Add the notification to all matching volunteers in a single operation
-        await Volunteer.updateMany(
-            {
-                preferred_categories: { $in: [category] },
-                preferred_locations: { $in: [location] }
-            },
-            { $push: { notifications: notification } }
-        );
+        await Volunteer.updateMany({
+            preferred_categories: { $in: [category] },
+            preferred_locations: { $in: [location] }
+        }, { $push: { notifications: notification } });
 
         res.status(201).json(service);
     } catch (err) {
@@ -411,7 +408,7 @@ const addService = async (req, res) => {
     }
 };
 
-const getService = async (req, res) => {
+const getService = async(req, res) => {
     let conditions = [];
     if (req.query.q) {
         const query = new RegExp(req.query.q, 'i');
@@ -437,7 +434,7 @@ const getService = async (req, res) => {
         }
     } else if (req.authType === "volunteer") {
         try {
-            const services = await Service.find({ ...baseQuery, status: "online" })
+            const services = await Service.find({...baseQuery, status: "online" })
                 .populate('category', 'categoryName')
                 .populate('location', 'locationName');
 
@@ -448,7 +445,7 @@ const getService = async (req, res) => {
     }
 };
 
-const getServiceById = async (req, res) => {
+const getServiceById = async(req, res) => {
     try {
         const service = await Service.findById(req.params.id)
             .populate('category', 'categoryName')
@@ -465,7 +462,7 @@ const getServiceById = async (req, res) => {
 };
 
 
-const getServiceByDateRange = async (req, res) => {
+const getServiceByDateRange = async(req, res) => {
     const startDate = req.query.startDate ? new Date(req.query.startDate) : {};
     const endDate = req.query.endDate ? new Date(req.query.endDate) : {};
 
@@ -498,7 +495,7 @@ const getServiceByDateRange = async (req, res) => {
         }
     } else if (req.authType === "volunteer") {
         try {
-            const services = await Service.find({ ...dateConditions, status: "online" })
+            const services = await Service.find({...dateConditions, status: "online" })
                 .populate('category', 'categoryName')
                 .populate('location', 'locationName');
 
@@ -508,7 +505,7 @@ const getServiceByDateRange = async (req, res) => {
         }
     }
 };
-const getAllVolunteers = async (req, res) => {
+const getAllVolunteers = async(req, res) => {
     if (req.authType !== 'admin') {
         sendError(res, 403, 'Only admins can view volunteers');
     } else {
@@ -545,4 +542,3 @@ app.get('/volunteer', auth, getAllVolunteers);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-

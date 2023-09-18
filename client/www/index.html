@@ -369,7 +369,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
         <div class="my-table-container" id="volunteer-list-container">
 
-
+            <!--ADDED WITH JS-->
 
 
         </div>
@@ -383,7 +383,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <footer data-role="footer" data-position="fixed" id="foort">
             <div data-role="navbar">
                 <!-- I want to work on this make icon to the left-->
-                <a href="#" onclick="toCreateMessage()" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send Message to selected popupLoginStaff</a>
+                <a href="#" onclick="toCreateMessage()" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send Message</a>
             </div>
         </footer>
     </div>
@@ -449,7 +449,9 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <ul data-role="listview">
                     <li>
                         <!-- I want to work on this make icon to the left-->
-                        <a href="#volunteer-list-page" id="tab-notification-page" data-icon="navigation" data-iconpos="left" data-iconshadow="true">Send MSG to new list</a>
+                        <a href="#volunteer-list-page" id="tab-notification-page" data-icon="navigation" class="text-center" data-iconpos="left" data-iconshadow="true">
+                            Send New Notification
+                        </a>
                 </ul>
             </div>
         </footer>
@@ -470,53 +472,48 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="main" class="ui-content staff-notif">
             <h3>Add new service opportunity:</h3>
             <form id="add-new-service">
+
                 <label for="service-name">Service Name:</label>
                 <input type="text" for="service-name" id="service-name">
-
                 <label for="select-location">Location</label>
-                <select data-native-menu="false" name="service_loc" data-mini="true" data-param="addServiceLocation" data-required="true">
+                <!-- name="service_loc" -->
+                <select data-native-menu="false" id="sm-location" name="preferred_locations" data-mini="true" data-param="prefLocation" data-required="true">
                     </select>
-
+                <span class="err-msg" data-param="prefLocation"></span>
                 <label for="select-services">Service Category:</label>
-                <select data-native-menu="false" name="service-cat" data-mini="true" data-param="addServiceCategories" data-required="true">
+                <!-- name="service-cat" -->
+                <select data-native-menu="false" id="sm-category" name="preferred_categories" data-mini="true" data-param="prefServiceCategories" data-required="true">
                     </select>
-
+                <span class="err-msg" data-param="prefServiceCategories"></span>
+                <label for="sm-description">Description</label>
+                <textarea name="sm-description" id="sm-description" data-param="serviceDescription" data-required="true" placeholder="Briefly about this service"></textarea>
+                <span class="err-msg" data-param="serviceDescription"></span>
+                <label for="sm-expiry-date">Valid till date</label>
+                <input type="text" name="sm-expiry-date" id="sm-expiry-date" data-param="serviceExpiryDate" data-required="true" />
+                <span class="err-msg" data-param="serviceExpiryDate"></span>
                 <label for="send-SMS">Display to public?</label>
-                <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
-                    <option value="off">No</option>
-                    <option value="on">Yes</option>
+                <select name="send-SMS" id="choose-online-offline" data-role="flipswitch" data-mini="true">
+                    <option value="offline">No</option>
+                    <option value="online">Yes</option>
                     </select>
             </form>
-            <a href="#" data-role="button" class="ui-btn">Save</a>
+            <a href="#" data-role="button" class="ui-btn" id="submit-new-service" data-id="add-new-service">Save</a>
         </div>
         <div>
-            <div><h3>Current Menu Data:</h3></div>
-            <div class="services-table-container">
-                <table>
-                    <tr class="headers">
-                        <td><span>Service</span></td>
-                        <td><span>Category</span></td>
-                        <td><span>Location</span></td>
-                        <td><span>Display</span></td>
-                    </tr>
-                    <tr>
-                        <td><span>Hair Colour</span></td>
-                        <td><span>Hairdressing</span></td>
-                        <td><span>Rockhampton</span></td>
-                        <td><span><select name="service-displayed" id="service-displayed" data-role="flipswitch" data-mini="true">
-                            <option value="off">Off</option>
-                            <option value="on">On</option>
-                            </select></span></td>
-                    </tr>
-                </table>
+            <div>
+                <h3 class="text-center">All Services:</h3>
+                <!-- Current Menu Data-->
+            </div>
+            <div class="services-table-container" id="staff-services-table-container">
+                <!--ADDED WITH JS renderStaffServices-->
 
+            </div>
         </div>
-    </div>
-    <!-- END Services Menu-->
+        <!-- END Services Menu-->
 
 
-    <script src="cordova.js"></script>
-    <script src="js/index.js"></script>
+        <script src="cordova.js"></script>
+        <script src="js/index.js"></script>
 </body>
 
 </html>

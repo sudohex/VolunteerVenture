@@ -333,6 +333,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <div data-role="page" id="staff-home-page">
         <div data-role="header" data-position="fixed">
             <h1>Staff Home</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div data-role="main" class="ui-content">
             <a href="#volunteer-list-page" data-role="button" class="ui-btn">Access Volunteer List</a>
@@ -347,6 +352,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Volunteers List</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div class="filter-container">
             <form id="filter-volunteers">
@@ -435,6 +445,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Sent Notifications</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div>
             <div data-role="main" class="ui-content staff-notif">
@@ -461,10 +476,15 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Sent Notifications-->
 
     <!-- Staff Services Menu -->
-    <div data-role="page" id="services-menu">
+    <div data-role="page" id="manage-services-menu">
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Services Menu</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
         </div>
         <div data-role="main" class="ui-content staff-notif">
             <h3>Add new service opportunity:</h3>
@@ -486,10 +506,30 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <option value="on">Yes</option>
                     </select>
             </form>
-            <a href="#" data-role="button" class="ui-btn">Save</a>
+            <a href="#" data-role="button" class="ui-btn">Add now</a>
+            
         </div>
         <div>
-            <!-- TODO NEED TO ADD SERVICES LIST TABLE HERE -->
+            <div><h3>Current Menu Data:</h3></div>
+            <div class="services-table-container">
+                <table>
+                    <tr class="headers">
+                        <td><span>Service</span></td>
+                        <td><span>Category</span></td>
+                        <td><span>Location</span></td>
+                        <td><span>Display</span></td>
+                    </tr>
+                    <tr>
+                        <td><span>Hair Colour</span></td>
+                        <td><span>Hairdressing</span></td>
+                        <td><span>Rockhampton</span></td>
+                        <td><span><select name="service-displayed" id="service-displayed" data-role="flipswitch" data-mini="true">
+                            <option value="off">Off</option>
+                            <option value="on">On</option>
+                            </select></span></td>
+                    </tr>
+                </table>
+
         </div>
     </div>
     <!-- END Services Menu-->

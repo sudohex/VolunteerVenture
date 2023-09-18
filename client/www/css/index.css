@@ -30,11 +30,18 @@
         color: white;
     }
     
-    .my-table-container {
+    .my-table-container,
+    #staff-services-table-container {
         max-width: 100%;
         overflow-x: auto;
         margin-top: 20px;
         /* Enable horizontal scrolling */
+    }
+    
+    #tab-notification-page {
+        height: 100%;
+        width: 100%;
+        text-align: center !important;
     }
     
     .volunteer-list-page {

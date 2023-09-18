@@ -10,6 +10,8 @@ var masterData = [{
         prefLocation: "Please select a location.",
         prefServiceCategories: "Please select atleast one option",
         notifPref: "Please select atleast one option.",
+        serviceDescription: "Please write atleast 10 characters.",
+        serviceExpiryDate: "Please select an expiry date."
     },
 }, ];
 
@@ -26,6 +28,8 @@ var apiEndPoints = {
     volunteers: "volunteer", //GET
     forgotPassword: "", // TO-DO add url
     filterVolunteers: "",
+    staffProfile: "staff",
+    addService: "service",
 
     //TO-DO Need to define all the endpoints
 };
@@ -122,7 +126,19 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
             } else { //Empty or null
                 return false;
             }
+        case "serviceDescription":
+            if (inputValue.length < 10) {
 
+                return false;
+            } else {
+                return true;
+            }
+        case "serviceExpiryDate":
+            if (inputValue != '') {
+                return true;
+            } else {
+                return false;
+            }
         default:
             console.log("Invalid input type");
             return false; // Invalid input type
@@ -208,6 +224,7 @@ $(document).ready(onDeviceReady)
 
 function onDeviceReady() {
 
+    /* -->DATERANGE PICKER PLUGIN */
     //Initiate Daterangepicker plugin
     $('input[name="date-range"]').daterangepicker({
 
@@ -218,13 +235,22 @@ function onDeviceReady() {
         }
 
     });
+
+    //Service expiry date selection
+    $('#sm-expiry-date').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true
+    }, function(start, end, label) {
+        $(this).val(start.format('DD/MM/YYYY'));
+    });
+
     //SET value to it
     $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
         $("#search-form").submit();
         console.log("Going to submit");
     });
-
+    /*  DATERANGE PICKER PLUGIN -->> */
 
 
 
@@ -265,8 +291,6 @@ function onDeviceReady() {
             //     scrollTop: $("#" + formId).offset().top,
             // }, 1000);
         }
-
-
     });
 
 
@@ -444,6 +468,10 @@ function onDeviceReady() {
 
         fetchVolunteers(); //API-NOT-READY
 
+        $("#filter-volunteers select[name='preferred_categories'],#filter-volunteers select[name='preferred_locations']").on("change", function() {
+            fetchVolunteersByFilter($("#filter-volunteers select[name='preferred_categories']").val(), $("#filter-volunteers select[name='preferred_locations']").val());
+        })
+
 
     }); //END of volunteers page prerequisites loading
 
@@ -596,6 +624,136 @@ function onDeviceReady() {
         }
 
     }
+
+    //staff services menu
+    $(document).on("pagecreate", "#manage-services-menu", function() {
+
+        //Only logged in user can see this page 
+        checkAuthentication();
+
+        //1.Fetch and populate locations
+        fetchLocations();
+        //2.Fetch and populate categories
+        fetchAllServices();
+        //3.Fetch and render services in staff page
+        fetchServices("", true); //query,true for staff/admin
+
+    })
+
+    // Function to fetch services based on query
+    function fetchServices(query = "", isStaffServicesMenu = false) {
+        const authDetails = getUser(); //1.Token and Id will be returned
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.services + `${query}`,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(services) {
+                //console.log(services);
+                if (isStaffServicesMenu) {
+                    renderStaffServices(services); //for staff page
+                } else {
+                    renderServices(services);
+                }
+            },
+            error: function(error) {
+                alert("Error fetching services:", readAPIError(error));
+                console.error(error);
+            }
+        });
+    }
+
+
+
+    function renderStaffServices(services) {
+
+
+        var staffServicesHtml = "";
+        staffServicesHtml = staffServicesHtml + '<table>' +
+            '<tr class="headers">' +
+            '<td><span>Service</span></td>' +
+            '<td><span>Category</span></td>' +
+            '<td><span>Location</span></td>' +
+            '<td><span>Display</span></td>' +
+            '</tr>';
+
+        services.forEach((service, index) => {
+            staffServicesHtml = staffServicesHtml + '<tr>' +
+                '<td><span>' + service.serviceName + '</span></td>' +
+                '<td><span>' + (service.category != undefined ? service.category.categoryName : "N/A") + '</span></td>' +
+                '<td><span>' + (service.location != undefined ? service.location.locationName : "N/A") + '</span></td>' +
+                '<td><span><select name="service-displayed" onclick="alert()" data-service="' + service.serviceName + '" data-id="' + service._id + '" data-role="flipswitch" data-mini="true">' +
+                '<option value="off">Off</option>' +
+                '<option value="on"' + (service.status === "online" ? "selected=true" : "selected=false") + '>On</option>' +
+                '</select></span></td>' +
+                '</tr>';
+            // console.log(staffServicesHtml);
+        });
+
+        staffServicesHtml = staffServicesHtml + '</table>';
+        $("#staff-services-table-container").html(staffServicesHtml);
+        $("select[name='service-displayed']").flipswitch();
+        $("select[name='service-displayed']").on("change", function() {
+            flipswitchChange($(this)); //console.log("switchch");
+        })
+
+    }
+
+
+    function flipswitchChange(changedElem) {
+
+        var serviceId = changedElem.data("id");
+        var serviceName = changedElem.data("service");
+        var isOnlineOffline = changedElem.val() == 'on' ? "online" : "offline";
+        console.log(serviceId, isOnlineOffline);
+        alert("Service->" + serviceName + " change status to " + isOnlineOffline + " :: PEDNING API");
+
+    }
+
+    // Function to render services in the collapsible set
+    function renderServices(services) {
+
+        var $collapsibleSet = $("#collapsiblesetForFilter");
+        $collapsibleSet.empty(); // Clear existing services
+
+        services.forEach(service => {
+
+            // Convert locations array into a user-friendly list
+            let locationDisplay = service.location ? "<li><p><strong>Location: </strong>" + service.location.locationName + " </p></li>" : "<p><strong>Location: N/A</strong></p>";
+            //NEW-CHANGE-MAHAMMAD
+            //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
+
+            // Category presentation
+            let categoryDisplay = service.category ? `<p><strong>Category: </strong> ${service.category.categoryName}</p>` : "<p><strong>Category: N/A</strong></p>";
+
+            //let categoryDisplay = service.category ? .categoryName; //NEW-CHANGE-MAHAMMAD
+            //let categoryDisplay = "";
+
+            var serviceCollapsible = `
+    <div data-role="collapsible">
+        <h3>
+        ${service.serviceName}
+        <p class="expirydate">${formatDateTime(service.expireDate,false)}</p>
+        </h3>
+        <p class="service-description">
+        ${service.description}
+        </p>
+        <ul>
+        <li>${categoryDisplay}</li>
+        ${locationDisplay}
+        </ul>
+    </div>
+`;
+            $collapsibleSet.append(serviceCollapsible);
+        });
+
+        $collapsibleSet.collapsibleset("refresh");
+    }
+
     //Services
     $(document).on("pageshow", "#public-home", function() {
 
@@ -636,69 +794,9 @@ function onDeviceReady() {
             }
             fetchServices(query);
         });
-
-        // Function to fetch services based on query
-        function fetchServices(query = "") {
-            const authDetails = getUser(); //1.Token and Id will be returned
-
-            $.ajax({
-                type: 'GET',
-                url: baseURL + apiEndPoints.services + `${query}`,
-                dataType: 'json',
-                headers: {
-                    'Authorization': 'Bearer ' + authDetails.token,
-                    'x-auth-token': authDetails.token
-                },
-                success: function(services) {
-                    console.log(services);
-                    renderServices(services);
-                },
-                error: function(error) {
-                    console.error("Error fetching services:", error);
-                }
-            });
-        }
-
-        // Function to render services in the collapsible set
-        function renderServices(services) {
-
-            var $collapsibleSet = $("#collapsiblesetForFilter");
-            $collapsibleSet.empty(); // Clear existing services
-
-            services.forEach(service => {
-
-                // Convert locations array into a user-friendly list
-                let locationDisplay = service.location ? "<li><p><strong>Location: </strong>" + service.location.locationName + " </p></li>" : "<p><strong>Location: N/A</strong></p>";
-                //NEW-CHANGE-MAHAMMAD
-                //let locationsList = service.locations.map(loc => `<li>${loc.locationName}</li>`).join('');
-
-                // Category presentation
-                let categoryDisplay = service.category ? `<p><strong>Category: </strong> ${service.category.categoryName}</p>` : "<p><strong>Category: N/A</strong></p>";
-
-                //let categoryDisplay = service.category ? .categoryName; //NEW-CHANGE-MAHAMMAD
-                //let categoryDisplay = "";
-
-                var serviceCollapsible = `
-        <div data-role="collapsible">
-            <h3>
-            ${service.serviceName}
-            <p class="expirydate">${formatDateTime(service.expireDate,false)}</p>
-            </h3>
-            <p class="service-description">
-            ${service.description}
-            </p>
-            <ul>
-            <li>${categoryDisplay}</li>
-            ${locationDisplay}
-            </ul>
-        </div>
-    `;
-                $collapsibleSet.append(serviceCollapsible);
-            });
-
-            $collapsibleSet.collapsibleset("refresh");
-        }
     });
+
+
     //Logout
     $(".signout-btn").click(function(e) {
         e.preventDefault();
@@ -743,10 +841,36 @@ function onDeviceReady() {
 
     })
 
+
+    $(document).on("pagecreate", "#staff-sent-notif", function() { //WAITING FOR API
+
+        const authDetails = getUser();
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.staffProfile,
+            //data: formData,//API-UPDATE:no longer needed
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(data) {
+
+                console.log(data);
+            },
+            error: function(errors) {
+                alert('Error: ' + readAPIError(errors));
+            }
+        });
+
+    });
+
     //Fetch Profile
     $(document).on("pagecreate", "#update-profile-page", function() {
 
         managePageActive("update-profile-page");
+
 
         //Only logged in user can see this page 
         checkAuthentication();
@@ -760,6 +884,61 @@ function onDeviceReady() {
 
 
     })
+
+
+
+
+
+
+
+    $("#submit-new-service").on('click', function() {
+        alert("LAKD");
+        var isValidForm = finalFormValidation($(this).data("id"));
+        const authDetails = getUser();
+        formData = {};
+        if (isValidForm) {
+
+            formData.serviceName = $("#service-name").val();
+            formData.category = $("#sm-category").val();
+            formData.location = $("#sm-location").val();
+            formData.description = $("#sm-description").val();
+            formData.expireDate = $("#sm-expiry-date").val();
+            formData.status = $("#choose-online-offline").val();
+            console.log(formData);
+            $.ajax({
+                type: 'POST',
+                url: baseURL + apiEndPoints.addService,
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                data: JSON.stringify(formData),
+                success: function(data) {
+                    console.log(data);
+                    if (data != undefined) {
+                        alert("Service added successfully!");
+
+                        jQuery.mobile.changePage("#manage-services-menu", {
+                            allowSamePageTransition: true,
+                            transition: 'none',
+                            reloadPage: true
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.log('Error signing up: ' + readAPIError(error));
+                }
+            });
+
+        } else {
+            console.log("Invalid form");
+        }
+
+    })
+
+
+
 
     //Loggedin User Info
 
@@ -833,7 +1012,7 @@ function onDeviceReady() {
     }
 
 
-    //AI
+
 
 
 
@@ -861,6 +1040,48 @@ function onDeviceReady() {
 
 
 
+    function fetchVolunteersByFilter(category = [], location = []) {
+
+        authDetails = getUser();
+        if (category !== null) {
+            category = category;
+        } else {
+            category = [];
+        }
+        if (location !== null) {
+            location = location;
+        } else {
+            location = [];
+        }
+        var formData = JSON.stringify({ category, location });
+
+        $.ajax({
+            type: 'POST',
+            url: baseURL + apiEndPoints.volunteers,
+            contentType: 'application/json',
+            data: formData,
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            contentType: 'application/json',
+            success: function(response) {
+
+                console.log(response);
+                var volunteers = response;
+                // Rearrange the volunteers data with location and category names
+                const rearrangedVolunteers = replaceIdsWithNames(volunteers, allLocations, allCategories);
+                //4.Handle resposne
+                renderVolunteers(rearrangedVolunteers);
+                bindCheckboxesAfterDomLoad(); //make sure all events binded to checkboxes
+            },
+            error: function(error) {
+                alert("Error fetching services:", readAPIError(error));
+                console.error(error);
+            }
+        });
+    }
+
 
     function fetchVolunteers() {
         authDetails = getUser();
@@ -884,7 +1105,8 @@ function onDeviceReady() {
                 bindCheckboxesAfterDomLoad(); //make sure all events binded to checkboxes
             },
             error: function(error) {
-                console.log('Error : ' + readAPIError(error));
+                alert("Error fetching services:", readAPIError(error));
+                console.error(error);
             }
         });
     }
@@ -894,6 +1116,7 @@ function onDeviceReady() {
     //Render volunteers list
 
     function renderVolunteers(volunteersList) {
+        console.log(volunteersList);
 
         var volunteersListHtml = "";
 
@@ -903,11 +1126,11 @@ function onDeviceReady() {
             '<td class="checkbox-holder"><span><input type="checkbox"  class="select-all"/></span></td>' +
             '<td><span>Name</span></td>' +
             '<td><span>Location</span></td>' +
-            '<td><span>Services</span></td>' +
+            '<td><span>Service Category</span></td>' +
             '<td><span>Email</span></td>' +
             '<td><span>SMS</span></td>' +
             '</tr>';
-        console.log(volunteersList);
+        // console.log(volunteersList);
         Object.keys(volunteersList).forEach((index) => {
             volunteer = volunteersList[index];
             var servicesHtml = volunteer.preferred_categories.map(function(category) {
@@ -965,7 +1188,7 @@ function onDeviceReady() {
                             '<p class = "notif-message">' + notifMessage + '</p>' +
                             '<span class = "sent-timedate">' +
                             '<span class = "material-symbols-sharp"> schedule</span>' +
-                            '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
+                            '<span class = "notif-datetime" >' + (notifSentOn == '' || notifSentOn == undefined ? "N/A" : "") + '</span>' +
                             '</span >' +
                             '<span class = "sent-by">' +
                             '<span class = "material-symbols-sharp">account_circle</span>' +
@@ -990,11 +1213,14 @@ function onDeviceReady() {
 } //END of OnDeviceReady
 
 
+
 //Fetch notifications sent to current user
 
 
 function readAPIError(error) {
+    console.log(error);
     errorMsg = error.responseJSON.errors[0].msg;
+    alert(errorMsg);
     return errorMsg;
 }
 

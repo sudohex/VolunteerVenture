@@ -510,33 +510,38 @@ function onDeviceReady() {
     }); //END of create volunteer account
 
 
-    //START of "update volunteer account"
     $("#update-profile-form").submit(function(event) {
-
         event.preventDefault();
         var formId = "update-profile-form";
         // 1. Validate form finally before submission
-        var isValidForm = true; //Bypass for demo//finalFormValidation(formId);
+        var isValidForm = finalFormValidation(formId);
+
         // 2. Collect data from the form
-        var formData = readFormData(formId);
+        const formData = {
+            firstName: $("#update-firstName").val(),
+            lastName: $("#update-lastName").val(),
+            phone: $("#update-phoneNo").val(),
+            preferred_categories: $("#update-select-services-menu").val(),
+            preferred_locations: [$("#update-locations").val()], // Wrap single value inside an array
+            preferred_channels: $("#update-select-consent").val()
+        };
+
         //3.Loggedin User Id
         const authDetails = getUser();
-        // const userId = volunteer.id;//no longer needed
         // 4. Proceed to send the POST request 
         console.log(formData);
         if (isValidForm) {
             $.ajax({
                 type: 'PUT',
-                url: baseURL + apiEndPoints.updateVlntrAccount, //userid no longer needed
-                data: formData,
+                url: baseURL + apiEndPoints.updateVlntrAccount,
+                data: JSON.stringify(formData), // Convert object to JSON string
                 headers: {
                     'Authorization': 'Bearer ' + authDetails.token,
                     'x-auth-token': authDetails.token
                 },
-                contentType: false, // Set contentType to false for FormData
-                processData: false,
+                contentType: 'application/json', // Specify content type as JSON
                 success: function(response) {
-                    //4.Handle resposne
+                    //4.Handle response
                     alert('Profile updated successfully');
                     $.mobile.changePage("#update-profile-page");
                 },
@@ -548,14 +553,12 @@ function onDeviceReady() {
                     }
                 }
             });
-
         } else {
             $("html, body").animate({
                 scrollTop: $("#" + formId).offset().top,
             }, 1000);
         }
     }); //END of update volunteer account
-
 
 
     function managePageActive(currentPage = '') {

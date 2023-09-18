@@ -35,7 +35,7 @@ const generateToken = (payload, expiresIn = 36000) => {
 };
 const verifyToken = (token) => {
     try {
-        return jwt.verify(token, "secret");
+        return jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
         throw new Error('Invalid token');
     }

@@ -147,8 +147,8 @@ const getVolunteerProfile = async(req, res) => {
 
         // Fetch volunteer data from the Volunteer model
         const volunteerData = await Volunteer.findById(req.userId)
-            .populate('preferred_categories') // Assuming you want detailed category info
-            .populate('preferred_locations'); // Assuming you want detailed location info
+            .populate('preferred_categories') 
+            .populate('preferred_locations'); 
 
         if (!volunteerData) {
             return sendError(res, 404, 'Volunteer data not found');
@@ -407,6 +407,21 @@ const addService = async(req, res) => {
         sendError(res, 500, 'Server error: ' + err);
     }
 };
+const getPreferredServicesForVolunteer = async (volunteerId) => {
+    const volunteerData = await Volunteer.findById(volunteerId);
+    if (!volunteerData) {
+        throw new Error('Volunteer data not found');
+    }
+
+    const preferredServices = await Service.find({
+        category: { $in: volunteerData.preferred_categories },
+        location: { $in: volunteerData.preferred_locations }
+    });
+
+    return preferredServices;
+}
+
+
 
 const getService = async(req, res) => {
     let conditions = [];
@@ -434,11 +449,19 @@ const getService = async(req, res) => {
         }
     } else if (req.authType === "volunteer") {
         try {
-            const services = await Service.find({...baseQuery, status: "online" })
-                .populate('category', 'categoryName')
-                .populate('location', 'locationName');
-
-            res.json(services);
+            // Get preferred services for the volunteer
+            const services = await getPreferredServicesForVolunteer(req.userId);
+    
+            // Now, filter out the ones that are not online and then populate necessary fields
+            const onlinePreferredServices = await Service.find({
+                _id: { $in: services.map(service => service._id) },
+                ...baseQuery,
+                status: "online"
+            })
+            .populate('category', 'categoryName')
+            .populate('location', 'locationName');
+    
+            res.json(onlinePreferredServices);
         } catch (err) {
             sendError(res, 500, 'Server error: ' + err);
         }

@@ -6,6 +6,14 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
+    <!-- Allow access to any origin -->
+<access origin="*" />
+<!-- Allow WebView navigation to any URL -->
+<allow-navigation href="*" />
+<!-- Open all external links in the system browser -->
+<allow-intent href="http://*/*" />
+<allow-intent href="https://*/*" />
+
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 </widget>

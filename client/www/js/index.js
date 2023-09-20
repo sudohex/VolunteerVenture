@@ -892,7 +892,6 @@ function onDeviceReady() {
 
 
     $("#submit-new-service").on('click', function() {
-        alert("LAKD");
         var isValidForm = finalFormValidation($(this).data("id"));
         const authDetails = getUser();
         formData = {};
@@ -901,7 +900,7 @@ function onDeviceReady() {
             formData.serviceName = $("#service-name").val();
             formData.category = $("#sm-category").val();
             formData.location = $("#sm-location").val();
-            formData.description = $("#sm-description").val();
+            formData.description = "10/12/2023" //$("#sm-description").val();
             formData.expireDate = $("#sm-expiry-date").val();
             formData.status = $("#choose-online-offline").val();
             console.log(formData);

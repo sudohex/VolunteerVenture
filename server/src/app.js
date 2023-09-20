@@ -505,6 +505,35 @@ const getServiceByDateRange = async(req, res) => {
         }
     }
 };
+
+const getFilteredVolunteers = async(req, res) => {
+
+    if (req.authType !== 'admin' && req.authType !== 'staff') {
+        sendError(res, 403, 'Only admins can view volunteers');
+
+    } else {
+        try {
+            const category = req.body.category;
+            const location = req.body.location;
+            const filteQuery = {};
+
+            if (category.length > 0) {
+                filteQuery.preferred_categories = { $in: category }
+            }
+
+            if (category.length > 0) {
+                filteQuery.preferred_locations = { $in: location }
+            }
+            const volunteers = await Volunteer.find(filteQuery);
+            res.status(200).json(volunteers);
+
+        } catch (err) {
+            sendError(res, 500, 'Server error: ' + err);
+        }
+    }
+
+};
+
 const getAllVolunteers = async(req, res) => {
     if (req.authType !== 'admin') {
         sendError(res, 403, 'Only admins can view volunteers');
@@ -536,7 +565,7 @@ app.get('/service/date', auth, getServiceByDateRange);
 app.get('/service/:id', auth, getServiceById);
 app.post('/service', auth, addService);
 app.get('/volunteer', auth, getAllVolunteers);
-
+app.post('/volunteer', auth, getFilteredVolunteers);
 
 
 const PORT = process.env.PORT || 3000;

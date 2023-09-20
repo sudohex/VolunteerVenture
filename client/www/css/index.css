@@ -219,15 +219,16 @@
     .bg-child:first-of-type {
         margin-right: 15px !important;
     }
-    
     /* Need to update icons */
+    
     .ui-btn-icon-top:after {
-        background-color: #fff !important;
+        /* background-color: #fff !important; */
+        /* TO SHOW THE ICONS ABOVE LINE MUST BE COMMENTED */
         /*background-image: url(./images/icons-36-black.png) !important;*/
     }
     
     footer ul.ui-listview a.active {
-        background-color: #C1D82F  !important;
+        background-color: #C1D82F !important;
     }
     /* Logout Button */
     
@@ -261,7 +262,7 @@
     }
     
     .signup-btn {
-        background-color: #6280A7  !important;
+        background-color: #6280A7 !important;
         margin-top: 10px !important;
         width: 160px !important;
     }
@@ -325,7 +326,7 @@
     .material-symbols-sharp {
         font-variation-settings: 'FILL' 0, 'wght' 0, 'GRAD' 0, 'opsz' NaN
     }
-
+    
     .cqu-image {
         display: flex;
         justify-content: center;

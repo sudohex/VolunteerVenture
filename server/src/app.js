@@ -477,6 +477,7 @@ const addService = async(req, res) => {
 };
 const getPreferredServicesForVolunteer = async(volunteerId) => {
     const volunteerData = await Volunteer.findById(volunteerId);
+
     if (!volunteerData) {
         throw new Error("Volunteer data not found");
     }

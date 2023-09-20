@@ -60,7 +60,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <!-- //Forgot password popup -->
             <div class="cqu-image">
                 <img src="..\css\img\cqulogo.png" alt="CQU Logo" width="300" height="200">
-                </div>
+            </div>
             <form id="signin-form">
                 <h3>Sign In</h3>
                 <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
@@ -109,7 +109,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 
             <div class="cqu-image">
                 <img src="..\css\img\cqulogo.png" alt="CQU Logo" width="300" height="200">
-                </div>
+            </div>
 
             <form id="signin-form-staff" data-user="STAFF">
                 <h3>Sign In - Staff</h3>
@@ -171,7 +171,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         <option value="">Select all that apply</option>
                         <option value="SMS">SMS</option>
                         <option value="EMAIL">Email</option>
-                        <option value="PUSH">Push</option>
+                        
                     </select>
                 <span class="err-msg" data-param="notifPref"></span>
                 <button type="submit" class="ui-btn">Submit</button>
@@ -306,7 +306,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <option value="">Select all that apply</option>
                     <option value="SMS">SMS</option>
                     <option value="EMAIL">Email</option>
-                    <option value="PUSH">Push</option>
+                    
         </select>
                 <span class="err-msg" data-param="notifPref"></span>
                 <div class="button-group">
@@ -504,42 +504,42 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
 
         <div id="staff-services-table-container"></div>
-    </div> 
-    <!-- END Staff services menu --> 
-                
-        <!-- Admin Home Page -->
-        <div data-role="page" id="admin-home-page">
-            <div data-role="header" data-position="fixed">
-                <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
-                <h1>Staff Home</h1>
-                <a href="#" class="ui-btn ui-btn-right signout-btn">
-                    <span class="material-symbols-sharp">
-            logout
-            </span>
-                </a>
-            </div>
-            <div data-role="main" class="ui-content">
-                <a href="#volunteer-list-page" data-role="button" class="ui-btn">Access Volunteer List</a>
-                <a href="#admin-services-menu" data-role="button" class="ui-btn">Edit Services Menu</a>
-                <a href="#staff-sent-notif" data-role="button" class="ui-btn">Sent Notifications</a>
-                <a href="#manage-user-accounts" data-role="button" class="ui-btn">Manage Accounts</a>
-                <!--THIS button is the only difference from Staff Home Page-->
-            </div>
-        </div>
-        <!-- END Admin Home Page -->
+    </div>
+    <!-- END Staff services menu -->
 
-        <!-- Admin Manage Accounts Page -->
-        <div data-role="page" id="manage-user-accounts">
-            <div data-role="header" data-position="fixed">
-                <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
-                <h1>Manage Accounts</h1>
-                <a href="#" class="ui-btn ui-btn-right signout-btn">
-                    <span class="material-symbols-sharp">
+    <!-- Admin Home Page -->
+    <div data-role="page" id="admin-home-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Staff Home</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
             logout
             </span>
-                </a>
-            </div>
-            <div data-role="main" class="ui-content">
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+            <a href="#volunteer-list-page" data-role="button" class="ui-btn">Access Volunteer List</a>
+            <a href="#admin-services-menu" data-role="button" class="ui-btn">Edit Services Menu</a>
+            <a href="#staff-sent-notif" data-role="button" class="ui-btn">Sent Notifications</a>
+            <a href="#manage-user-accounts" data-role="button" class="ui-btn">Manage Accounts</a>
+            <!--THIS button is the only difference from Staff Home Page-->
+        </div>
+    </div>
+    <!-- END Admin Home Page -->
+
+    <!-- Admin Manage Accounts Page -->
+    <div data-role="page" id="manage-user-accounts">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Manage Accounts</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+            logout
+            </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
 
             <!-- Admin Edit Staff Popup -->
             <div data-role="popup" id="popupEditStaff" data-theme="a" class="ui-corner-all">

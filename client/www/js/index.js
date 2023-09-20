@@ -15,7 +15,7 @@ var masterData = [{
     },
 }, ];
 
-var baseURL = "https://volunteerventureapi.onrender.com/";
+var baseURL = "http://localhost:3000/"; //https://volunteerventureapi.onrender.com/
 var apiEndPoints = {
     login: "login",
     createVlntrAccount: "signup",
@@ -653,7 +653,7 @@ function onDeviceReady() {
                 'x-auth-token': authDetails.token
             },
             success: function(services) {
-                //console.log(services);
+                console.log(services);
                 if (isStaffServicesMenu) {
                     renderStaffServices(services); //for staff page
                 } else {

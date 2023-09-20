@@ -1,4 +1,10 @@
     /* CUSTOM CSS WILL BE IN THIS FILE */
+    /* CQU Brand Colours to use: 
+    Navy #003768 
+    LightBlue #6280A7
+    Green #C1D82F 
+    Background Grey #F6F6F4
+    SubText Grey #7D7983 */
     
     .ui-select a.ui-btn,
     .ui-page {
@@ -119,13 +125,13 @@
     }
     
     h1.ui-title {
-        background: white !important;
+        color: #fff;
         font-size: 16px !important;
         text-shadow: none !important;
     }
     
     div.ui-header {
-        background: white !important;
+        background: #003768 !important;
     }
     /* Notifications list */
     
@@ -214,20 +220,22 @@
         margin-right: 15px !important;
     }
     
+    /* Need to update icons */
     .ui-btn-icon-top:after {
-        background-color: #29404d !important;
+        background-color: #fff !important;
+        /*background-image: url(./images/icons-36-black.png) !important;*/
     }
     
     footer ul.ui-listview a.active {
-        background-color: #29404d !important;
+        background-color: #C1D82F  !important;
     }
     /* Logout Button */
     
     .signout-btn {
-        background-color: #5d8195 !important;
+        background-color: #C1D82F !important;
         box-shadow: none !important;
         border: none !important;
-        color: white !important;
+        color: #003768 !important;
         text-shadow: none !important;
     }
     
@@ -236,7 +244,7 @@
     .signup-btn,
     .btn-cancel {
         width: 100px !important;
-        background: #29404d !important;
+        background: #003768 !important;
         /*#536eb6 !important; */
         /*Similar color from wireframes */
         text-shadow: none !important;
@@ -248,14 +256,12 @@
     }
     
     .btn-cancel {
-        background-color: #f43838 !important;
+        background-color: #C1D82F!important;
+        color: #003768 !important;
     }
     
     .signup-btn {
-        background-color: #5d8195 !important;
-    }
-    
-    .signup-btn {
+        background-color: #6280A7  !important;
         margin-top: 10px !important;
         width: 160px !important;
     }
@@ -287,7 +293,7 @@
     
     .submsg {
         font-size: 14px;
-        color: #929293;
+        color: #7D7983;
     }
     /* fallback */
     
@@ -318,4 +324,9 @@
     
     .material-symbols-sharp {
         font-variation-settings: 'FILL' 0, 'wght' 0, 'GRAD' 0, 'opsz' NaN
+    }
+
+    .cqu-image {
+        display: flex;
+        justify-content: center;
     }

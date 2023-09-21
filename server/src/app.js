@@ -7,21 +7,21 @@ const compression = require("compression");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const {
-  Category,
-  Department,
-  Location,
-  Notification,
-  Service,
-  Staff,
-  User,
-  Volunteer,
+    Category,
+    Department,
+    Location,
+    Notification,
+    Service,
+    Staff,
+    User,
+    Volunteer,
 } = require("./models/models");
 const {
-  validateRequestBody,
-  hashPassword,
-  generateToken,
-  sendError,
-  comparePassword,
+    validateRequestBody,
+    hashPassword,
+    generateToken,
+    sendError,
+    comparePassword,
 } = require("./utils/helper"); // Import the hashPassword function
 const auth = require("./middlware/auth");
 
@@ -38,786 +38,779 @@ app.use(bodyParser.json()); // Parses incoming request bodies
 connectDB();
 app.use(express.json());
 
-const addDefaultAdmin = async () => {
-  const defaultAdminEmail = "admin@cqu.com";
-  const defaultAdminPassword = "adminadmin";
+const addDefaultAdmin = async() => {
+    const defaultAdminEmail = "admin@cqu.com";
+    const defaultAdminPassword = "adminadmin";
 
-  try {
-    await User.findOneAndUpdate(
-      { email: defaultAdminEmail }, // find a document with this filter
-      {
-        email: defaultAdminEmail,
-        password: await hashPassword(defaultAdminPassword),
-        authType: "admin",
-      },
-      {
-        upsert: true, // if not exist, create it
-        new: true, // return the updated document
-        setDefaultsOnInsert: true, // use the model's default values if set
-      }
-    );
-  } catch (err) {
-    console.error("Error creating default admin:", err);
-  }
+    try {
+        await User.findOneAndUpdate({ email: defaultAdminEmail }, // find a document with this filter
+            {
+                email: defaultAdminEmail,
+                password: await hashPassword(defaultAdminPassword),
+                authType: "admin",
+            }, {
+                upsert: true, // if not exist, create it
+                new: true, // return the updated document
+                setDefaultsOnInsert: true, // use the model's default values if set
+            }
+        );
+    } catch (err) {
+        console.error("Error creating default admin:", err);
+    }
 };
 
 // Call the function to ensure the default admin is added/exists
 addDefaultAdmin();
 
 /** Functions for handling requests */
-const signup = async (req, res) => {
-  const requiredFields = [
-    "email",
-    "password",
-    "firstName",
-    "lastName",
-    "phone",
-    "preferred_categories",
-    "preferred_locations",
-    "preferred_channels",
-  ];
-  const validation = validateRequestBody(req.body, requiredFields);
+const signup = async(req, res) => {
+    const requiredFields = [
+        "email",
+        "password",
+        "firstName",
+        "lastName",
+        "phone",
+        "preferred_categories",
+        "preferred_locations",
+        "preferred_channels",
+    ];
+    const validation = validateRequestBody(req.body, requiredFields);
 
-  if (!validation.isValid) {
-    return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
-  }
-  const {
-    email,
-    password,
-    firstName,
-    lastName,
-    phone,
-    preferred_categories,
-    preferred_locations,
-    preferred_channels,
-  } = req.body;
+    if (!validation.isValid) {
+        return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
+    }
+    const {
+        email,
+        password,
+        firstName,
+        lastName,
+        phone,
+        preferred_categories,
+        preferred_locations,
+        preferred_channels,
+    } = req.body;
 
-  if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
-    return sendError(res, 400, "Invalid email format");
-  }
-
-  if (password.length < 6) {
-    return sendError(res, 400, "Password should be at least 6 characters long");
-  }
-  // Validate if the provided categories exist
-  const categories = await Category.find({
-    _id: { $in: preferred_categories },
-  });
-  if (categories.length !== preferred_categories.length) {
-    return sendError(res, 400, "Some categories are invalid");
-  }
-  // Validate if the provided locations exist
-  const locations = await Location.find({ _id: { $in: preferred_locations } });
-  if (locations.length !== preferred_locations.length) {
-    return sendError(res, 400, "Some locations are invalid");
-  }
-
-  try {
-    if (await User.findOne({ email })) {
-      return sendError(res, 400, "User already exists");
+    if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+        return sendError(res, 400, "Invalid email format");
     }
 
-    const user = new User({
-      email,
-      password: await hashPassword(password),
-      authType: "volunteer",
-      firstName,
-      lastName,
-      phone,
+    if (password.length < 6) {
+        return sendError(res, 400, "Password should be at least 6 characters long");
+    }
+    // Validate if the provided categories exist
+    const categories = await Category.find({
+        _id: { $in: preferred_categories },
     });
-
-    await user.save();
-
-    const volunteer = new Volunteer({
-      _id: user._id,
-      firstName,
-      lastName,
-      phone: phone,
-      preferred_categories,
-      preferred_locations,
-      preferred_channels,
-    });
-
-    await volunteer.save();
-
-    res.status(201).json({ msg: "User registered successfully" });
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const login = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user || !(await comparePassword(password, user.password))) {
-      return sendError(res, 400, "Invalid credentials");
+    if (categories.length !== preferred_categories.length) {
+        return sendError(res, 400, "Some categories are invalid");
+    }
+    // Validate if the provided locations exist
+    const locations = await Location.find({ _id: { $in: preferred_locations } });
+    if (locations.length !== preferred_locations.length) {
+        return sendError(res, 400, "Some locations are invalid");
     }
 
-    const token = generateToken({
-      user: {
-        id: user.id,
-        authType: user.authType,
-      },
-    });
+    try {
+        if (await User.findOne({ email })) {
+            return sendError(res, 400, "User already exists");
+        }
 
-    res.json({ token, user: { id: user.id, authType: user.authType } });
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
+        const user = new User({
+            email,
+            password: await hashPassword(password),
+            authType: "volunteer",
+            firstName,
+            lastName,
+            phone,
+        });
+
+        await user.save();
+
+        const volunteer = new Volunteer({
+            _id: user._id,
+            firstName,
+            lastName,
+            phone: phone,
+            preferred_categories,
+            preferred_locations,
+            preferred_channels,
+        });
+
+        await volunteer.save();
+
+        res.status(201).json({ msg: "User registered successfully" });
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
 };
-const getVolunteerProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.userId).select("-password");
-    if (!user || user.authType !== "volunteer") {
-      return sendError(res, 404, "User not found or not a volunteer");
+const login = async(req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user || !(await comparePassword(password, user.password))) {
+            return sendError(res, 400, "Invalid credentials");
+        }
+        const token = generateToken({
+            user: {
+                id: user.id,
+                acctType: user.acctType, //authType: user.authType
+            },
+        });
+        res.json({ token, user: { id: user.id, acctType: user.acctType } }); //authType: user.authType
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const getVolunteerProfile = async(req, res) => {
+    try {
+        const user = await User.findById(req.userId).select("-password");
+        if (!user || user.authType !== "volunteer") {
+            return sendError(res, 404, "User not found or not a volunteer");
+        }
+
+        // Fetch volunteer data from the Volunteer model
+        const volunteerData = await Volunteer.findById(req.userId)
+            .populate("preferred_categories")
+            .populate("preferred_locations");
+
+        if (!volunteerData) {
+            return sendError(res, 404, "Volunteer data not found");
+        }
+
+        // Combine user and volunteer data
+        const combinedData = {
+            ...user._doc, // Spread user data
+            ...volunteerData._doc, // Spread volunteer data
+            password: undefined, // Ensure password is not included
+        };
+
+        res.json(combinedData);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+
+const updateVolunteerProfile = async(req, res) => {
+    if (req.authType !== "volunteer") {
+        return res
+            .status(403)
+            .json({ error: "Only volunteers can update their profiles" });
     }
 
-    // Fetch volunteer data from the Volunteer model
-    const volunteerData = await Volunteer.findById(req.userId)
-      .populate("preferred_categories")
-      .populate("preferred_locations");
+    const volunteerId = req.userId;
+    try {
+        // Validation for categories and locations, if they are provided in the request
+        if (req.body.preferred_categories) {
+            const categories = await Category.find({
+                _id: { $in: req.body.preferred_categories },
+            });
+            if (categories.length !== req.body.preferred_categories.length) {
+                return res.status(400).json({ error: "Some categories are invalid" });
+            }
+        }
 
-    if (!volunteerData) {
-      return sendError(res, 404, "Volunteer data not found");
+        if (req.body.preferred_locations) {
+            const locations = await Location.find({
+                _id: { $in: req.body.preferred_locations },
+            });
+            if (locations.length !== req.body.preferred_locations.length) {
+                return res.status(400).json({ error: "Some locations are invalid" });
+            }
+        }
+
+        // Update the volunteer profile
+        const updatedVolunteer = await Volunteer.findByIdAndUpdate(
+            volunteerId,
+            req.body, { new: true, runValidators: true }
+        );
+
+        if (!updatedVolunteer) {
+            return res.status(404).json({ error: "Volunteer not found" });
+        }
+
+        res.status(200).json(updatedVolunteer);
+    } catch (err) {
+        res.status(500).json({ error: "Server error: " + err });
+    }
+};
+
+const addCategory = async(req, res) => {
+    if (req.authType !== "admin") {
+        return sendError(res, 403, "Only admins can add categories");
+    }
+    const { categoryName } = req.body;
+
+    if (!categoryName) {
+        return sendError(res, 400, "Category name is required");
     }
 
-    // Combine user and volunteer data
-    const combinedData = {
-      ...user._doc, // Spread user data
-      ...volunteerData._doc, // Spread volunteer data
-      password: undefined, // Ensure password is not included
-    };
+    try {
+        const existingCategory = await Category.findOne({ categoryName });
+        if (existingCategory) {
+            return sendError(res, 400, "Category already exists");
+        }
 
-    res.json(combinedData);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
+        const category = new Category({ categoryName });
+        await category.save();
+
+        res.status(201).json(category);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
 };
+const getAllCategories = async(req, res) => {
+    try {
+        const categories = await Category.find();
+        res.json(categories);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const addLocation = async(req, res) => {
+    if (req.authType !== "admin") {
+        return sendError(res, 403, "Only admins can add locations");
+    }
+    const { locationName } = req.body;
 
-const updateVolunteerProfile = async (req, res) => {
-  if (req.authType !== "volunteer") {
-    return res
-      .status(403)
-      .json({ error: "Only volunteers can update their profiles" });
-  }
-
-  const volunteerId = req.userId;
-  try {
-    // Validation for categories and locations, if they are provided in the request
-    if (req.body.preferred_categories) {
-      const categories = await Category.find({
-        _id: { $in: req.body.preferred_categories },
-      });
-      if (categories.length !== req.body.preferred_categories.length) {
-        return res.status(400).json({ error: "Some categories are invalid" });
-      }
+    if (!locationName) {
+        return sendError(res, 400, "Location name is required");
     }
 
-    if (req.body.preferred_locations) {
-      const locations = await Location.find({
-        _id: { $in: req.body.preferred_locations },
-      });
-      if (locations.length !== req.body.preferred_locations.length) {
-        return res.status(400).json({ error: "Some locations are invalid" });
-      }
+    try {
+        const existingLocation = await Location.findOne({ locationName });
+        if (existingLocation) {
+            return sendError(res, 400, "Location already exists");
+        }
+
+        const location = new Location({ locationName });
+        await location.save();
+
+        res.status(201).json(location);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const getAllLocations = async(req, res) => {
+    try {
+        const locations = await Location.find();
+        res.json(locations);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const addDepartment = async(req, res) => {
+    if (req.authType !== "admin") {
+        return sendError(res, 403, "Only admins can add departments");
+    }
+    const { departmentName } = req.body;
+
+    if (!departmentName) {
+        return sendError(res, 400, "Department name is required");
     }
 
-    // Update the volunteer profile
-    const updatedVolunteer = await Volunteer.findByIdAndUpdate(
-      volunteerId,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    try {
+        const existingDepartment = await Department.findOne({ departmentName });
+        if (existingDepartment) {
+            return sendError(res, 400, "Department already exists");
+        }
 
-    if (!updatedVolunteer) {
-      return res.status(404).json({ error: "Volunteer not found" });
+        const department = new Department({ departmentName });
+        await department.save();
+
+        res.status(201).json(department);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const getAllDepartments = async(req, res) => {
+    try {
+        const departments = await Department.find();
+        res.json(departments);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const addStaff = async(req, res) => {
+    if (req.authType !== "admin") {
+        return sendError(res, 403, "Only admins can add staff members");
+    }
+    const requiredFields = [
+        "email",
+        "password",
+        "department",
+        "location",
+        "firstName",
+        "lastName",
+        "phoneNo",
+    ];
+    const validation = validateRequestBody(req.body, requiredFields);
+    if (!validation.isValid) {
+        return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
     }
 
-    res.status(200).json(updatedVolunteer);
-  } catch (err) {
-    res.status(500).json({ error: "Server error: " + err });
-  }
+    const {
+        email,
+        password,
+        department,
+        location,
+        firstName,
+        lastName,
+        phoneNo,
+    } = req.body;
+
+    try {
+        // Check if user with the provided email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return sendError(res, 400, "User with this email already exists");
+        }
+
+        // Create a new user
+        const user = new User({
+            email,
+            password: await hashPassword(password),
+            authType: "staff",
+        });
+
+        await user.save();
+
+        // Create a new staff member with the user's ID
+        const staff = new Staff({
+            _id: user._id,
+            department,
+            location,
+            firstName,
+            lastName,
+            phoneNo,
+        });
+
+        await staff.save();
+
+        res.status(201).json(staff);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
 };
-
-const addCategory = async (req, res) => {
-  if (req.authType !== "admin") {
-    return sendError(res, 403, "Only admins can add categories");
-  }
-  const { categoryName } = req.body;
-
-  if (!categoryName) {
-    return sendError(res, 400, "Category name is required");
-  }
-
-  try {
-    const existingCategory = await Category.findOne({ categoryName });
-    if (existingCategory) {
-      return sendError(res, 400, "Category already exists");
+const getAllStaff = async(req, res) => {
+    try {
+        const staffMembers = await Staff.find()
+            .populate("department")
+            .populate("location");
+        res.json(staffMembers);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+const addService = async(req, res) => {
+    if (req.authType !== "staff") {
+        return sendError(res, 403, "Only staff members can add services");
     }
 
-    const category = new Category({ categoryName });
-    await category.save();
-
-    res.status(201).json(category);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const getAllCategories = async (req, res) => {
-  try {
-    const categories = await Category.find();
-    res.json(categories);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const addLocation = async (req, res) => {
-  if (req.authType !== "admin") {
-    return sendError(res, 403, "Only admins can add locations");
-  }
-  const { locationName } = req.body;
-
-  if (!locationName) {
-    return sendError(res, 400, "Location name is required");
-  }
-
-  try {
-    const existingLocation = await Location.findOne({ locationName });
-    if (existingLocation) {
-      return sendError(res, 400, "Location already exists");
+    const requiredFields = [
+        "category",
+        "location",
+        "serviceName",
+        "description",
+        "expireDate",
+        "status",
+    ];
+    const validation = validateRequestBody(req.body, requiredFields);
+    if (!validation.isValid) {
+        return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
     }
 
-    const location = new Location({ locationName });
-    await location.save();
-
-    res.status(201).json(location);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const getAllLocations = async (req, res) => {
-  try {
-    const locations = await Location.find();
-    res.json(locations);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const addDepartment = async (req, res) => {
-  if (req.authType !== "admin") {
-    return sendError(res, 403, "Only admins can add departments");
-  }
-  const { departmentName } = req.body;
-
-  if (!departmentName) {
-    return sendError(res, 400, "Department name is required");
-  }
-
-  try {
-    const existingDepartment = await Department.findOne({ departmentName });
-    if (existingDepartment) {
-      return sendError(res, 400, "Department already exists");
-    }
-
-    const department = new Department({ departmentName });
-    await department.save();
-
-    res.status(201).json(department);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const getAllDepartments = async (req, res) => {
-  try {
-    const departments = await Department.find();
-    res.json(departments);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const addStaff = async (req, res) => {
-  if (req.authType !== "admin") {
-    return sendError(res, 403, "Only admins can add staff members");
-  }
-  const requiredFields = [
-    "email",
-    "password",
-    "department",
-    "location",
-    "firstName",
-    "lastName",
-    "phoneNo",
-  ];
-  const validation = validateRequestBody(req.body, requiredFields);
-  if (!validation.isValid) {
-    return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
-  }
-
-  const {
-    email,
-    password,
-    department,
-    location,
-    firstName,
-    lastName,
-    phoneNo,
-  } = req.body;
-
-  try {
-    // Check if user with the provided email already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return sendError(res, 400, "User with this email already exists");
-    }
-
-    // Create a new user
-    const user = new User({
-      email,
-      password: await hashPassword(password),
-      authType: "staff",
-    });
-
-    await user.save();
-
-    // Create a new staff member with the user's ID
-    const staff = new Staff({
-      _id: user._id,
-      department,
-      location,
-      firstName,
-      lastName,
-      phoneNo,
-    });
-
-    await staff.save();
-
-    res.status(201).json(staff);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const getAllStaff = async (req, res) => {
-  try {
-    const staffMembers = await Staff.find()
-      .populate("department")
-      .populate("location");
-    res.json(staffMembers);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-const addService = async (req, res) => {
-  if (req.authType !== "staff") {
-    return sendError(res, 403, "Only staff members can add services");
-  }
-
-  const requiredFields = [
-    "category",
-    "location",
-    "serviceName",
-    "description",
-    "expireDate",
-    "status",
-  ];
-  const validation = validateRequestBody(req.body, requiredFields);
-  if (!validation.isValid) {
-    return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
-  }
-
-  const { category, location, serviceName, description, expireDate, status } =
+    const { category, location, serviceName, description, expireDate, status } =
     req.body;
 
-  try {
-    const service = new Service({
-      category,
-      location,
-      serviceName,
-      description,
-      expireDate,
-      status,
+    try {
+        const service = new Service({
+            category,
+            location,
+            serviceName,
+            description,
+            expireDate,
+            status,
+        });
+
+        await service.save();
+
+        // Fetch all the volunteers who have the added service's category and location in their preferences.
+        const matchedVolunteers = await Volunteer.find({
+            preferred_categories: { $in: [category] },
+            preferred_locations: { $in: [location] },
+        });
+
+        // Loop through each matched volunteer and create a notification for them.
+        for (const volunteer of matchedVolunteers) {
+            const notification = new Notification({
+                sender: req.userId,
+                recipient: volunteer._id,
+                subject: `New Service: ${serviceName}`,
+                message: `A new service named ${serviceName} is available in your preferred category and location.`,
+                relatedService: service._id,
+            });
+
+            await notification.save();
+        }
+
+        res.status(201).json(service);
+    } catch (err) {
+        sendError(res, 500, "Server error: " + err);
+    }
+};
+
+const getPreferredServicesForVolunteer = async(volunteerId) => {
+    const volunteerData = await Volunteer.findById(volunteerId);
+    if (!volunteerData) {
+        throw new Error("Volunteer data not found");
+    }
+
+    const preferredServices = await Service.find({
+        category: { $in: volunteerData.preferred_categories },
+        location: { $in: volunteerData.preferred_locations },
     });
 
-    await service.save();
+    return preferredServices;
+};
 
-    // Fetch all the volunteers who have the added service's category and location in their preferences.
-    const matchedVolunteers = await Volunteer.find({
-      preferred_categories: { $in: [category] },
-      preferred_locations: { $in: [location] },
-    });
-
-    // Loop through each matched volunteer and create a notification for them.
-    for (const volunteer of matchedVolunteers) {
-      const notification = new Notification({
-        sender: req.userId,
-        recipient: volunteer._id,
-        subject: `New Service: ${serviceName}`,
-        message: `A new service named ${serviceName} is available in your preferred category and location.`,
-        relatedService: service._id,
-      });
-
-      await notification.save();
+const getService = async(req, res) => {
+    let conditions = [];
+    if (req.query.q) {
+        const query = new RegExp(req.query.q, "i");
+        conditions = [
+            { serviceName: query },
+            { description: query },
+            { "category.categoryName": query },
+            { "location.locationName": query },
+        ];
     }
 
-    res.status(201).json(service);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
+    const baseQuery = conditions.length ? { $or: conditions } : {};
+
+    if (req.authType === "staff") {
+        try {
+            const services = await Service.find(baseQuery)
+                .populate("category", "categoryName")
+                .populate("location", "locationName");
+
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, "Server error: " + err);
+        }
+    } else if (req.authType === "volunteer") {
+        try {
+            // Get preferred services for the volunteer
+            const services = await getPreferredServicesForVolunteer(req.userId);
+
+            // Now, filter out the ones that are not online and then populate necessary fields
+            const onlinePreferredServices = await Service.find({
+                    _id: { $in: services.map((service) => service._id) },
+                    ...baseQuery,
+                    status: "online",
+                })
+                .populate("category", "categoryName")
+                .populate("location", "locationName");
+
+            res.json(onlinePreferredServices);
+        } catch (err) {
+            sendError(res, 500, "Server error: " + err);
+        }
+    }
+};
+const getServiceByDateRange = async(req, res) => {
+    const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+    const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+    let dateConditions = {};
+
+    if (startDate && endDate) {
+        dateConditions.expireDate = {
+            $gte: startDate,
+            $lte: endDate,
+        };
+    } else if (startDate) {
+        dateConditions.expireDate = {
+            $gte: startDate,
+        };
+    } else if (endDate) {
+        dateConditions.expireDate = {
+            $lte: endDate,
+        };
+    }
+
+    if (req.authType === "staff") {
+        try {
+            const services = await Service.find({
+                    ...dateConditions,
+                    status: "online",
+                })
+                .populate("category", "categoryName")
+                .populate("location", "locationName");
+
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, "Server error: " + err);
+        }
+    } else if (req.authType === "volunteer") {
+        try {
+            // Get volunteer preferences
+            const volunteer = await Volunteer.findById(req.userId);
+            if (!volunteer) {
+                return sendError(res, 404, "Volunteer not found");
+            }
+
+            // Combine preferred categories, locations, date conditions, and online status
+            const conditions = {
+                ...dateConditions,
+                status: "online",
+                category: { $in: volunteer.preferred_categories },
+                location: { $in: volunteer.preferred_locations },
+            };
+
+            const services = await Service.find(conditions)
+                .populate("category", "categoryName")
+                .populate("location", "locationName");
+
+            res.json(services);
+        } catch (err) {
+            sendError(res, 500, "Server error: " + err);
+        }
+    }
 };
 
-const getPreferredServicesForVolunteer = async (volunteerId) => {
-  const volunteerData = await Volunteer.findById(volunteerId);
-  if (!volunteerData) {
-    throw new Error("Volunteer data not found");
-  }
-
-  const preferredServices = await Service.find({
-    category: { $in: volunteerData.preferred_categories },
-    location: { $in: volunteerData.preferred_locations },
-  });
-
-  return preferredServices;
-};
-
-const getService = async (req, res) => {
-  let conditions = [];
-  if (req.query.q) {
-    const query = new RegExp(req.query.q, "i");
-    conditions = [
-      { serviceName: query },
-      { description: query },
-      { "category.categoryName": query },
-      { "location.locationName": query },
-    ];
-  }
-
-  const baseQuery = conditions.length ? { $or: conditions } : {};
-
-  if (req.authType === "staff") {
+const getServiceById = async(req, res) => {
     try {
-      const services = await Service.find(baseQuery)
-        .populate("category", "categoryName")
-        .populate("location", "locationName");
+        const service = await Service.findById(req.params.id)
+            .populate("category", "categoryName")
+            .populate("location", "locationName");
 
-      res.json(services);
+        if (!service) {
+            return sendError(res, 404, "Service not found");
+        }
+
+        res.json(service);
     } catch (err) {
-      sendError(res, 500, "Server error: " + err);
+        sendError(res, 500, "Server error: " + err);
     }
-  } else if (req.authType === "volunteer") {
+};
+
+const getAllVolunteers = async(req, res) => {
+    if (req.authType !== "staff" && req.authType !== "admin") {
+        sendError(res, 403, "Only staff or admins can view volunteers");
+    } else {
+        try {
+            const volunteers = await Volunteer.find();
+            res.status(200).json(volunteers);
+        } catch (err) {
+            sendError(res, 500, "Server error: " + err);
+        }
+    }
+};
+
+const deleteCategory = async(req, res) => {
     try {
-      // Get preferred services for the volunteer
-      const services = await getPreferredServicesForVolunteer(req.userId);
-
-      // Now, filter out the ones that are not online and then populate necessary fields
-      const onlinePreferredServices = await Service.find({
-        _id: { $in: services.map((service) => service._id) },
-        ...baseQuery,
-        status: "online",
-      })
-        .populate("category", "categoryName")
-        .populate("location", "locationName");
-
-      res.json(onlinePreferredServices);
-    } catch (err) {
-      sendError(res, 500, "Server error: " + err);
+        const categoryId = req.params.id;
+        const result = await Category.findByIdAndRemove(categoryId);
+        if (!result) {
+            return res.status(404).send({ message: "Category not found" });
+        }
+        res.status(200).send({ message: "Category deleted successfully" });
+    } catch (error) {
+        res.status(500).send({ message: "Error deleting category: " + error });
     }
-  }
 };
-const getServiceByDateRange = async (req, res) => {
-  const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
-  const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
-
-  let dateConditions = {};
-
-  if (startDate && endDate) {
-    dateConditions.expireDate = {
-      $gte: startDate,
-      $lte: endDate,
-    };
-  } else if (startDate) {
-    dateConditions.expireDate = {
-      $gte: startDate,
-    };
-  } else if (endDate) {
-    dateConditions.expireDate = {
-      $lte: endDate,
-    };
-  }
-
-  if (req.authType === "staff") {
+const deleteLocation = async(req, res) => {
     try {
-      const services = await Service.find({
-        ...dateConditions,
-        status: "online",
-      })
-        .populate("category", "categoryName")
-        .populate("location", "locationName");
-
-      res.json(services);
-    } catch (err) {
-      sendError(res, 500, "Server error: " + err);
+        const locationId = req.params.id;
+        const result = await Location.findByIdAndRemove(locationId);
+        if (!result) {
+            return res.status(404).send({ message: "Location not found" });
+        }
+        res.status(200).send({ message: "Location deleted successfully" });
+    } catch (error) {
+        res.status(500).send({ message: "Error deleting location: " + error });
     }
-  } else if (req.authType === "volunteer") {
+};
+
+const deleteDepartment = async(req, res) => {
     try {
-      // Get volunteer preferences
-      const volunteer = await Volunteer.findById(req.userId);
-      if (!volunteer) {
-        return sendError(res, 404, "Volunteer not found");
-      }
-
-      // Combine preferred categories, locations, date conditions, and online status
-      const conditions = {
-        ...dateConditions,
-        status: "online",
-        category: { $in: volunteer.preferred_categories },
-        location: { $in: volunteer.preferred_locations },
-      };
-
-      const services = await Service.find(conditions)
-        .populate("category", "categoryName")
-        .populate("location", "locationName");
-
-      res.json(services);
-    } catch (err) {
-      sendError(res, 500, "Server error: " + err);
+        const departmentId = req.params.id;
+        const result = await Department.findByIdAndRemove(departmentId);
+        if (!result) {
+            return res.status(404).send({ message: "Department not found" });
+        }
+        res.status(200).send({ message: "Department deleted successfully" });
+    } catch (error) {
+        res.status(500).send({ message: "Error deleting department: " + error });
     }
-  }
 };
 
-const getServiceById = async (req, res) => {
-  try {
-    const service = await Service.findById(req.params.id)
-      .populate("category", "categoryName")
-      .populate("location", "locationName");
-
-    if (!service) {
-      return sendError(res, 404, "Service not found");
-    }
-
-    res.json(service);
-  } catch (err) {
-    sendError(res, 500, "Server error: " + err);
-  }
-};
-
-const getAllVolunteers = async (req, res) => {
-  if (req.authType !== "staff" && req.authType !== "admin") {
-    sendError(res, 403, "Only staff or admins can view volunteers");
-  } else {
+const deleteStaff = async(req, res) => {
     try {
-      const volunteers = await Volunteer.find();
-      res.status(200).json(volunteers);
-    } catch (err) {
-      sendError(res, 500, "Server error: " + err);
+        const staffId = req.params.id;
+        const result = await Staff.findByIdAndRemove(staffId);
+        if (!result) {
+            return res.status(404).send({ message: "Staff not found" });
+        }
+        res.status(200).send({ message: "Staff deleted successfully" });
+    } catch (error) {
+        res.status(500).send({ message: "Error deleting staff: " + error });
     }
-  }
 };
 
-const deleteCategory = async (req, res) => {
-  try {
-    const categoryId = req.params.id;
-    const result = await Category.findByIdAndRemove(categoryId);
-    if (!result) {
-      return res.status(404).send({ message: "Category not found" });
-    }
-    res.status(200).send({ message: "Category deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting category: " + error });
-  }
-};
-const deleteLocation = async (req, res) => {
-  try {
-    const locationId = req.params.id;
-    const result = await Location.findByIdAndRemove(locationId);
-    if (!result) {
-      return res.status(404).send({ message: "Location not found" });
-    }
-    res.status(200).send({ message: "Location deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting location: " + error });
-  }
-};
-
-const deleteDepartment = async (req, res) => {
-  try {
-    const departmentId = req.params.id;
-    const result = await Department.findByIdAndRemove(departmentId);
-    if (!result) {
-      return res.status(404).send({ message: "Department not found" });
-    }
-    res.status(200).send({ message: "Department deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting department: " + error });
-  }
-};
-
-const deleteStaff = async (req, res) => {
-  try {
-    const staffId = req.params.id;
-    const result = await Staff.findByIdAndRemove(staffId);
-    if (!result) {
-      return res.status(404).send({ message: "Staff not found" });
-    }
-    res.status(200).send({ message: "Staff deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting staff: " + error });
-  }
-};
-
-const deleteService = async (req, res) => {
-  try {
-    const serviceId = req.params.id;
-    const result = await Service.findByIdAndRemove(serviceId);
-    if (!result) {
-      return res.status(404).send({ message: "Service not found" });
-    }
-    res.status(200).send({ message: "Service deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting service: " + error });
-  }
-};
-
-const deleteVolunteer = async (req, res) => {
-  try {
-    const volunteerId = req.params.id;
-    const result = await Volunteer.findByIdAndRemove(volunteerId);
-    if (!result) {
-      return res.status(404).send({ message: "Volunteer not found" });
-    }
-    res.status(200).send({ message: "Volunteer deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting volunteer: " + error });
-  }
-};
-
-const getNotifications = async (req, res) => {
-  if (req.authType === "volunteer") {
+const deleteService = async(req, res) => {
     try {
-      const notifications = await Notification.find({ recipient: req.userId })
-        .populate("sender", "firstName lastName")
-        .populate("relatedService", "serviceName description expireDate status")
-        .populate("recipient", "firstName lastName phone"); // Populate volunteer data
-      res.status(200).json(notifications);
-    } catch (err) {
-      res.status(500).json({ error: "Server error: " + err });
+        const serviceId = req.params.id;
+        const result = await Service.findByIdAndRemove(serviceId);
+        if (!result) {
+            return res.status(404).send({ message: "Service not found" });
+        }
+        res.status(200).send({ message: "Service deleted successfully" });
+    } catch (error) {
+        res.status(500).send({ message: "Error deleting service: " + error });
     }
-  } else if (req.authType === "staff") {
+};
+
+const deleteVolunteer = async(req, res) => {
     try {
-      const notifications = await Notification.aggregate([
-        {
-          $match: { sender: new mongoose.Types.ObjectId(req.userId) },
-        },
-        {
-          $lookup: {
-            from: "volunteers",
-            localField: "recipient",
-            foreignField: "_id",
-            as: "volunteerInfo",
-          },
-        },
-        {
-          $unwind: "$volunteerInfo",
-        },
-        {
-          $group: {
-            _id: "$subject", // Group by subject
-            readStatus: { $first: "$readStatus" },
-            message: { $first: "$message" },
-            relatedService: { $first: "$relatedService" },
-            volunteers: { $push: "$volunteerInfo" }, // Push each volunteer into the array
-          },
-        },
-        {
-          $lookup: {
-            from: "services",
-            localField: "relatedService",
-            foreignField: "_id",
-            as: "relatedService",
-          },
-        },
-        {
-          $unwind: {
-            path: "$relatedService",
-            preserveNullAndEmptyArrays: true, // This ensures that even if relatedService is null, the document still appears in the output.
-          },
-        },
-      ]);
+        const volunteerId = req.params.id;
+        const result = await Volunteer.findByIdAndRemove(volunteerId);
+        if (!result) {
+            return res.status(404).send({ message: "Volunteer not found" });
+        }
+        res.status(200).send({ message: "Volunteer deleted successfully" });
+    } catch (error) {
+        res.status(500).send({ message: "Error deleting volunteer: " + error });
+    }
+};
 
-      res.status(200).json(notifications);
+const getNotifications = async(req, res) => {
+    if (req.authType === "volunteer") {
+        try {
+            const notifications = await Notification.find({ recipient: req.userId })
+                .populate("sender", "firstName lastName")
+                .populate("relatedService", "serviceName description expireDate status")
+                .populate("recipient", "firstName lastName phone"); // Populate volunteer data
+            res.status(200).json(notifications);
+        } catch (err) {
+            res.status(500).json({ error: "Server error: " + err });
+        }
+    } else if (req.authType === "staff") {
+        try {
+            const notifications = await Notification.aggregate([{
+                    $match: { sender: new mongoose.Types.ObjectId(req.userId) },
+                },
+                {
+                    $lookup: {
+                        from: "volunteers",
+                        localField: "recipient",
+                        foreignField: "_id",
+                        as: "volunteerInfo",
+                    },
+                },
+                {
+                    $unwind: "$volunteerInfo",
+                },
+                {
+                    $group: {
+                        _id: "$subject", // Group by subject
+                        readStatus: { $first: "$readStatus" },
+                        message: { $first: "$message" },
+                        relatedService: { $first: "$relatedService" },
+                        volunteers: { $push: "$volunteerInfo" }, // Push each volunteer into the array
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "services",
+                        localField: "relatedService",
+                        foreignField: "_id",
+                        as: "relatedService",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$relatedService",
+                        preserveNullAndEmptyArrays: true, // This ensures that even if relatedService is null, the document still appears in the output.
+                    },
+                },
+            ]);
+
+            res.status(200).json(notifications);
+        } catch (err) {
+            res.status(500).json({ error: "Server error: " + err });
+        }
+    } else {
+        res.status(403).json({ error: "Unauthorized" });
+    }
+};
+
+const sendNotification = async(req, res) => {
+    if (req.authType !== "staff") {
+        return res
+            .status(403)
+            .json({ error: "Only staff members can send notifications" });
+    }
+
+    const { volunteerIds, subject, message, relatedService } = req.body;
+
+    // Validate required fields
+    if (!volunteerIds || !Array.isArray(volunteerIds) || !subject || !message) {
+        return res
+            .status(400)
+            .json({ error: "Required fields: volunteerIds, subject, message" });
+    }
+
+    const notifications = volunteerIds.map((volunteerId) => ({
+        sender: req.userId, // assuming staff's user ID is stored in req.userId
+        recipient: volunteerId,
+        subject,
+        message,
+        relatedService,
+    }));
+
+    try {
+        await Notification.insertMany(notifications);
+
+        res.status(201).json({ message: "Notifications sent successfully!" });
     } catch (err) {
-      res.status(500).json({ error: "Server error: " + err });
+        res.status(500).json({ error: "Server error: " + err.message });
     }
-  } else {
-    res.status(403).json({ error: "Unauthorized" });
-  }
 };
 
-const sendNotification = async (req, res) => {
-  if (req.authType !== "staff") {
-    return res
-      .status(403)
-      .json({ error: "Only staff members can send notifications" });
-  }
-
-  const { volunteerIds, subject, message, relatedService } = req.body;
-
-  // Validate required fields
-  if (!volunteerIds || !Array.isArray(volunteerIds) || !subject || !message) {
-    return res
-      .status(400)
-      .json({ error: "Required fields: volunteerIds, subject, message" });
-  }
-
-  const notifications = volunteerIds.map((volunteerId) => ({
-    sender: req.userId, // assuming staff's user ID is stored in req.userId
-    recipient: volunteerId,
-    subject,
-    message,
-    relatedService,
-  }));
-
-  try {
-    await Notification.insertMany(notifications);
-
-    res.status(201).json({ message: "Notifications sent successfully!" });
-  } catch (err) {
-    res.status(500).json({ error: "Server error: " + err.message });
-  }
-};
-
-const updateService = async (req, res) => {
-  if (req.authType !== "staff") {
-    return res
-      .status(403)
-      .json({ error: "Only staff members can update services" });
-  }
-
-  const serviceId = req.params.id; // Assuming you'll pass the service ID as a route parameter
-
-  if (!serviceId) {
-    return res.status(400).json({ error: "Service ID is required" });
-  }
-
-  try {
-    const updatedService = await Service.findByIdAndUpdate(
-      serviceId,
-      req.body,
-      { new: true }
-    );
-
-    if (!updatedService) {
-      return res.status(404).json({ error: "Service not found" });
+const updateService = async(req, res) => {
+    if (req.authType !== "staff") {
+        return res
+            .status(403)
+            .json({ error: "Only staff members can update services" });
     }
 
-    res.status(200).json(updatedService);
-  } catch (err) {
-    res.status(500).json({ error: "Server error: " + err });
-  }
+    const serviceId = req.params.id; // Assuming you'll pass the service ID as a route parameter
+
+    if (!serviceId) {
+        return res.status(400).json({ error: "Service ID is required" });
+    }
+
+    try {
+        const updatedService = await Service.findByIdAndUpdate(
+            serviceId,
+            req.body, { new: true }
+        );
+
+        if (!updatedService) {
+            return res.status(404).json({ error: "Service not found" });
+        }
+
+        res.status(200).json(updatedService);
+    } catch (err) {
+        res.status(500).json({ error: "Server error: " + err });
+    }
 };
 
-const updateCategory = async (req, res) => {
+const updateCategory = async(req, res) => {
     console.log(req.authType)
-    if (req.authType !== "staff" && req.authType !== "admin" ) {
+    if (req.authType !== "staff" && req.authType !== "admin") {
         return res.status(403).json({ error: "Only staff or admin can update categories" });
     }
 
@@ -836,8 +829,8 @@ const updateCategory = async (req, res) => {
         return res.status(500).json({ error: "Server error: " + err });
     }
 };
-const updateLocation = async (req, res) => {
-    if (req.authType !== "staff" && req.authType !=="admin") {
+const updateLocation = async(req, res) => {
+    if (req.authType !== "staff" && req.authType !== "admin") {
         return res.status(403).json({ error: "Only staff can update locations" });
     }
 
@@ -856,8 +849,8 @@ const updateLocation = async (req, res) => {
         return res.status(500).json({ error: "Server error: " + err });
     }
 };
-const updateDepartment = async (req, res) => {
-    if (req.authType !== "staff" && req.authType !=="admin") {
+const updateDepartment = async(req, res) => {
+    if (req.authType !== "staff" && req.authType !== "admin") {
         return res.status(403).json({ error: "Only staff can update departments" });
     }
 
@@ -876,8 +869,8 @@ const updateDepartment = async (req, res) => {
         return res.status(500).json({ error: "Server error: " + err });
     }
 };
-const updateStaff = async (req, res) => {
-    if (req.authType !== "staff" && req.authType !=="admin") {
+const updateStaff = async(req, res) => {
+    if (req.authType !== "staff" && req.authType !== "admin") {
         return res.status(403).json({ error: "Only staff can update staff details" });
     }
 

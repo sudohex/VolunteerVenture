@@ -25,6 +25,7 @@ var apiEndPoints = {
     locations: "location",
     categories: "category",
     services: "service", //service?q=
+    updateService: "/service?id=", //PUT
     notifications: "notifications",
     profile: "profile", //GET
     volunteers: "volunteer", //GET
@@ -873,18 +874,22 @@ function onDeviceReady() {
         var serviceId = changedElem.data("id");
         var serviceName = changedElem.data("service");
         var isOnlineOffline = changedElem.val() == 'on' ? "online" : "offline";
-        console.log(serviceId, isOnlineOffline);
-        alert("Service->" + serviceName + " change status to " + isOnlineOffline + " :: PEDNING API");
+        var formData = {};
+        formData.status = isOnlineOffline;
+        formData = JSON.stringify(formData);
+        //console.log(serviceId, isOnlineOffline);
+        //alert("Service->" + serviceName + " change status to " + isOnlineOffline + " :: PEDNING API");
         $.ajax({
-            type: 'GET',
-            url: baseURL + apiEndPoints.staffProfile,
+            type: 'PUT',
+            url: baseURL + apiEndPoints.updateService + serviceId,
             dataType: 'json',
+            data: formData,
             headers: {
                 'Authorization': 'Bearer ' + authDetails.token,
                 'x-auth-token': authDetails.token
             },
-            success: function(staff) {
-                console.log(staff);
+            success: function(response) {
+                console.log(response);
             },
             error: function(error) {
                 alert("Error fetching services:", readAPIError(error));

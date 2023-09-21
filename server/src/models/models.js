@@ -58,14 +58,16 @@ const volunteerSchema = new mongoose.Schema({
     preferred_channels: [{
         type: String,
         enum: ['SMS', 'EMAIL', 'PUSH']
-    }],
-    notifications: [{
-        subject: String,
-        message: String,
-        serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
-        sentOn: Date,
     }]
+}, options);
 
+const notificationSchema = new mongoose.Schema({
+    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff', required: true },
+    recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'Volunteer', required: true },
+    subject: { type: String, required: true },
+    message: { type: String, required: true },
+    readStatus: { type: Boolean, default: false },
+    relatedService: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' } 
 }, options);
 
 
@@ -82,5 +84,6 @@ module.exports = {
     Service: mongoose.model('Service', serviceSchema),
     Staff: mongoose.model('Staff', staffSchema),
     User: mongoose.model('User', userSchema),
-    Volunteer: mongoose.model('Volunteer', volunteerSchema)
+    Volunteer: mongoose.model('Volunteer', volunteerSchema),
+    Notification:mongoose.model('Notification',notificationSchema)
 };

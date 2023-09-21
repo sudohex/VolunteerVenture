@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
@@ -192,20 +192,7 @@ const getVolunteerProfile = async(req, res) => {
         sendError(res, 500, "Server error: " + err);
     }
 };
-const updateVolunteerProfile = async(req, res) => {
-    const requiredFields = [
-        "firstName",
-        "lastName",
-        "phone",
-        "preferred_categories",
-        "preferred_locations",
-        "preferred_channels",
-    ];
-    const validation = validateRequestBody(req.body, requiredFields);
 
-    if (!validation.isValid) {
-        return sendError(res, 400, `Missing parameter: ${validation.missingField}`);
-    }
 const updateVolunteerProfile = async (req, res) => {
   if (req.authType !== "volunteer") {
     return res.status(403).json({ error: "Only volunteers can update their profiles" });
@@ -583,7 +570,6 @@ const getServiceByDateRange = async (req, res) => {
         }
     }
 };
-
 
 const getServiceById = async (req, res) => {
   try {

@@ -227,6 +227,10 @@
         /*background-image: url(./images/icons-36-black.png) !important;*/
     }
     
+    .ui-popup {
+        padding: 10px !important;
+    }
+    
     footer ul.ui-listview a.active {
         background-color: #C1D82F !important;
     }

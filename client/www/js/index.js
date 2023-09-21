@@ -11,7 +11,9 @@ var masterData = [{
         prefServiceCategories: "Please select atleast one option",
         notifPref: "Please select atleast one option.",
         serviceDescription: "Please write atleast 10 characters.",
-        serviceExpiryDate: "Please select an expiry date."
+        serviceExpiryDate: "Please select an expiry date.",
+        accType: "Please select a account type.",
+        staffDepartment: "Please select a department."
     },
 }, ];
 
@@ -28,8 +30,12 @@ var apiEndPoints = {
     volunteers: "volunteer", //GET
     forgotPassword: "", // TO-DO add url
     filterVolunteers: "",
-    staffProfile: "staff",
+    staffProfile: "ADD-HERE", //POST
     addService: "service",
+    addStaff: "staff", //POST
+    editStaff: "ADD-HERE", //PUT
+    staffDepartments: "department", //GET
+    allStaff: "staff", //GET
 
     //TO-DO Need to define all the endpoints
 };
@@ -103,7 +109,7 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue);
 
         case "mobile":
-            return true;
+            return /^[0-9]{10}$/.test(inputValue);
 
         case "password":
             return inputValue.length >= 6; //TO-DO need to fix the length after discussion(8)
@@ -120,6 +126,7 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
         case "prefLocation":
         case "prefServiceCategories":
         case "notifPref":
+        case "accType":
 
             if (inputValue) {
                 return true;
@@ -353,12 +360,25 @@ function onDeviceReady() {
                     // 4. Handle the response
 
                     localStorage.setItem('token', response.token);
-                    if (whichLogin == "STAFF") {
+                    localStorage.setItem('user_id', response.user.id);
+                    var accountType = response.user.acctType;
+                    localStorage.setItem('user_type', accountType);
+                    const errorAccType = (accountType === 'admin' || accountType === 'staff') ? "Staff Member" : "Volunteer";
+                    if (whichLogin == "STAFF" && accountType == 'staff') {
                         $.mobile.changePage("#staff-home-page");
-                    } else {
+                        alert('Successfully signed in as Staff!');
+                    } else if (whichLogin == "STAFF" && accountType == 'admin') {
+                        $.mobile.changePage("#admin-home-page");
+                        alert('Successfully signed in as Admin!');
+                    } else if (whichLogin != "STAFF" && accountType == 'volunteer') {
                         $.mobile.changePage("#public-home");
+                        alert('Successfully signed  in as Volunteer!!');
+                    } else {
+                        alert("Problem signing in: Login as " + errorAccType);
                     }
-                    alert('Successfully signed in!');
+
+
+
                 },
                 error: function(error) {
 
@@ -401,9 +421,32 @@ function onDeviceReady() {
 
                     $('#update-locations').html(locationsOptions).selectmenu().selectmenu("refresh");
                 } else {
-                    $('select[name="preferred_locations"]').html(locationsOptions).selectmenu().selectmenu("refresh");
+                    $('select[name="preferred_locations"],select.locations').html(locationsOptions).selectmenu().selectmenu("refresh");
                 }
 
+            }
+        });
+    } //END of fecthLocations
+
+    function fecthDepartments(action = "") {
+        const authDetails = getUser();
+        // Fetch and populate departments
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.staffDepartments,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(data) {
+
+                allDepartments = data;
+                var departmentsOptions = '<option value="">Select one option</option>';
+                allDepartments.forEach(function(department) {
+                    departmentsOptions += '<option value="' + department._id + '">' + department.departmentName + '</option>';
+                });
+                $('select.staff_departments').html(departmentsOptions).selectmenu().selectmenu("refresh");
             }
         });
     } //END of fecthLocations
@@ -614,6 +657,47 @@ function onDeviceReady() {
     }); //END of update volunteer account
 
 
+
+
+    //START of "create staff account"
+    $("#new-staff-form").submit(function(event) {
+        const authDetails = getUser();
+        event.preventDefault();
+        var formId = "new-staff-form";
+        // 1. Validate form finally before submission
+        var isValidForm = finalFormValidation(formId);
+        // 2. Collect data from the form
+        var formData = readFormData(formId);
+        // 3. Proceed to send the POST request 
+        console.log(isValidForm);
+        if (isValidForm) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + apiEndPoints.addStaff,
+                data: formData,
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                contentType: 'application/json',
+                success: function(response) {
+                    //4.Handle resposne
+                    alert('Staff Account created successfully!');
+                    window.location.hash = "#manage-user-accounts"; //Manage Account page
+                },
+                error: function(error) {
+                    alert("Error creating account:", readAPIError(error));
+                }
+            });
+
+        } else {
+            $("html, body").animate({
+                scrollTop: $("#" + formId).offset().top,
+            }, 1000);
+        }
+    }); //END of create staff account
+
+
     function managePageActive(currentPage = '') {
 
         if (currentPage != '') {
@@ -639,6 +723,57 @@ function onDeviceReady() {
         fetchServices("", true); //query,true for staff/admin
 
     })
+
+    //Add new staff
+    $(document).on("pagecreate", "#create-staff-acct", function() {
+
+        //Only logged in user can see this page 
+        checkAuthentication();
+        //1.Fetch and populate locations
+        fetchLocations();
+        //2.Fetch and populate departments
+        fecthDepartments();
+    })
+
+    //Add new staff
+    $(document).on("pagecreate", "#manage-user-accounts", function() {
+
+        //Only logged in user can see this page 
+        checkAuthentication();
+        //1.Fetch and populate locations
+        fetchLocations();
+        //2.Fetch and populate departments
+        fecthDepartments();
+        //3.Fetch all staff and render
+        fetchAllStaff();
+    })
+
+
+    function fetchAllStaff() {
+        const authDetails = getUser(); //1.Token and Id will be returned
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.allStaff, // + `${query}`
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(staffAccounts) {
+
+                renderStaffAccounts(staffAccounts);
+                localStorage.setItem("allStaffAccounts", JSON.stringify(staffAccounts));
+            },
+            error: function(error) {
+                alert("Error fetching staff accounts:", readAPIError(error));
+                console.error(error);
+            }
+        });
+
+    }
+
+
 
     // Function to fetch services based on query
     function fetchServices(query = "", isStaffServicesMenu = false) {
@@ -668,6 +803,35 @@ function onDeviceReady() {
     }
 
 
+    function renderStaffAccounts(staffAccounts) {
+
+
+
+        var staffAccountsHtml = "";
+        staffAccountsHtml = staffAccountsHtml + '<table>' +
+            '<tr class="headers">' +
+            '<td><span>Edit</span></td>' +
+            '<td><span>Name</span></td>' +
+            '<td><span>Department</span></td>' +
+            '<td><span>Location</span></td>' +
+            '</tr>';
+
+        staffAccounts.forEach((staff, index) => {
+            staffAccountsHtml = staffAccountsHtml + '<tr>' +
+                '<td><a href="#popupEditStaff" class="popupEditStaff" data-role="button"   data-staffid=' + staff._id + ' data-rel="popup">  <span class="material-symbols-sharp">edit</span></a></td>' +
+                '<td><span>' + staff.firstName + " " + staff.lastName + '</span></td>' +
+                '<td><span>' + ((staff.department != undefined && staff.department != null) ? staff.department.departmentName : "N/A") + '</span></td>' +
+                '<td><span>' + (staff.location != undefined ? staff.location.locationName : "N/A") + '</span></td>' +
+                '</tr>';
+
+
+        });
+        staffAccountsHtml = staffAccountsHtml + '</table>';
+        $("#staff-accounts-table-container").html(staffAccountsHtml);
+        $(".popupEditStaff").on("click", function() {
+            setEditFormStaff($(this).data("staffid"))
+        })
+    } //END renderStaffAccounts
 
     function renderStaffServices(services) {
 
@@ -687,11 +851,11 @@ function onDeviceReady() {
                 '<td><span>' + (service.category != undefined ? service.category.categoryName : "N/A") + '</span></td>' +
                 '<td><span>' + (service.location != undefined ? service.location.locationName : "N/A") + '</span></td>' +
                 '<td><span><select name="service-displayed" onclick="alert()" data-service="' + service.serviceName + '" data-id="' + service._id + '" data-role="flipswitch" data-mini="true">' +
-                '<option value="off">Off</option>' +
-                '<option value="on"' + (service.status === "online" ? "selected=true" : "selected=false") + '>On</option>' +
+                '<option value="off"' + (service.status === "offline" ? "selected='true'" : "") + '>Off</option>' +
+                '<option value="on"' + (service.status === "online" ? "selected='true'" : "") + '>On</option>' +
                 '</select></span></td>' +
                 '</tr>';
-            // console.log(staffServicesHtml);
+
         });
 
         staffServicesHtml = staffServicesHtml + '</table>';
@@ -705,12 +869,28 @@ function onDeviceReady() {
 
 
     function flipswitchChange(changedElem) {
-
+        const authDetails = getUser();
         var serviceId = changedElem.data("id");
         var serviceName = changedElem.data("service");
         var isOnlineOffline = changedElem.val() == 'on' ? "online" : "offline";
         console.log(serviceId, isOnlineOffline);
         alert("Service->" + serviceName + " change status to " + isOnlineOffline + " :: PEDNING API");
+        $.ajax({
+            type: 'GET',
+            url: baseURL + apiEndPoints.staffProfile,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            success: function(staff) {
+                console.log(staff);
+            },
+            error: function(error) {
+                alert("Error fetching services:", readAPIError(error));
+                console.error(error);
+            }
+        });
 
     }
 
@@ -889,7 +1069,36 @@ function onDeviceReady() {
 
 
 
+    $("#edit-staff-user").on('submit', function() {
+        var formId = $(this).attr("id");
+        var isValidForm = finalFormValidation(formId);
+        const authDetails = getUser();
+        formData = readFormData(formId);;
+        if (isValidForm) {
 
+            $.ajax({
+                type: 'POST',
+                url: baseURL + apiEndPoints.editStaff,
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                data: formData,
+                success: function(data) {
+                    console.log(data);
+
+                },
+                error: function(error) {
+                    console.log('Error updating staff: ' + readAPIError(error));
+                }
+            });
+
+        } else {
+            console.log("Invalid form");
+        }
+
+    })
 
     $("#submit-new-service").on('click', function() {
         var isValidForm = finalFormValidation($(this).data("id"));
@@ -900,10 +1109,10 @@ function onDeviceReady() {
             formData.serviceName = $("#service-name").val();
             formData.category = $("#sm-category").val();
             formData.location = $("#sm-location").val();
-            formData.description = "10/12/2023" //$("#sm-description").val();
+            formData.description = $("#sm-description").val();
             formData.expireDate = $("#sm-expiry-date").val();
-            formData.status = $("#choose-online-offline").val();
-            console.log(formData);
+            formData.status = $("#choose-online-offline").val() == "on" ? "online" : "offline";
+
             $.ajax({
                 type: 'POST',
                 url: baseURL + apiEndPoints.addService,
@@ -917,12 +1126,7 @@ function onDeviceReady() {
                     console.log(data);
                     if (data != undefined) {
                         alert("Service added successfully!");
-
-                        jQuery.mobile.changePage("#manage-services-menu", {
-                            allowSamePageTransition: true,
-                            transition: 'none',
-                            reloadPage: true
-                        });
+                        location.reload(); //refresh page
                     }
                 },
                 error: function(error) {
@@ -938,6 +1142,23 @@ function onDeviceReady() {
 
 
 
+    //SET values to edit form in popup staff
+    function setEditFormStaff(staffId) {
+        allStaffAccounts = JSON.parse(localStorage.getItem("allStaffAccounts"));
+        const foundEditedStaff = allStaffAccounts.find(obj => obj._id === staffId);
+        if (foundEditedStaff != undefined && foundEditedStaff != null) {
+            var department = ((foundEditedStaff.department != undefined && foundEditedStaff.department != null) ? foundEditedStaff.department._id : "");
+            var location = ((foundEditedStaff.location != undefined && foundEditedStaff.location != null) ? foundEditedStaff.location._id : "");
+            var accType = ((foundEditedStaff.isAdmin == true) ? "admin" : "staff")
+            $("#edit_staff_name").html(foundEditedStaff.firstName + " " + foundEditedStaff.lastName);
+            $("#edit_staff_loc option[value='" + location + "']").prop("selected", true);
+            $("#edit_staff_dept option[value='" + department + "']").prop("selected", true);
+            $("#edit_staff_type option[value='" + accType + "']").prop("selected", true);
+            $("#edit_staff_loc,#edit_staff_dept,#edit_staff_type").selectmenu().selectmenu("refresh"); //to update to dom
+        } else {
+            console.log("Edited staff account not found in localstorage.");
+        }
+    } //END setEditStaff
 
     //Loggedin User Info
 

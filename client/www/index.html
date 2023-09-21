@@ -32,7 +32,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 <body class="body">
 
     <!-- Signin Page VOLUNTEER -->
-    <div data-role="page" data-cache="false" id="signin-page" data-user="VOLUNTEER">
+    <div data-role="page" id="signin-page" data-user="VOLUNTEER">
 
         <div data-role="header" data-position="fixed">
             <h1>Volunteer Venture</h1>
@@ -81,7 +81,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Signin Page VOLUNTEER-->
 
     <!-- Signin Page - STAFF-->
-    <div data-role="page" data-cache="false" id="signin-page-staff">
+    <div data-role="page" id="signin-page-staff">
         <div data-role="header" data-position="fixed">
             <h1>Volunteer Venture</h1>
         </div>
@@ -129,7 +129,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Signin Page - STAFF-->
 
     <!-- Create Account Page -->
-    <div data-role="page" data-cache="false" id="signup-page">
+    <div data-role="page" id="signup-page">
         <div data-role="header" data-position="fixed">
             <h1>Sign Up</h1>
         </div>
@@ -183,7 +183,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Create Account page -->
 
     <!-- Public Home Page -->
-    <div data-role="page" data-cache="false" id="public-home">
+    <div data-role="page" id="public-home">
         <div data-role="header" data-position="fixed">
             <h1>Services</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
@@ -222,7 +222,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Public Home-->
 
     <!-- Notifications Page -->
-    <div data-role="page" data-cache="false" id="notification-page">
+    <div data-role="page" id="notification-page">
         <div data-role="header" data-position="fixed">
             <h1>Notifications</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
@@ -263,7 +263,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Notifications Page -->
 
     <!-- Update Profile Page -->
-    <div data-role="page" data-cache="false" id="update-profile-page">
+    <div data-role="page" id="update-profile-page">
         <div data-role="header" data-position="fixed">
             <h1>Update Profile</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
@@ -337,7 +337,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Update Profile Page -->
 
     <!-- Staff Home Page -->
-    <div data-role="page" data-cache="false" id="staff-home-page">
+    <div data-role="page" id="staff-home-page">
         <div data-role="header" data-position="fixed">
             <h1>Staff Home</h1>
         </div>
@@ -350,7 +350,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Staff Home Page -->
 
     <!-- Staff List of Volunteers Page-->
-    <div data-role="page" data-cache="false" id="volunteer-list-page">
+    <div data-role="page" id="volunteer-list-page">
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Volunteers List</h1>
@@ -360,7 +360,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     </span>
             </a>
         </div>
-        <div class="filter-container">
+        <div data-role="main" class="ui-content filter-container">
+            <h3>Filter list with Location or Category: </h3>
             <form id="filter-volunteers">
                 <label for="select-locations">Locations</label>
                 <select data-native-menu="false" multiple="multiple" id="filter_volunteer_locations" name="preferred_locations" data-mini="true" data-required="false"><!--data-param="prefLocation"-->
@@ -397,7 +398,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Volunteer List Page-->
 
     <!-- Staff Create Message -->
-    <div data-role="page" data-cache="false" id="create-message">
+    <div data-role="page" id="create-message">
         <div data-role="header" data-position="fixed">
             <h1>New Message</h1>
             <p>*Message will be sent to selected Volunteer List</p>
@@ -429,7 +430,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Staff Create Message-->
 
     <!-- Staff Sent Notifications -->
-    <div data-role="page" data-cache="false" id="staff-sent-notif">
+    <div data-role="page" id="staff-sent-notif">
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Sent Notifications</h1>
@@ -466,7 +467,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Sent Notifications-->
 
     <!-- Staff Services Menu -->
-    <div data-role="page" data-cache="false" id="manage-services-menu">
+    <div data-role="page" id="manage-services-menu">
         <div data-role="header" data-position="fixed">
             <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Services Menu</h1>
@@ -477,7 +478,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </a>
         </div>
         <div data-role="main" class="ui-content staff-notif">
-            <h3 class="text-center">Add new service opportunity:</h3>
+            <h3>Add new service opportunity:</h3>
             <form id="add-new-service">
 
                 <label for="service-name">Service Name:</label>
@@ -493,18 +494,14 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     </select>
                 <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="sm-description">Description</label>
-                <textarea name="sm-description" id="sm-description" data-required="true" data-param="serviceDescription" data-required="true" placeholder="Briefly about this service"></textarea>
-                <span class="err-msg" data-param="serviceDescription"></span>
-                <label for="sm-description">Description</label>
-                <input type="text" for="sm-expiry-date" id="sm-expiry-date" data-required="true" data-param="serviceExpiryDate">
-                <span class="err-msg" data-param="serviceExpiryDate"></span>
-                <label for="online-offline">Display to public?</label>
-                <select name="online-offline" id="choose-online-offline" data-role="flipswitch" data-mini="true">
-                <option value="on">Yes</option>
+                <textarea name="sm-description" id="sm-description" data-param="serviceDescription" data-required="true" placeholder="Briefly about this service"></textarea>
+                <label for="send-SMS">Display to public?</label>
+                <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
                 <option value="off">No</option>
+                <option value="on">Yes</option>
                 </select>
             </form>
-            <a href="#" type="submit" data-role="button" class="ui-btn" id="submit-new-service">Save</a>
+            <a href="#" data-role="button" class="ui-btn" id="submit-new-service">Save</a>
         </div>
 
         <div id="staff-services-table-container"></div>
@@ -512,7 +509,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Staff services menu -->
 
     <!-- Admin Home Page -->
-    <div data-role="page" data-cache="false" id="admin-home-page">
+    <div data-role="page" id="admin-home-page">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Staff Home</h1>
@@ -533,7 +530,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Admin Home Page -->
 
     <!-- Admin Manage Accounts Page -->
-    <div data-role="page" data-cache="false" id="manage-user-accounts">
+    <div data-role="page" id="manage-user-accounts">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Manage Accounts</h1>
@@ -549,22 +546,15 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <div data-role="popup" id="popupEditStaff" data-theme="a" class="ui-corner-all">
                 <form id="edit-staff-user">
                     <div class="edit-staff-user">
-                        <h3 class="text-center">Edit/Remove Staff Account</h3>
-                        <label>Staff Name</label>
-                        <p id="edit_staff_name"></p>
+                        <h3>Edit/Remove Staff Account</h3>
+                        <p>Bob Smith</p>
                         <label for="edit-staff-dept">Department</label>
-                        <select name="edit-staff-dept" class="staff_departments" id="edit_staff_dept" data-mini="true">
-                                <!-- ADDED WITH JS-->
-                        </select>
+                        <select name="edit-staff-dept" id="edit-staff-dept" data-mini="true"></select>
                         <label for="edit-staff-loc">Location</label>
-                        <select name="edit-staff-loc" class="locations" id="edit_staff_loc" data-mini="true">
-                            <!-- ADDED WITH JS-->
-                        </select>
+                        <select name="edit-staff-loc" id="edit-staff-loc" data-mini="true"></select>
                         <label for="edit-staff-type">Account Type</label>
-                        <select name="edit-staff-type" id="edit_staff_type" data-mini="true">
-<option value="staff">Staff</option>
-                        </select>
-                        <button class="ui-btn" type="submit">Save</button>
+                        <select name="edit-staff-type" id="edit-staff-type" data-mini="true"></select>
+                        <button class="ui-btn">Save</button>
                     </div>
                 </form>
             </div>
@@ -576,8 +566,30 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <div>
                     <h3>Staff Accounts:</h3>
                 </div>
-                <div class="staff-table-container" id="staff-accounts-table-container">
-                    <!-- ADDED WITH JS-->
+                <div class="staff-table-container">
+                    <table>
+                        <tr class="headers">
+                            <td><span>Edit</span></td>
+                            <td><span>Name</span></td>
+                            <td><span>Dept.</span></td>
+                            <td><span>Loc.</span></td>
+                            <td><span>Type</span></td>
+                        </tr>
+                        <tr>
+                            <td><span><a href="#popupEditStaff" class="ui-icon-edit" data-role="button" data-icon="edit" data-iconpos="notext" data-rel="popup"></a></span></td>
+                            <td><span>B.Smith</span></td>
+                            <td><span>Hair & Beauty</span></td>
+                            <td><span>BNE</span></td>
+                            <td><span>Admin</span></td>
+                        </tr>
+                        <tr>
+                            <td><span><a href="#popupEditStaff" class="ui-icon-edit" data-role="button" data-icon="edit" data-iconpos="notext" data-rel="popup"></a></span></td>
+                            <td><span>R.Jones</span></td>
+                            <td><span>Catering</span></td>
+                            <td><span>RKM</span></td>
+                            <td><span>Staff</span></td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -585,7 +597,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Admin Manage Accounts Page -->
 
     <!-- Admin Create Staff -->
-    <div data-role="page" data-cache="false" id="create-staff-acct">
+    <div data-role="page" id="create-staff-acct">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Create New Staff User</h1>
@@ -614,26 +626,19 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <span class="err-msg" data-param="lastName"></span>
         </label>
                 <label for="phoneNo">Phone *
-            <input type="text" name="phoneNo" id="phoneNo" data-param="mobile" data-required="true">
+            <input type="text" name="phone" id="phoneNo" data-param="mobile" data-required="true">
             <span class="err-msg" data-param="mobile"></span>
         </label>
 
-                <label for="department">Department *</label>
-                <select name="department" class="staff_departments" id="select-department" data-mini="true" data-param="staffDepartment" data-required="true">
-                     <!-- ADDED WITH JS-->
-                </select>
-                <span class="err-msg" data-param="staffDepartment"></span>
+                <label for="select-department">Department</label>
+                <select name="select-department" id="select-department" data-mini="true"></select>
 
-                <label for="location">Location *</label>
-                <select name="location" class="locations" id="select-location" data-mini="true" data-param="prefLocation" data-required="true">
-                    <!-- ADDED WITH JS-->
-                </select>
-                <span class="err-msg" data-param="prefLocation"></span>
-                <label for="accType">Account Type *</label>
-                <select name="accType" id="select-type" data-mini="true" data-param="accType" data-required="true">
-                    <option value="staff" selected>Staff</option>
-                </select>
-                <span class="err-msg" data-param="accType"></span>
+                <label for="select-location">Location</label>
+                <select name="select-location" id="select-location" data-mini="true"></select>
+
+                <label for="select-type">Account Type</label>
+                <select name="select-type" id="select-type" data-mini="true"></select>
+
                 <button type="submit" class="ui-btn">Submit</button>
             </form>
         </div>
@@ -642,7 +647,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Admin Create Staff-->
 
     <!-- Admin Services Menu -->
-    <div data-role="page" data-cache="false" id="admin-services-menu">
+    <div data-role="page" id="admin-services-menu">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
             <h1>Services Menu</h1>

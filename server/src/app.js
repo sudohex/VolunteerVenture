@@ -836,7 +836,7 @@ const updateCategory = async (req, res) => {
     }
 };
 const updateLocation = async (req, res) => {
-    if (req.acctType !== "staff") {
+    if (req.acctType !== "staff" && req.acctType !=="admin") {
         return res.status(403).json({ error: "Only staff can update locations" });
     }
 
@@ -856,7 +856,7 @@ const updateLocation = async (req, res) => {
     }
 };
 const updateDepartment = async (req, res) => {
-    if (req.acctType !== "staff") {
+    if (req.acctType !== "staff" && req.acctType !=="admin") {
         return res.status(403).json({ error: "Only staff can update departments" });
     }
 
@@ -876,7 +876,7 @@ const updateDepartment = async (req, res) => {
     }
 };
 const updateStaff = async (req, res) => {
-    if (req.acctType !== "staff") {
+    if (req.acctType !== "staff" && req.acctType !=="admin") {
         return res.status(403).json({ error: "Only staff can update staff details" });
     }
 

@@ -48,7 +48,7 @@ const addDefaultAdmin = async () => {
       {
         email: defaultAdminEmail,
         password: await hashPassword(defaultAdminPassword),
-        acctType: "admin",
+        authType: "admin",
       },
       {
         upsert: true, // if not exist, create it
@@ -120,7 +120,7 @@ const signup = async (req, res) => {
     const user = new User({
       email,
       password: await hashPassword(password),
-      acctType: "volunteer",
+      authType: "volunteer",
       firstName,
       lastName,
       phone,
@@ -157,11 +157,11 @@ const login = async (req, res) => {
     const token = generateToken({
       user: {
         id: user.id,
-        acctType: user.acctType,
+        authType: user.authType,
       },
     });
 
-    res.json({ token, user: { id: user.id, acctType: user.acctType } });
+    res.json({ token, user: { id: user.id, authType: user.authType } });
   } catch (err) {
     sendError(res, 500, "Server error: " + err);
   }
@@ -169,7 +169,7 @@ const login = async (req, res) => {
 const getVolunteerProfile = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
-    if (!user || user.acctType !== "volunteer") {
+    if (!user || user.authType !== "volunteer") {
       return sendError(res, 404, "User not found or not a volunteer");
     }
 
@@ -375,7 +375,7 @@ const addStaff = async (req, res) => {
     const user = new User({
       email,
       password: await hashPassword(password),
-      acctType: "staff",
+      authType: "staff",
     });
 
     await user.save();
@@ -816,7 +816,8 @@ const updateService = async (req, res) => {
 };
 
 const updateCategory = async (req, res) => {
-    if (req.acctType !== "staff" && req.acctType !== "admin" ) {
+    console.log(req.authType)
+    if (req.authType !== "staff" && req.authType !== "admin" ) {
         return res.status(403).json({ error: "Only staff or admin can update categories" });
     }
 
@@ -836,7 +837,7 @@ const updateCategory = async (req, res) => {
     }
 };
 const updateLocation = async (req, res) => {
-    if (req.acctType !== "staff" && req.acctType !=="admin") {
+    if (req.authType !== "staff" && req.authType !=="admin") {
         return res.status(403).json({ error: "Only staff can update locations" });
     }
 
@@ -856,7 +857,7 @@ const updateLocation = async (req, res) => {
     }
 };
 const updateDepartment = async (req, res) => {
-    if (req.acctType !== "staff" && req.acctType !=="admin") {
+    if (req.authType !== "staff" && req.authType !=="admin") {
         return res.status(403).json({ error: "Only staff can update departments" });
     }
 
@@ -876,7 +877,7 @@ const updateDepartment = async (req, res) => {
     }
 };
 const updateStaff = async (req, res) => {
-    if (req.acctType !== "staff" && req.acctType !=="admin") {
+    if (req.authType !== "staff" && req.authType !=="admin") {
         return res.status(403).json({ error: "Only staff can update staff details" });
     }
 

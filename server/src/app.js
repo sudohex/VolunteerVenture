@@ -165,7 +165,7 @@ const login = async(req, res) => {
 const getVolunteerProfile = async(req, res) => {
     try {
         const user = await User.findById(req.userId).select("-password");
-        if (!user || user.authType !== "volunteer") {
+        if (!user || user.acctType !== "volunteer") {
             return sendError(res, 404, "User not found or not a volunteer");
         }
 

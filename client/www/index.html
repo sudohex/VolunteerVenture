@@ -404,31 +404,38 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <!-- END Volunteer List Page-->
 
     <!-- Staff Create Message -->
-    <div data-role="page" id="create-message">
+    <div data-role="page" id="create-message-page">
         <div data-role="header" data-position="fixed">
             <h1>New Message</h1>
         </div>
         <div data-role="main" class="ui-content">
-            <p>*Message will be sent to selected Volunteer List</p>
+            <p class="selected_vlntrs_heading">Selected Volunteers</p>
+            <div class="selected_volunteers">
+                <!-- LIST ADDED FROM JS-->
+            </div>
+
             <form id="create-msg-form">
                 <label for="notif-subject">Subject:</label>
-                <input type="text" for="notif-subject" id="notif-subject">
+                <input type="text" for="notif-subject" id="notif_subject" data-required="true" data-param="notifSubject">
+                <span class="err-msg" data-param="notifSubject"></span>
                 <label for="notif-msg">Enter Message:</label>
-                <textarea name="notif-msg" id="notif-msg"></textarea>
-
-                <label for="send-SMS">SMS:</label>
-                <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
+                <textarea name="notif-msg" id="notif_msg" data-param="notifMessage" data-required="true"></textarea>
+                <span class="err-msg" data-param="notifMessage"></span>
+                <label><b>Send Notification By :</b></label>
+                <label for="channel_msg">SMS:</label>
+                <select name="channel_msg" id="channel_msg" data-role="flipswitch" data-mini="true">
                     <option value="off">No</option>
                     <option value="on">Yes</option>
                     </select>
-                <label for="send-Email">Email:</label>
-                <select name="send-Email" id="send-Email" data-role="flipswitch" data-mini="true">
+                <label for="channel_email">Email:</label>
+                <select name="channel_email" id="channel_email" data-role="flipswitch" data-mini="true">
                     <option value="off">No</option>
                     <option value="on">Yes</option>
                     </select>
+                <span class="err-msg" id="select_channel"></span>
             </form>
 
-            <a href="#" data-role="button" class="ui-btn">Send</a>
+            <a href="#" data-role="button" type="submit" class="ui-btn send_message_submit" data-formid="create-msg-form">Send</a>
             <a href="#volunteer-list-page" data-role="button" class="ui-btn">Cancel</a>
         </div>
 
@@ -502,6 +509,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="sm-description">Description</label>
                 <textarea name="sm-description" id="sm-description" data-param="serviceDescription" data-required="true" placeholder="Briefly about this service"></textarea>
+                <span class="err-msg" data-param="serviceDescription"></span>
+                <label for="expireOn">Available till?</label>
+                <input id="sm-expiry-date" name="expireOn" type="date" data-required="true" data-param="serviceExpiryDate" />
+                <span class="err-msg" data-param="serviceExpiryDate"></span>
                 <label for="send-SMS">Display to public?</label>
                 <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
                 <option value="off">No</option>

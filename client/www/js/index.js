@@ -14,7 +14,9 @@ var masterData = [{
         serviceDescription: "Please write atleast 10 characters.",
         serviceExpiryDate: "Please select an expiry date.",
         accType: "Please select a account type.",
-        staffDepartment: "Please select a department."
+        staffDepartment: "Please select a department.",
+        notifMessage: "Please enter atleast  50 characters.",
+        notifSubject: "Please enter atleast  10 characters."
     },
 }, ];
 
@@ -27,7 +29,8 @@ var apiEndPoints = {
     categories: "category",
     services: "service", //service?q=
     updateService: "service/", //PUT
-    notifications: "notifications",
+    notifications: "notification", //GET same for both STAFF AND Volunteer
+    sendNotifications: "notification", //POST for create message page
     profile: "profile", //GET
     volunteers: "volunteer", //GET
     forgotPassword: "", // TO-DO add url
@@ -136,6 +139,7 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
                 return false;
             }
         case "serviceDescription":
+        case "notifSubject":
             if (inputValue.length < 10) {
 
                 return false;
@@ -147,6 +151,13 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
                 return true;
             } else {
                 return false;
+            }
+        case "notifMessage":
+            if (inputValue.length < 50) {
+
+                return false;
+            } else {
+                return true;
             }
         default:
             console.log("Invalid input type");
@@ -221,11 +232,16 @@ function toCreateMessage() {
     var SelectedVolnteerIds = [];
 
     $(".individual-checkbox:checked").each(function() {
-        SelectedVolnteerIds.push($(this).data("id"));
+        var volunteerObj = {
+            id: $(this).data("id"),
+            name: $(this).data("name")
+        };
+
+        SelectedVolnteerIds.push(volunteerObj);
     });
     console.log(SelectedVolnteerIds);
     localStorage.setItem("SelectedVolnteerIds", JSON.stringify(SelectedVolnteerIds));
-    $.mobile.changePage("#create-message");
+    $.mobile.changePage("#create-message-page");
 }
 
 // document.addEventListener('deviceready', onDeviceReady, false);
@@ -253,16 +269,23 @@ function onDeviceReady() {
     //Service expiry date selection
     $('#sm-expiry-date').daterangepicker({
         singleDatePicker: true,
-        showDropdowns: true
-    }, function(start, end, label) {
-        $(this).val(start.format('DD/MM/YYYY'));
+        showDropdowns: true,
+        autoUpdateInput: false // Disable auto-update of the input field
     });
+
+    $('#sm-expiry-date').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('DD/MM/YYYY'));
+    });
+
+    $('#sm-expiry-date').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
 
     //SET value to it
     $('input[name="date-range"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
         $("#search-form").submit();
-        console.log("Going to submit");
     });
     /*  DATERANGE PICKER PLUGIN -->> */
 
@@ -367,28 +390,28 @@ function onDeviceReady() {
                     // 4. Handle the response
 
                     localStorage.setItem('token', response.token);
-                    localStorage.setItem('user_id', response.user.id);
+                    localStorage.setItem('user', JSON.stringify(response.user));
                     var accountType = response.user.acctType;
-                    localStorage.setItem('user_type', accountType);
+
                     const errorAccType = (accountType === 'admin' || accountType === 'staff') ? "Staff Member" : "Volunteer";
                     var response_message = "";
                     var isSuccess = true;
                     if (whichLogin == "STAFF" && accountType == 'staff') {
-                        //$.mobile.changePage("");
+
                         //alert('');
                         response_message = "Successfully signed in as Staff!";
                         navigateTo = "#staff-home-page";
-
+                        $.mobile.changePage("#staff-home-page");
 
 
 
                     } else if (whichLogin == "STAFF" && accountType == 'admin') {
-                        //$.mobile.changePage("#admin-home-page");
+                        $.mobile.changePage("#admin-home-page");
                         //navigateTo = "#admin-home-page";
                         alert('Successfully signed in as Admin!');
                         //response_message = "Successfully signed in as Admin!";
                     } else if (whichLogin != "STAFF" && accountType == 'volunteer') {
-                        //$.mobile.changePage("#public-home");
+                        $.mobile.changePage("#public-home");
                         // navigateTo = "#public-home";
                         alert('Successfully signed  in as Volunteer!!');
                         //response_message = "Successfully signed  in as Volunteer!!";
@@ -399,10 +422,10 @@ function onDeviceReady() {
                     }
 
 
-                    $.mobile.changePage(navigateTo);
-                    setTimeout(function() {
-                        showAPIResponse(response_message, isSuccess);
-                    }, masterData[0]["messageTimeout"]);
+                    // $.mobile.changePage(navigateTo);
+                    // setTimeout(function() {
+                    //     showAPIResponse(response_message, isSuccess);
+                    // }, masterData[0]["messageTimeout"]);
 
                 },
                 error: function(error) {
@@ -543,6 +566,95 @@ function onDeviceReady() {
 
     }); //END of volunteers page prerequisites loading
 
+    //List of volunteers initialize
+    $(document).on("pagecreate", "#create-message-page", function() {
+        //1.Check Login
+        checkAuthentication();
+        //2. GetSelected list
+        var SelectedVolnteerIds = localStorage.getItem("SelectedVolnteerIds");
+        SelectedVolnteerIds = JSON.parse(SelectedVolnteerIds);
+        //3.Render list
+        var SelectedVolnteersHTML = "";
+        SelectedVolnteerIds.forEach(volunteer => {
+                SelectedVolnteersHTML += '<p class="selected_volunteer">' +
+                    volunteer.name +
+                    '<a href="#" class="deselect-volunteer" title="remove" data-id="' + volunteer.id + '">' +
+                    '<span class="material-symbols-sharp">close</span></a>' +
+                    '</p>';
+            })
+            //4.APPEND TO HTML CONTAINER
+        $(".selected_volunteers").html(SelectedVolnteersHTML);
+
+        //5.Bind click event to Deselect volunteer and remove volunteer when choose to remove
+        $(".deselect-volunteer").on("click", function() {
+                var volunteerId = $(this).data("id");
+                var SelectedVolnteers = JSON.parse(localStorage.getItem("SelectedVolnteerIds"));
+                console.log(SelectedVolnteers, "Before");
+                const newSelectedVolnteers = SelectedVolnteers.filter(item => item.id !== volunteerId);
+                console.log(newSelectedVolnteers, "After");
+                localStorage.setItem("SelectedVolnteerIds", JSON.stringify(newSelectedVolnteers));
+                $(this).parent().remove();
+            })
+            //6.Submit form to send message
+        $(".send_message_submit").on("click", function() {
+
+            var volunteersList = JSON.parse(localStorage.getItem("SelectedVolnteerIds"));
+            const formId = $(this).data("formid");
+            const isValidForm = finalFormValidation(formId);
+            var formData = [];
+            if (isValidForm) {
+                formDataObj = {};
+                formDataObj.subject = $("#notif_subject").val();
+                formDataObj.message = $("#notif_msg").val();
+                formDataObj.volunteerIds = [];
+                formDataObj.channel = {}
+                formDataObj.channel.email = ($("#channel_email").val() == 'on' ? true : false);
+                formDataObj.channel.sms = ($("#channel_msg").val() == 'on' ? true : false);
+                if (formDataObj.channel.email === false && formDataObj.channel.sms === false) {
+                    $("#select_channel").html("Please select atleast one channel type from SMS or Email.");
+                } else {
+                    volunteersList.forEach(volunteer => {
+                        formDataObj.volunteerIds.push(volunteer.id);
+                    });
+                }
+
+
+            } else {
+
+            } //END of data validation
+
+
+            formData = JSON.stringify(formDataObj);
+            authDetails = getUser();
+
+            $.ajax({
+                type: 'POST',
+                url: baseURL + apiEndPoints.sendNotifications,
+                data: formData,
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                contentType: 'application/json', // Specify content type as JSON
+                success: function(response) {
+
+                    //4.Handle resposne
+                    // TO-DO need to populate from server response
+                    console.log(response);
+                    showAPIResponse(response.message, true);
+                    alert(response.message);
+                    $.mobile.changePage("#staff-sent-notif");
+
+                },
+                error: function(error) {
+                    console.log('Error signing up: ' + readAPIError(error));
+                }
+            });
+
+
+        })
+
+    }); //END create message page load
 
     // filter volunteer
     $("#volunteer-list-page .ui-selectmenu .ui-icon-delete").on("click", function(event, ui) { //When user click on close select options
@@ -1072,6 +1184,14 @@ function onDeviceReady() {
         fetchNotifications();
 
     })
+    $(document).on("pageshow", "#staff-sent-notif", function() {
+        //managePageActive("notification-page");
+        //Only logged in user can see this page 
+        checkAuthentication();
+
+        fetchNotifications("STAFF");
+
+    })
 
     $(document).on("pageshow", "#staff-services-menu", function() {
         //managePageActive("notification-page");
@@ -1084,29 +1204,29 @@ function onDeviceReady() {
     })
 
 
-    $(document).on("pagecreate", "#staff-sent-notif", function() { //WAITING FOR API
+    // $(document).on("pagecreate", "#staff-sent-notif", function() { //WAITING FOR API
 
-        const authDetails = getUser();
+    //     const authDetails = getUser();
 
-        $.ajax({
-            type: 'GET',
-            url: baseURL + apiEndPoints.staffProfile,
-            //data: formData,//API-UPDATE:no longer needed
-            contentType: 'application/json',
-            headers: {
-                'Authorization': 'Bearer ' + authDetails.token,
-                'x-auth-token': authDetails.token
-            },
-            success: function(data) {
+    //     $.ajax({
+    //         type: 'GET',
+    //         url: baseURL + apiEndPoints.staffProfile,
+    //         //data: formData,//API-UPDATE:no longer needed
+    //         contentType: 'application/json',
+    //         headers: {
+    //             'Authorization': 'Bearer ' + authDetails.token,
+    //             'x-auth-token': authDetails.token
+    //         },
+    //         success: function(data) {
 
-                console.log(data);
-            },
-            error: function(errors) {
-                alert('Error: ' + readAPIError(errors));
-            }
-        });
+    //             console.log(data);
+    //         },
+    //         error: function(errors) {
+    //             alert('Error: ' + readAPIError(errors));
+    //         }
+    //     });
 
-    });
+    // });
 
     //Fetch Profile
     $(document).on("pagecreate", "#update-profile-page", function() {
@@ -1226,8 +1346,10 @@ function onDeviceReady() {
 
     function getUser() {
         const token = localStorage.getItem('token');
-        //const id = JSON.parse(localStorage.getItem('user'))._id;
-        return { token };
+        const user = JSON.parse(localStorage.getItem('user'));
+        const id = user.id;
+        const acctType = user.acctType;
+        return { token, id, acctType };
     }
     //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMzExM2YxZDZiMDlhMzhhNGRmNjU3IiwiYWNjdFR5cGUiOiJ2b2x1bnRlZXIifSwiaWF0IjoxNjk0NzAwMzMxLCJleHAiOjE2OTQ3MzYzMzF9.tWYLNYFu9XBUNs1Zuz74biZguW8xj_ufboU26TUAPxM
     function fetchProfile() {
@@ -1420,10 +1542,11 @@ function onDeviceReady() {
             }).join('');
             var SMSOn = volunteer.preferred_channels.indexOf("SMS") !== -1 ? "Y" : "N";
             var EmailOn = volunteer.preferred_channels.indexOf("EMAIL") !== -1 ? "Y" : "N";
-
+            var volunteerFullName = volunteer.firstName + ' ' + volunteer.lastName;
             volunteersListHtml = volunteersListHtml + '<tr>' +
-                '<td class="checkbox-holder"><span class="custom-checkbox"><input type="checkbox" data-id="' + volunteer._id + '" class="individual-checkbox"/></span></td>' +
-                '<td><span>' + volunteer.firstName + ' ' + volunteer.lastName + '</span></td>' +
+                '<td class="checkbox-holder"><span class="custom-checkbox">' +
+                '<input type="checkbox" data-id="' + volunteer._id + '" data-name="' + volunteerFullName + '" class="individual-checkbox"/></span></td>' +
+                '<td><span>' + volunteerFullName + '</span></td>' +
                 '<td><span>' + volunteer.preferred_locations[0] + '</span></td>' +
                 '<td><span>' + servicesHtml + '</span></td>' +
                 '<td><span>' + SMSOn + '</span></td>' +
@@ -1438,49 +1561,80 @@ function onDeviceReady() {
 
 
 
-    function fetchNotifications() {
-
-        const authDetails = getUser(); //localStorage.getItem('token');
-        //const formData = JSON.stringify({ id });
+    function fetchNotifications(accountType = "") {
 
 
+        const authDetails = getUser();
         $.ajax({
             type: 'GET',
-            url: baseURL + apiEndPoints.profile,
+            url: baseURL + apiEndPoints.notifications,
             contentType: 'application/json',
             headers: {
                 'Authorization': 'Bearer ' + authDetails.token,
                 'x-auth-token': authDetails.token
             },
-            success: function(response) {
+            success: function(notifications) {
                 var myNotifications = "";
-                console.log(response);
-                // console.log(response.firstName);
-                // console.log(response.notifications);
-                if (response.notifications && response.notifications.length > 0) {
-
-                    response.notifications.forEach((item) => {
+                // console.log(notifications);
+                // return;
+                if (notifications && notifications.length > 0) {
+                    notifications.forEach((item) => {
                         var notifSubject = item.subject;
                         var notifMessage = item.message;
-                        var notifSentBy = "CQU Staff"; // item.createdBy;
-                        var notifSentOn = formatDateTime(item.dateSent);
-                        var notifSentThrough = item.channelType;
+                        var notifSentBy = "";
+                        // item.createdBy;
+                        var notifSentOn = ((item.createdAt != undefined && item.createdAt != null) ? formatDateTime(item.createdAt) : "N/A");
+                        var sentToList = '';
+                        if (accountType == "STAFF") {
+                            var volunteers = item.volunteers;
+                            const VolunteerNameslimit = 5;
+                            if (!Array.isArray(volunteers) || volunteers.length === 0) {
+                                sentToList = ''; // Handle empty or invalid input
+                            }
+                            const fullNames = volunteers.slice(0, VolunteerNameslimit).map(item => `${item.firstName} ${item.lastName}`);
+
+
+                            const additionalCount = volunteers.length - VolunteerNameslimit;
+
+                            if (additionalCount > 0) {
+                                sentToList = `${fullNames.join(', ')} ` + `" & <a href="#">` + `${additionalCount} more</a>`;
+                            } else {
+                                sentToList = fullNames.join(', ');
+                            }
+                        } else {
+                            notifSentBy = item.sender.firstName + " " + item.sender.lastName;
+                        }
+
+                        //var notifSentThrough = item.channelType;
                         myNotifications += '<div class="each-notification">' +
                             '<p class = "notif-subject">' + notifSubject + '</p>' +
                             '<p class = "notif-message">' + notifMessage + '</p>' +
                             '<span class = "sent-timedate">' +
                             '<span class = "material-symbols-sharp"> schedule</span>' +
                             '<span class = "notif-datetime" >' + (notifSentOn == '' || notifSentOn == undefined ? "N/A" : "") + '</span>' +
-                            '</span >' +
+                            '</span >' + "<p class='sent-to-list'><b>Sent To: </b>" + sentToList + "</p>" +
                             '<span class = "sent-by">' +
-                            '<span class = "material-symbols-sharp">account_circle</span>' +
-                            '<span class = "notif-sentby">' + notifSentBy + '</span>' +
-                            '</span></div>';
+                            '<span class = "material-symbols-sharp">account_circle</span>';
+                        if (accountType == "STAFF") {
+                            myNotifications += "";
+                        } else {
+                            myNotifications += '<span class = "notif-sentby">' + notifSentBy + '</span>';
+                        }
+
+                        myNotifications += '</span></div>';
                     });
-                    $(".voluntr-notif").html(myNotifications); //append to the parent div
+                    if (accountType == "STAFF") {
+
+                        $(".staff-notif").html(myNotifications); //append to the parent div
+
+                    } else {
+                        $(".voluntr-notif").html(myNotifications); //append to the parent div
+                    }
+
                 } else {
 
-                    alert("Zero notifications found!");
+                    //alert();
+                    showAPIResponse("Zero notifications found!");
                 }
 
                 //console.log(myNotifications);
@@ -1492,6 +1646,7 @@ function onDeviceReady() {
     }
 
 
+
 } //END of OnDeviceReady
 
 
@@ -1501,10 +1656,27 @@ function onDeviceReady() {
 
 function readAPIError(error) {
     console.log(error);
-    errorMsg = error.responseJSON.errors[0].msg;
+
+    let errorMsg = "";
+
+    // Check if the error response has a "message" field
+    if (error.responseJSON && error.responseJSON.message) {
+        errorMsg = error.responseJSON.message;
+    }
+    // Check if the error response has an "errors" field with an array
+    else if (error.responseJSON && Array.isArray(error.responseJSON.errors) && error.responseJSON.errors.length > 0 && error.responseJSON.errors[0].msg) {
+        errorMsg = error.responseJSON.errors[0].msg;
+    }
+    // If neither "message" nor "errors" are present, use a default error message
+    else {
+        errorMsg = "An error occurred.";
+    }
+
     alert(errorMsg);
-    return errorMsg;
+    //showAPIResponse(errorMsg);
+
 }
+
 
 
 function formatDateTime(dateString = '', includeTime = true) {

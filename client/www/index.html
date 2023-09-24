@@ -31,6 +31,12 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
 
 <body class="body">
 
+    <!-- service status update response POPUP-->
+    <div data-role="popup" id="event_response_popup" class="vv_popup">
+        <p id="event_response_message" class="response_message">Updating....</p>
+    </div>
+    <!-- service status update response POPUP-->
+
     <!-- Signin Page VOLUNTEER -->
     <div data-role="page" id="signin-page" data-user="VOLUNTEER">
 
@@ -491,7 +497,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <label for="select-services">Service Category:</label>
                 <!-- name="service-cat" -->
                 <select data-native-menu="false" id="sm-category" name="preferred_categories" data-mini="true" data-param="prefServiceCategories" data-required="true">
-                    </select>
+                <!-- ADDED WITH JS-->    
+                </select>
                 <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="sm-description">Description</label>
                 <textarea name="sm-description" id="sm-description" data-param="serviceDescription" data-required="true" placeholder="Briefly about this service"></textarea>
@@ -504,7 +511,10 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <a href="#" data-role="button" class="ui-btn" id="submit-new-service">Save</a>
         </div>
 
-        <div id="staff-services-table-container"></div>
+
+        <div id="staff-services-table-container">
+            <!-- ADDED WITH JS-->
+        </div>
     </div>
     <!-- END Staff services menu -->
 

@@ -12,6 +12,25 @@
         text-shadow: none;
     }
     
+    .success_response {
+        color: #198754;
+    }
+    
+    .error_response {
+        color: #DC4C64;
+    }
+    
+    .response_message {
+        text-align: center;
+        font-size: 16px;
+        text-shadow: none !important;
+    }
+    
+    .ui-popup.vv_popup {
+        background-color: white !important;
+        border: none !important;
+    }
+    
     .filter-container {
         padding: 10px;
         width: 90%;

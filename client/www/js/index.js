@@ -1,4 +1,5 @@
 var masterData = [{
+    messageTimeout: 2000,
     errorMessages: {
         email: "Please enter a valid email.",
         password: "Please enter a valid password.",
@@ -25,7 +26,7 @@ var apiEndPoints = {
     locations: "location",
     categories: "category",
     services: "service", //service?q=
-    updateService: "/service?id=", //PUT
+    updateService: "service/", //PUT
     notifications: "notifications",
     profile: "profile", //GET
     volunteers: "volunteer", //GET
@@ -232,6 +233,11 @@ $(document).ready(onDeviceReady)
 
 function onDeviceReady() {
 
+    //init popup
+    $(document).on("pagecreate", function() {
+        $("#event_response_popup").popup();
+    });
+
     /* -->DATERANGE PICKER PLUGIN */
     //Initiate Daterangepicker plugin
     $('input[name="date-range"]').daterangepicker({
@@ -365,20 +371,38 @@ function onDeviceReady() {
                     var accountType = response.user.acctType;
                     localStorage.setItem('user_type', accountType);
                     const errorAccType = (accountType === 'admin' || accountType === 'staff') ? "Staff Member" : "Volunteer";
+                    var response_message = "";
+                    var isSuccess = true;
                     if (whichLogin == "STAFF" && accountType == 'staff') {
-                        $.mobile.changePage("#staff-home-page");
-                        alert('Successfully signed in as Staff!');
+                        //$.mobile.changePage("");
+                        //alert('');
+                        response_message = "Successfully signed in as Staff!";
+                        navigateTo = "#staff-home-page";
+
+
+
+
                     } else if (whichLogin == "STAFF" && accountType == 'admin') {
-                        $.mobile.changePage("#admin-home-page");
+                        //$.mobile.changePage("#admin-home-page");
+                        //navigateTo = "#admin-home-page";
                         alert('Successfully signed in as Admin!');
+                        //response_message = "Successfully signed in as Admin!";
                     } else if (whichLogin != "STAFF" && accountType == 'volunteer') {
-                        $.mobile.changePage("#public-home");
+                        //$.mobile.changePage("#public-home");
+                        // navigateTo = "#public-home";
                         alert('Successfully signed  in as Volunteer!!');
+                        //response_message = "Successfully signed  in as Volunteer!!";
                     } else {
                         alert("Problem signing in: Login as " + errorAccType);
+                        //  response_message = "Problem signing in: Login as " + errorAccType;
+                        // isSuccess = false; //when issue
                     }
 
 
+                    $.mobile.changePage(navigateTo);
+                    setTimeout(function() {
+                        showAPIResponse(response_message, isSuccess);
+                    }, masterData[0]["messageTimeout"]);
 
                 },
                 error: function(error) {
@@ -882,7 +906,7 @@ function onDeviceReady() {
         $.ajax({
             type: 'PUT',
             url: baseURL + apiEndPoints.updateService + serviceId,
-            dataType: 'json',
+            contentType: 'application/json', // Specify content type as JSON
             data: formData,
             headers: {
                 'Authorization': 'Bearer ' + authDetails.token,
@@ -890,12 +914,45 @@ function onDeviceReady() {
             },
             success: function(response) {
                 console.log(response);
+                if (response) {
+                    var response_message = "Service : " + serviceName + " Display option changed to <b>" + isOnlineOffline + "</b> successfully!";
+                    showAPIResponse(response_message, true); //true when success
+                } else {
+                    var response_message = "Something went wrong!!";
+                    showAPIResponse(response_message);
+                }
+
             },
             error: function(error) {
-                alert("Error fetching services:", readAPIError(error));
+                //alert("Error fetching services:", readAPIError(error));
                 console.error(error);
+                showAPIResponse("Error updating service!! " + readAPIError(error));
+
             }
+
         });
+
+
+    }
+
+    function showAPIResponse(responseMessage, isSuccess = false, navigateTo = "") {
+
+        var responseUpdateElem = $("#event_response_message");
+        if (isSuccess == true) {
+            if (!responseUpdateElem.hasClass("success_response")) {
+                responseUpdateElem.html(responseMessage).addClass("success_response");
+            }
+        } else {
+            if (!responseUpdateElem.hasClass("error_response")) {
+                responseUpdateElem.addClass("error_response");
+            }
+        }
+        responseUpdateElem.html(responseMessage); //sets message
+        $("#event_response_popup").popup("open");
+        setTimeout(function() {
+            $("#event_response_popup").popup("close");
+        }, masterData[0]["messageTimeout"]);
+
 
     }
 
@@ -1478,6 +1535,7 @@ function formatDateTime(dateString = '', includeTime = true) {
 
 function checkAuthentication() {
 
+    console.log("Someone called me");
     const token = localStorage.getItem('token');
     //const user = localStorage.getItem('user');
 

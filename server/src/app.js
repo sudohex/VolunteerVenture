@@ -47,7 +47,7 @@ const addDefaultAdmin = async() => {
             {
                 email: defaultAdminEmail,
                 password: await hashPassword(defaultAdminPassword),
-                authType: "admin",
+                acctType: "admin",
             }, {
                 upsert: true, // if not exist, create it
                 new: true, // return the updated document
@@ -118,7 +118,7 @@ const signup = async(req, res) => {
         const user = new User({
             email,
             password: await hashPassword(password),
-            authType: "volunteer",
+            acctType: "volunteer",
             firstName,
             lastName,
             phone,
@@ -165,7 +165,7 @@ const login = async(req, res) => {
 const getVolunteerProfile = async(req, res) => {
     try {
         const user = await User.findById(req.userId).select("-password");
-        if (!user || user.authType !== "volunteer") {
+        if (!user || user.acctType !== "volunteer") {
             return sendError(res, 404, "User not found or not a volunteer");
         }
 

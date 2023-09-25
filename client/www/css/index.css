@@ -170,8 +170,7 @@
     /* Notifications list */
     
     .staff-notif p.sent-to-list {
-        position: absolute;
-        bottom: 7%;
+        margin-bottom: 8%;
     }
     
     .staff-notif p.notif-message {

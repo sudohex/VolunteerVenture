@@ -925,11 +925,16 @@ function onDeviceReady() {
                 'x-auth-token': authDetails.token
             },
             success: function(services) {
-                console.log(services);
-                if (isStaffServicesMenu) {
-                    renderStaffServices(services); //for staff page
-                } else {
-                    renderServices(services);
+                console.log(services, "Services list");
+                if (services.length > 0) {
+                    if (isStaffServicesMenu) {
+                        renderStaffServices(services); //for staff page
+                    } else {
+                        renderServices(services);
+                    }
+                } else { //0 records
+                    $("#collapsiblesetForFilter").html('<p class="text-center err-msg">No mathcing services found for your preferences.</p>');
+                    showAPIResponse("Zero mathcing services found!!");
                 }
             },
             error: function(error) {
@@ -1575,7 +1580,7 @@ function onDeviceReady() {
             },
             success: function(notifications) {
                 var myNotifications = "";
-                // console.log(notifications);
+                console.log(notifications);
                 // return;
                 if (notifications && notifications.length > 0) {
                     notifications.forEach((item) => {
@@ -1586,6 +1591,7 @@ function onDeviceReady() {
                         var notifSentOn = ((item.createdAt != undefined && item.createdAt != null) ? formatDateTime(item.createdAt) : "N/A");
                         var sentToList = '';
                         if (accountType == "STAFF") {
+
                             var volunteers = item.volunteers;
                             const VolunteerNameslimit = 5;
                             if (!Array.isArray(volunteers) || volunteers.length === 0) {
@@ -1611,16 +1617,15 @@ function onDeviceReady() {
                             '<p class = "notif-message">' + notifMessage + '</p>' +
                             '<span class = "sent-timedate">' +
                             '<span class = "material-symbols-sharp"> schedule</span>' +
-                            '<span class = "notif-datetime" >' + (notifSentOn == '' || notifSentOn == undefined ? "N/A" : "") + '</span>' +
-                            '</span >' + "<p class='sent-to-list'><b>Sent To: </b>" + sentToList + "</p>" +
-                            '<span class = "sent-by">' +
-                            '<span class = "material-symbols-sharp">account_circle</span>';
-                        if (accountType == "STAFF") {
-                            myNotifications += "";
-                        } else {
-                            myNotifications += '<span class = "notif-sentby">' + notifSentBy + '</span>';
-                        }
+                            '<span class = "notif-datetime" >' + notifSentOn + '</span>' +
+                            '</span >';
 
+
+                        if (accountType == "STAFF") {
+                            myNotifications += "<p class='sent-to-list'><b> Sent To: </b>" + sentToList + "</p>";
+                        } else {
+                            myNotifications += '<span class = "sent-by"><span class = "material-symbols-sharp">account_circle</span><span class = "notif-sentby">' + notifSentBy + '</span>';
+                        }
                         myNotifications += '</span></div>';
                     });
                     if (accountType == "STAFF") {

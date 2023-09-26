@@ -726,7 +726,8 @@ const getNotifications = async(req, res) => {
         }
     } else if (req.authType === "staff") {
         try {
-            const notifications = await Notification.aggregate([{
+            const notifications = await Notification.aggregate([
+                {
                     $match: { sender: new mongoose.Types.ObjectId(req.userId) },
                 },
                 {
@@ -746,29 +747,17 @@ const getNotifications = async(req, res) => {
                         readStatus: { $first: "$readStatus" },
                         message: { $first: "$message" },
                         relatedService: { $first: "$relatedService" },
+                        createdAt: { $first: "$createdAt" }, // Include createdAt field
                         volunteers: { $push: "$volunteerInfo" }, // Push each volunteer into the array
                     },
                 },
-                {
-                    $lookup: {
-                        from: "services",
-                        localField: "relatedService",
-                        foreignField: "_id",
-                        as: "relatedService",
-                    },
-                },
-                {
-                    $unwind: {
-                        path: "$relatedService",
-                        preserveNullAndEmptyArrays: true, // This ensures that even if relatedService is null, the document still appears in the output.
-                    },
-                },
             ]);
-
+        
             res.status(200).json(notifications);
         } catch (err) {
             res.status(500).json({ error: "Server error: " + err });
         }
+        
     } else {
         res.status(403).json({ error: "Unauthorized" });
     }

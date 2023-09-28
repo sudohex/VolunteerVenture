@@ -16,7 +16,12 @@ var masterData = [{
         accType: "Please select a account type.",
         staffDepartment: "Please select a department.",
         notifMessage: "Please enter atleast  50 characters.",
-        notifSubject: "Please enter atleast  10 characters."
+        notifSubject: "Please enter atleast  10 characters.",
+        locationName: "Location name is required.",
+        categoryName: "Category name is required.",
+        staffDepartment: "Please select a department.",
+        staffLocation: "Please select a location."
+
     },
 }, ];
 
@@ -38,9 +43,18 @@ var apiEndPoints = {
     staffProfile: "ADD-HERE", //POST
     addService: "service",
     addStaff: "staff", //POST
-    editStaff: "ADD-HERE", //PUT
+    updateStaff: "staff/", //PUT /:id
     staffDepartments: "department", //GET
     allStaff: "staff", //GET
+    addCategory: "category", //POST
+    allCategories: "category", //GET
+    updateCategory: "category/", //PUT /:id
+    addLocation: "location", //POST
+    allLocations: "location", //GET
+    updateLocation: "location/", //PUT /:id
+    allDepartments: "department", //GET
+    addDepartment: "department", //POST
+    updateDepartment: "department/", //PUT /:id
 
     //TO-DO Need to define all the endpoints
 };
@@ -132,6 +146,8 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
         case "prefServiceCategories":
         case "notifPref":
         case "accType":
+        case "staffDepartment":
+        case "staffLocation":
 
             if (inputValue) {
                 return true;
@@ -159,6 +175,15 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
             } else {
                 return true;
             }
+        case "locationName":
+        case "categoryName":
+        case "departmentName":
+            if (inputValue.length <= 0) {
+
+                return false;
+            } else {
+                return true;
+            }
         default:
             console.log("Invalid input type");
             return false; // Invalid input type
@@ -172,26 +197,16 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
  */
 
 function readFormData(formId) {
-
-
-
-
-
     var thisForm = $("#" + formId);
     var disabled = thisForm.find(':input:disabled').removeAttr('disabled');
     var formData = thisForm.serializeArray();
     disabled.attr('disabled', 'disabled');
     var formDataObject = {};
     var preferredChannels = [];
-
-
-
     formData.forEach(function(field) {
         var fieldName = field.name;
         var fieldValue = decodeURIComponent(field.value || "");
-
         if (fieldName === "preferred_categories" || fieldName === "preferred_locations" || fieldName === "preferred_channels") {
-
             if (!formDataObject[fieldName]) {
                 formDataObject[fieldName] = [fieldValue];
             } else {
@@ -213,11 +228,7 @@ function readFormData(formId) {
             }
         }
     });
-
-    //formDataObject.preferred_channels = preferredChannels.join(" &| ");
-
     var formDataJSON = JSON.stringify(formDataObject);
-
     return formDataJSON;
 }
 
@@ -249,6 +260,9 @@ $(document).ready(onDeviceReady)
 
 function onDeviceReady() {
 
+
+
+
     //init popup
     $(document).on("pagecreate", function() {
         $("#event_response_popup").popup();
@@ -267,19 +281,23 @@ function onDeviceReady() {
     });
 
     //Service expiry date selection
-    $('#sm-expiry-date').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        autoUpdateInput: false // Disable auto-update of the input field
-    });
+    // $('#sm-expiry-date').daterangepicker({
+    //     singleDatePicker: true,
+    //     showDropdowns: true,
+    //     locale: {
+    //         cancelLabel: 'Clear',
+    //         format: 'DD-MM-YYYY'
+    //     },
+    //     autoUpdateInput: false 
+    // });
 
-    $('#sm-expiry-date').on('apply.daterangepicker', function(ev, picker) {
-        $(this).val(picker.startDate.format('DD/MM/YYYY'));
-    });
+    // $('#sm-expiry-date').on('apply.daterangepicker', function(ev, picker) {
+    //     $(this).val(picker.startDate.format('YYYY-MM-dd'));
+    // });
 
-    $('#sm-expiry-date').on('cancel.daterangepicker', function(ev, picker) {
-        $(this).val('');
-    });
+    // $('#sm-expiry-date').on('cancel.daterangepicker', function(ev, picker) {
+    //     $(this).val('');
+    // });
 
 
     //SET value to it
@@ -508,6 +526,7 @@ function onDeviceReady() {
             dataType: 'json',
             success: function(data) {
                 allCategories = data; //setting value for globally use
+                localStorage.setItem("allCategories", JSON.stringify(allCategories));
                 if (action == "staff") {
                     var categoriesOptions = '<option value="">Select one option</option>';
                 } else {
@@ -550,19 +569,36 @@ function onDeviceReady() {
 
 
     //List of volunteers initialize
-    $(document).on("pagecreate", "#volunteer-list-page", function() {
+    $(document).on("pagecreate", "#admin-volunteer-list-page", function() { //"#volunteer-list-page",
         checkAuthentication();
         //1.Fetch and populate locations
+        loggedInUser = getUser();
+        var accountType = loggedInUser.acctType;
+
         fetchLocations();
         //2.Fetch and populate categories
         fetchAllServices();
+        $("#filter-volunteers-admin select[name='preferred_categories'],#filter-volunteers select[name='preferred_locations']").on("change", function() {
+            fetchVolunteersByFilter($("#filter-volunteers-admin select[name='preferred_categories']").val(), $("#filter-volunteers-admin select[name='preferred_locations']").val(), "admin");
+        })
+        fetchVolunteers("admin");
 
-        fetchVolunteers(); //API-NOT-READY
+    }); //END of volunteers page prerequisites loading
 
+    //List of volunteers initialize
+    $(document).on("pagecreate", "#volunteer-list-page", function() { //"#volunteer-list-page",
+        checkAuthentication();
+        //1.Fetch and populate locations
+        loggedInUser = getUser();
+        var accountType = loggedInUser.acctType;
+
+        fetchLocations();
+        //2.Fetch and populate categories
+        fetchAllServices();
         $("#filter-volunteers select[name='preferred_categories'],#filter-volunteers select[name='preferred_locations']").on("change", function() {
             fetchVolunteersByFilter($("#filter-volunteers select[name='preferred_categories']").val(), $("#filter-volunteers select[name='preferred_locations']").val());
         })
-
+        fetchVolunteers();
 
     }); //END of volunteers page prerequisites loading
 
@@ -692,7 +728,6 @@ function onDeviceReady() {
 
         //SELECT-ALL Volunteers Reverese  
         $(".individual-checkbox").change(function() {
-            console.log("Inside change jill individual checkbox");
             var checkedCount = $(".individual-checkbox:checked").length;
 
             if (checkedCount === $(".individual-checkbox").length) {
@@ -848,27 +883,27 @@ function onDeviceReady() {
 
     //staff services menu
     $(document).on("pagecreate", "#manage-services-menu", function() {
+        //Only logged in user can see this page 
+        checkAuthentication();
+        fetchServices("", true); //query,true for staff/admin
+    })
+
+    //Add new service
+    $(document).on("pagecreate", "#add-service-page", function() {
 
         //Only logged in user can see this page 
         checkAuthentication();
-
         //1.Fetch and populate locations
         fetchLocations();
         //2.Fetch and populate categories
         fetchAllServices();
         //3.Fetch and render services in staff page
-        fetchServices("", true); //query,true for staff/admin
-
     })
 
     //Add new staff
     $(document).on("pagecreate", "#create-staff-acct", function() {
-
-        //Only logged in user can see this page 
         checkAuthentication();
-        //1.Fetch and populate locations
         fetchLocations();
-        //2.Fetch and populate departments
         fecthDepartments();
     })
 
@@ -883,6 +918,7 @@ function onDeviceReady() {
         fecthDepartments();
         //3.Fetch all staff and render
         fetchAllStaff();
+
     })
 
 
@@ -898,7 +934,7 @@ function onDeviceReady() {
                 'x-auth-token': authDetails.token
             },
             success: function(staffAccounts) {
-
+                //console.log(staffAccounts);
                 renderStaffAccounts(staffAccounts);
                 localStorage.setItem("allStaffAccounts", JSON.stringify(staffAccounts));
             },
@@ -947,31 +983,30 @@ function onDeviceReady() {
 
     function renderStaffAccounts(staffAccounts) {
 
-
-
         var staffAccountsHtml = "";
-        staffAccountsHtml = staffAccountsHtml + '<table>' +
-            '<tr class="headers">' +
-            '<td><span>Edit</span></td>' +
+        staffAccountsHtml = staffAccountsHtml + '<table class="controlled_table">' +
+            '<thead><tr class="headers">' +
             '<td><span>Name</span></td>' +
+            '<td><span>Phone</span></td>' +
             '<td><span>Department</span></td>' +
             '<td><span>Location</span></td>' +
-            '</tr>';
+            '<td><span>Edit</span></td>' +
+            '</tr></thead><tbody>';
 
         staffAccounts.forEach((staff, index) => {
             staffAccountsHtml = staffAccountsHtml + '<tr>' +
-                '<td><a href="#popupEditStaff" class="popupEditStaff" data-role="button"   data-staffid=' + staff._id + ' data-rel="popup">  <span class="material-symbols-sharp">edit</span></a></td>' +
                 '<td><span>' + staff.firstName + " " + staff.lastName + '</span></td>' +
+                '<td>' + staff.phoneNo + '</td>' +
                 '<td><span>' + ((staff.department != undefined && staff.department != null) ? staff.department.departmentName : "N/A") + '</span></td>' +
                 '<td><span>' + (staff.location != undefined ? staff.location.locationName : "N/A") + '</span></td>' +
+                '<td><a href="#update-staff-acct" class="popupEditStaff" data-role="button"   data-staffid=' + staff._id + '>  <span class="material-symbols-sharp">edit</span></a></td>' +
                 '</tr>';
-
-
         });
-        staffAccountsHtml = staffAccountsHtml + '</table>';
+        staffAccountsHtml = staffAccountsHtml + '</tbody></table>';
         $("#staff-accounts-table-container").html(staffAccountsHtml);
+        reloadDatatable(); //init dataTable plugin
         $(".popupEditStaff").on("click", function() {
-            setEditFormStaff($(this).data("staffid"))
+            setEditFormStaff($(this).data("staffid"));
         })
     } //END renderStaffAccounts
 
@@ -979,20 +1014,20 @@ function onDeviceReady() {
 
 
         var staffServicesHtml = "";
-        staffServicesHtml = staffServicesHtml + '<table>' +
-            '<tr class="headers">' +
+        staffServicesHtml = staffServicesHtml + '<table class="controlled_table">' +
+            '<thead><tr class="headers">' +
             '<td><span>Service</span></td>' +
             '<td><span>Category</span></td>' +
             '<td><span>Location</span></td>' +
             '<td><span>Display</span></td>' +
-            '</tr>';
+            '</tr><thead><tbody>';
 
         services.forEach((service, index) => {
             staffServicesHtml = staffServicesHtml + '<tr>' +
                 '<td><span>' + service.serviceName + '</span></td>' +
                 '<td><span>' + (service.category != undefined ? service.category.categoryName : "N/A") + '</span></td>' +
                 '<td><span>' + (service.location != undefined ? service.location.locationName : "N/A") + '</span></td>' +
-                '<td><span><select name="service-displayed" onclick="alert()" data-service="' + service.serviceName + '" data-id="' + service._id + '" data-role="flipswitch" data-mini="true">' +
+                '<td><span><select name="service-displayed"  data-service="' + service.serviceName + '" data-id="' + service._id + '" data-role="flipswitch" data-mini="true">' +
                 '<option value="off"' + (service.status === "offline" ? "selected='true'" : "") + '>Off</option>' +
                 '<option value="on"' + (service.status === "online" ? "selected='true'" : "") + '>On</option>' +
                 '</select></span></td>' +
@@ -1000,8 +1035,9 @@ function onDeviceReady() {
 
         });
 
-        staffServicesHtml = staffServicesHtml + '</table>';
+        staffServicesHtml = staffServicesHtml + '</tbody></table>';
         $("#staff-services-table-container").html(staffServicesHtml);
+        reloadDatatable(); //dataTable plugin
         $("select[name='service-displayed']").flipswitch();
         $("select[name='service-displayed']").on("change", function() {
             flipswitchChange($(this)); //console.log("switchch");
@@ -1288,7 +1324,8 @@ function onDeviceReady() {
     })
 
     $("#submit-new-service").on('click', function() {
-        var isValidForm = finalFormValidation($(this).data("id"));
+        var formId = $(this).data("id");
+        var isValidForm = finalFormValidation(formId);
         const authDetails = getUser();
         formData = {};
         if (isValidForm) {
@@ -1313,16 +1350,18 @@ function onDeviceReady() {
                     console.log(data);
                     if (data != undefined) {
                         alert("Service added successfully!");
-                        location.reload(); //refresh page
+                        location.href("#manage-services-menu"); //refresh page
                     }
                 },
                 error: function(error) {
-                    console.log('Error signing up: ' + readAPIError(error));
+                    console.log('Error:' + readAPIError(error));
                 }
             });
 
         } else {
-            console.log("Invalid form");
+            $("html, body").animate({
+                scrollTop: $("#" + formId).offset().top,
+            }, 1000);
         }
 
     })
@@ -1331,17 +1370,23 @@ function onDeviceReady() {
 
     //SET values to edit form in popup staff
     function setEditFormStaff(staffId) {
+
         allStaffAccounts = JSON.parse(localStorage.getItem("allStaffAccounts"));
         const foundEditedStaff = allStaffAccounts.find(obj => obj._id === staffId);
+        console.log(foundEditedStaff);
         if (foundEditedStaff != undefined && foundEditedStaff != null) {
             var department = ((foundEditedStaff.department != undefined && foundEditedStaff.department != null) ? foundEditedStaff.department._id : "");
             var location = ((foundEditedStaff.location != undefined && foundEditedStaff.location != null) ? foundEditedStaff.location._id : "");
-            var accType = ((foundEditedStaff.isAdmin == true) ? "admin" : "staff")
-            $("#edit_staff_name").html(foundEditedStaff.firstName + " " + foundEditedStaff.lastName);
-            $("#edit_staff_loc option[value='" + location + "']").prop("selected", true);
-            $("#edit_staff_dept option[value='" + department + "']").prop("selected", true);
-            $("#edit_staff_type option[value='" + accType + "']").prop("selected", true);
-            $("#edit_staff_loc,#edit_staff_dept,#edit_staff_type").selectmenu().selectmenu("refresh"); //to update to dom
+            var accType = ((foundEditedStaff.isAdmin == true) ? "admin" : "staff");
+            $("#update-staff-form").attr("data-id", foundEditedStaff._id);
+            $("#update-staff-acct input[name='firstName']").val(foundEditedStaff.firstName);
+            $("#update-staff-acct input[name='lastName']").val(foundEditedStaff.lastName);
+            //$("#update-staff-acct input[name='email']").val(foundEditedStaff.email);
+            $("#update-staff-acct input[name='phoneNo']").val(foundEditedStaff.phoneNo);
+            $("#update-staff-acct select.locations option[value='" + location + "']").prop("selected", true);
+            $("#update-staff-acct select.staff_departments option[value='" + department + "']").prop("selected", true);
+            $("#update-staff-acct select.staff_departments,#update-staff-acct select.locations").selectmenu().selectmenu("refresh"); //to update to dom
+
         } else {
             console.log("Edited staff account not found in localstorage.");
         }
@@ -1356,6 +1401,33 @@ function onDeviceReady() {
         const acctType = user.acctType;
         return { token, id, acctType };
     }
+
+
+    function reloadDatatable() {
+
+        var table = $('.controlled_table').DataTable();
+        table.destroy();
+        new DataTable('.controlled_table', {
+            responsive: false,
+            colReorder: false,
+            lengthChange: false,
+            scrollX: true,
+        });
+
+        table.on('page.dt', function() {
+            setTimeout(function() {
+                reloadFlipswitch(); //to wait for updating DOM
+            }, 500);
+
+        });
+
+    }
+
+    function reloadFlipswitch() {
+        $("select[name='service-displayed']").flipswitch();
+    }
+
+
     //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMzExM2YxZDZiMDlhMzhhNGRmNjU3IiwiYWNjdFR5cGUiOiJ2b2x1bnRlZXIifSwiaWF0IjoxNjk0NzAwMzMxLCJleHAiOjE2OTQ3MzYzMzF9.tWYLNYFu9XBUNs1Zuz74biZguW8xj_ufboU26TUAPxM
     function fetchProfile() {
 
@@ -1449,7 +1521,7 @@ function onDeviceReady() {
 
 
 
-    function fetchVolunteersByFilter(category = [], location = []) {
+    function fetchVolunteersByFilter(category = [], location = [], isAdmin = false) {
 
         authDetails = getUser();
         if (category !== null) {
@@ -1476,12 +1548,12 @@ function onDeviceReady() {
             contentType: 'application/json',
             success: function(response) {
 
-                console.log(response);
+
                 var volunteers = response;
                 // Rearrange the volunteers data with location and category names
                 const rearrangedVolunteers = replaceIdsWithNames(volunteers, allLocations, allCategories);
                 //4.Handle resposne
-                renderVolunteers(rearrangedVolunteers);
+                renderVolunteers(rearrangedVolunteers, isAdmin);
                 bindCheckboxesAfterDomLoad(); //make sure all events binded to checkboxes
             },
             error: function(error) {
@@ -1492,7 +1564,7 @@ function onDeviceReady() {
     }
 
 
-    function fetchVolunteers() {
+    function fetchVolunteers(user = "") {
         authDetails = getUser();
 
         $.ajax({
@@ -1510,7 +1582,12 @@ function onDeviceReady() {
                 // Rearrange the volunteers data with location and category names
                 const rearrangedVolunteers = replaceIdsWithNames(volunteers, allLocations, allCategories);
                 //4.Handle resposne
-                renderVolunteers(rearrangedVolunteers);
+                if (user == "admin") {
+                    renderVolunteers(rearrangedVolunteers, true);
+                } else {
+                    renderVolunteers(rearrangedVolunteers);
+                }
+
                 bindCheckboxesAfterDomLoad(); //make sure all events binded to checkboxes
             },
             error: function(error) {
@@ -1524,21 +1601,21 @@ function onDeviceReady() {
 
     //Render volunteers list
 
-    function renderVolunteers(volunteersList) {
-        console.log(volunteersList);
+    function renderVolunteers(volunteersList, isAdmin = false) {
+
 
         var volunteersListHtml = "";
 
 
-        volunteersListHtml = +"<table>" +
-            '<tr class="headers">' +
+        volunteersListHtml += "<table class='controlled_table responsive nowrap' width='100%'>" +
+            '<thead><tr class="headers">' +
             '<td class="checkbox-holder"><span><input type="checkbox"  class="select-all"/></span></td>' +
             '<td><span>Name</span></td>' +
             '<td><span>Location</span></td>' +
             '<td><span>Service Category</span></td>' +
             '<td><span>Email</span></td>' +
             '<td><span>SMS</span></td>' +
-            '</tr>';
+            '</tr></thead><tbody>';
         // console.log(volunteersList);
         Object.keys(volunteersList).forEach((index) => {
             volunteer = volunteersList[index];
@@ -1559,8 +1636,13 @@ function onDeviceReady() {
                 '</tr>';
         });
 
-        volunteersListHtml = volunteersListHtml + '</table>';
-        $("#volunteer-list-container").html(volunteersListHtml);
+        volunteersListHtml = volunteersListHtml + '</tbody></table>';
+        if (isAdmin) {
+            $("#volunteer-list-container-admin").html(volunteersListHtml); //ADMIN page
+        } else {
+            $("#volunteer-list-container").html(volunteersListHtml);
+        }
+        reloadDatatable(); //init dataTable plugin
 
     } //END volunteer list
 
@@ -1591,7 +1673,7 @@ function onDeviceReady() {
                         var notifSentOn = ((item.createdAt != undefined && item.createdAt != null) ? formatDateTime(item.createdAt) : "N/A");
                         var sentToList = '';
                         if (accountType == "STAFF") {
-
+                            notifSubject = item._id; //This _id has subject for staff notifications
                             var volunteers = item.volunteers;
                             const VolunteerNameslimit = 5;
                             if (!Array.isArray(volunteers) || volunteers.length === 0) {
@@ -1630,7 +1712,7 @@ function onDeviceReady() {
                     });
                     if (accountType == "STAFF") {
 
-                        $(".staff-notif").html(myNotifications); //append to the parent div
+                        $("#staff-sent-notif .staff-notif").html(myNotifications); //append to the parent div
 
                     } else {
                         $(".voluntr-notif").html(myNotifications); //append to the parent div
@@ -1652,6 +1734,202 @@ function onDeviceReady() {
 
 
 
+    //Manage locations,categories,departments
+    $(".saveBtn").on("click", function() {
+
+            var formId = $(this).data("formid");
+            var formAction = $(this).data("action");
+            var authDetails = getUser();
+            var isValidForm = finalFormValidation(formId);
+            var currentPageTarget = $(this).data("target");
+            var openedPopup = $(this).closest(".administration-popup").attr("id");
+            var formData = [];
+            if (isValidForm) {
+                var formData = readFormData(formId);
+                if (formAction == "add") {
+                    currentAction = "added";
+                    requestMethod = "POST";
+                    var endPoint = (currentPageTarget == "Category") ? apiEndPoints.addCategory : (currentPageTarget == "Location") ? apiEndPoints.addLocation : (currentPageTarget == "Department") ? apiEndPoints.addDepartment : "";
+                } else if (formAction == "edit") {
+                    currentAction = "updated";
+                    requestMethod = "PUT";
+                    var endPoint = (currentPageTarget == "Category") ? apiEndPoints.updateCategory : (currentPageTarget == "Location") ? apiEndPoints.updateLocation : (currentPageTarget == "Department") ? apiEndPoints.updateDepartment : "";
+                    endPoint += $(this).data("id");
+                }
+                console.log(formData, "edit form");
+                $.ajax({
+                    type: requestMethod,
+                    url: baseURL + endPoint,
+                    data: formData,
+                    headers: {
+                        'Authorization': 'Bearer ' + authDetails.token,
+                        'x-auth-token': authDetails.token
+                    },
+                    contentType: 'application/json',
+                    success: function(response) {
+                        // 4. Handle the response
+                        if (response) {
+                            console.log(response);
+                            $(".event_response_in_popup").removeClass("error_response").addClass("success_response").html(currentPageTarget + " " + currentAction + "  successfully!");
+                            setTimeout(function() {
+                                $("#" + openedPopup + " .ui-icon-delete").click();
+                                $(".event_response_in_popup").removeClass("success_response").html("");
+                                $(".empty-after-save").val("");
+                                /* Refresh list after saving*/
+                                $(".administration-menu-item[data-item='" + currentPageTarget + "']").click();
+                            }, masterData[0]["messageTimeout"]);
+                        }
+
+                    },
+                    error: function(error) {
+                        var errorMsg = readAPIError(error, true);
+                        $(".event_response_in_popup").removeClass("success_response").addClass("error_response").html(errorMsg);
+
+                    }
+                }); //END of Ajax
+
+
+
+            } else {
+                $("html, body").animate({
+                    scrollTop: $("#" + formId).offset().top,
+                }, 1000);
+            }
+
+        }) //END add locations,categories,departments
+
+    //On adminstration page load click on locations to show list of locations default
+    $("#admin-data-management").on("pagecreate", function() {
+        $(".administration-menu-item:first").click();
+    })
+
+    //On click of inpage menu loads page according to the menu clicked
+    $(".administration-menu-item").on("click", function() {
+        currentPageName = $(this).data("item");
+        var popupLink = $(this).data("popup-name");
+        $(".administration-menu-item").removeClass("active");
+        $(this).addClass("active");
+        displayCurrentPage(currentPageName, popupLink);
+    })
+
+    function displayCurrentPage(currentPageName, popupLink) {
+
+        $("#current-page-heading").html(currentPageName);
+        $("#current_page_add_event").html(currentPageName);
+        $("#page_add_popup_link").attr("href", "#" + popupLink);
+        $("#current_page_add_event").html(currentPageName);
+        $("#current-page-data").html('<div class="pre-loader">Loading....</div>');
+        var tableCurrentPage = "";
+        var authDetails = getUser();
+        var endPoint = (currentPageName == "Category") ? apiEndPoints.allCategories : (currentPageName == "Location") ? apiEndPoints.allLocations : (currentPageName == "Department") ? apiEndPoints.allDepartments : "";
+
+        $.ajax({
+            type: 'GET',
+            url: baseURL + endPoint,
+            headers: {
+                'Authorization': 'Bearer ' + authDetails.token,
+                'x-auth-token': authDetails.token
+            },
+            contentType: 'application/json',
+            success: function(responseData) {
+                // 4. Handle the response
+                if (responseData) {
+                    console.log(responseData);
+
+                    if (currentPageName === "Category") {
+                        tableCurrentPage += "<table class='my-table-container controlled_table'>" +
+                            "<thead><tr><th>S.No</th><th>Category Name</th><th>Edit</th></tr></thead><tbody>";
+                        $.each(responseData, function(index, value) {
+                            tableCurrentPage += "<tr><td>" + (index + 1) + "</td><td>" + value.categoryName + "</td><td><a href='#popupUpdateCategory' class='edit-table-data' data-rel='popup' data-item-type='" + currentPageName + "' data-id='" + value._id + "' data-name='" + value.categoryName + "'><span class='material-symbols-sharp' >edit</span></td></tr>";
+                        });
+
+
+                    } else if (currentPageName === "Location") {
+                        tableCurrentPage += "<table class='my-table-container controlled_table'>" +
+                            "<thead><tr><th>S.No</th><th>Location Name</th><th>Edit</th></tr></thead>";
+                        $.each(responseData, function(index, value) {
+                            tableCurrentPage += "<tr><td>" + (index + 1) + "</td><td>" + value.locationName + "</td><td><a href='#popupUpdateLocation' class='edit-table-data' data-rel='popup' data-item-type='" + currentPageName + "' data-id='" + value._id + "' data-name='" + value.locationName + "'><span class='material-symbols-sharp' >edit</span></td></tr>";
+                        });
+
+                    } else if (currentPageName === "Department") {
+
+                        tableCurrentPage += "<table class='my-table-container controlled_table'>" +
+                            "<thead><tr><th>S.No</th><th>Department Name</th><th>Edit</th></tr></thead>";
+                        $.each(responseData, function(index, value) {
+                            tableCurrentPage += "<tr><td>" + (index + 1) + "</td><td>" + value.departmentName + "</td><td><a href='#popupUpdateDepartment' class='edit-table-data' data-rel='popup' data-item-type='" + currentPageName + "' data-id='" + value._id + "' data-name='" + value.departmentName + "'><span class='material-symbols-sharp' >edit</span></td></tr>";
+                        });
+
+                    }
+                    tableCurrentPage += "</tbody></table>"; //wrapping table properly
+                    $("#current-page-data").html(tableCurrentPage);
+                    reloadDatatable(); //init dataTable plugin
+
+                    //bind table row edit event for location/category&Department
+                    $(".edit-table-data").on("click", function() {
+
+                        dataName = $(this).data("name");
+                        dataId = $(this).data("id");
+                        currentAction = $(this).data("item-type").toLowerCase();
+                        $("input[name='" + currentAction + "Name']").val(dataName); //Name of edited location/category/department
+                        $(".saveBtn#update-" + currentAction).attr("data-id", dataId); //Id of edited location/category/department
+                    })
+
+                } else {
+                    alert("Something went wrong!.");
+                }
+            },
+            error: function(error) {
+                readAPIError(error);
+
+            }
+        }); //END of Ajax
+    } //END of displayCurrentPage
+
+    $("#update-staff-form,#new-staff-form").on("submit", function(e) {
+
+        e.preventDefault();
+        var formId = $(this).attr("id");
+        var isValidForm = finalFormValidation(formId);
+        var formData = readFormData(formId);
+        var authDetails = getUser();
+        var staffId = $(this).data("id");
+        var action = $(this).data("action");
+        var apiEndPoint = (action == "update-staff") ? apiEndPoints.updateStaff : apiEndPoints.addStaff;
+        var apiMethod = (action == "update-staff") ? "PUT" : "POST";
+        var responseSuccessMsg = (action == "update-staff") ? "Updated" : "Created";
+        apiEndPoint += (action == "update-staff") ? staffId : "";
+
+        if (isValidForm) {
+            $.ajax({
+                type: apiMethod,
+                url: baseURL + apiEndPoint,
+                data: formData,
+                headers: {
+                    'Authorization': 'Bearer ' + authDetails.token,
+                    'x-auth-token': authDetails.token
+                },
+                contentType: 'application/json',
+                success: function(response) {
+                    //4.Handle resposne
+                    console.log(response);
+                    alert("Staff account " + responseSuccessMsg + " successfully!!");
+                    //$.mobile.changePage("#manage-user-accounts");
+                },
+                error: function(error) {
+                    console.log('Error: ' + readAPIError(error));
+                }
+            });
+        } else {
+            $("html, body").animate({
+                scrollTop: $("#" + formId).offset().top,
+            }, 1000);
+        }
+
+
+    })
+
+
+
 } //END of OnDeviceReady
 
 
@@ -1659,7 +1937,7 @@ function onDeviceReady() {
 //Fetch notifications sent to current user
 
 
-function readAPIError(error) {
+function readAPIError(error, returnMsg = false) {
     console.log(error);
 
     let errorMsg = "";
@@ -1676,8 +1954,12 @@ function readAPIError(error) {
     else {
         errorMsg = "An error occurred.";
     }
+    if (returnMsg) {
+        return errorMsg;
+    } else {
+        alert(errorMsg);
+    }
 
-    alert(errorMsg);
     //showAPIResponse(errorMsg);
 
 }

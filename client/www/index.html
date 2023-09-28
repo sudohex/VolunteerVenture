@@ -17,14 +17,20 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" media="all" href="css/daterangepicker.css" />
     <link rel="stylesheet" href="css/utility.css">
+    <link rel="stylesheet" href="css/dataTables/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="css/dataTables/rowReorder.dataTables.min.css" />
+    <link rel="stylesheet" href="css/dataTables/responsive.dataTables.min.css" />
     <script src="js/moment.min.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/jquery.mobile-1.4.5.js"></script>
     <script src="js/daterangepicker.js"></script>
+    <script src="js/dataTables/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables/dataTables.rowReorder.min.js"></script>
+    <script src="js/dataTables/dataTables.responsive.min.js"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,200&family=Open+Sans:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,200&family=Open+Sans:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet"> -->
 
     <title>Volunteer Venture</title>
 </head>
@@ -75,7 +81,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <span class="err-msg" data-param="password"></span>
                 <p class="forgot-p-link"><a href="#popupLogin" data-rel="popup" data-position-to="window">Forgot Password?</a></p>
                 <!-- TO-DO add page -->
-                <p class="other-login-link"><a href="#signin-page-staff">Login as Staff Member</a></p>
+                <p class="other-login-link"><a href="#signin-page-staff">Login as Staff / Admin</a></p>
                 <!-- TO-DO add page -->
                 <button type="submit" class="ui-btn signin-btn" id="signin-btn">Sign In</button>
 
@@ -118,7 +124,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </div>
 
             <form id="signin-form-staff" data-user="STAFF">
-                <h3>Sign In - Staff</h3>
+                <h3>Sign In - Staff / Admin</h3>
                 <input type="email" name="email" placeholder="Email" data-param="email" data-required="true">
                 <span class="err-msg" data-param="email"></span>
                 <input type="password" name="password" placeholder="Password" data-param="password" data-required="true">
@@ -367,7 +373,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     </span>
             </a>
         </div>
-        <div data-role="main" class="ui-content filter-container">
+        <div data-role="main" class="ui-content filter-container volunteer-filter-staff">
             <h3>Filter list with Location or Category: </h3>
             <form id="filter-volunteers">
                 <label for="select-locations">Locations</label>
@@ -455,7 +461,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </a>
         </div>
         <div>
-            <div data-role="main" class="ui-content staff-notif">
+            <div data-role="main" class="ui-content staff-notif um">
                 <div class="no-notifications">
                     <span class="material-symbols-sharp">
                             notifications_active
@@ -492,13 +498,35 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </a>
         </div>
         <div data-role="main" class="ui-content staff-notif">
-            <h3>Add new service opportunity:</h3>
-            <form id="add-new-service">
+            <h3 class="text-center">All Services</h3>
+            <a href="#add-service-page" data-role="button"><b>+</b> Add Service</a>
+        </div>
+        <div id="staff-services-table-container">
+            <!-- ADDED WITH JS-->
+        </div>
+    </div>
+    <!-- END Staff services menu -->
 
-                <label for="service-name">Service Name:</label>
-                <input type="text" for="service-name" id="service-name">
+
+    <!-- Staff Services Menu -->
+    <div data-role="page" id="add-service-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#staff-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Services Menu</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content staff-notif">
+            <h3 class="text-center">Add new service opportunity</h3>
+            <form id="add-new-service-form">
+
+                <label for="service-name">Service Name*</label>
+                <input type="text" for="service-name" id="service-name" data-param="serviceName" data-trequired="true">
+                <span class="err-msg" data-param="serviceName"></span>
                 <label for="select-location">Location</label>
-                <!-- name="service_loc" -->
                 <select data-native-menu="false" id="sm-location" name="preferred_locations" data-mini="true" data-param="prefLocation" data-required="true">
                     </select>
                 <span class="err-msg" data-param="prefLocation"></span>
@@ -520,12 +548,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <option value="on">Yes</option>
                 </select>
             </form>
-            <a href="#" data-role="button" class="ui-btn" id="submit-new-service">Save</a>
-        </div>
-
-
-        <div id="staff-services-table-container">
-            <!-- ADDED WITH JS-->
+            <a href="#" data-role="button" class="ui-btn" id="submit-new-service" data-id="add-new-service-form">Save</a>
         </div>
     </div>
     <!-- END Staff services menu -->
@@ -534,7 +557,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <div data-role="page" id="admin-home-page">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
-            <h1>Staff Home</h1>
+            <h1>Admin Home</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
                 <span class="material-symbols-sharp">
             logout
@@ -542,14 +565,56 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </a>
         </div>
         <div data-role="main" class="ui-content">
-            <a href="#volunteer-list-page" data-role="button" class="ui-btn">Access Volunteer List</a>
-            <a href="#admin-services-menu" data-role="button" class="ui-btn">Edit Services Menu</a>
-            <a href="#staff-sent-notif" data-role="button" class="ui-btn">Sent Notifications</a>
+            <a href="#admin-volunteer-list-page" data-role="button" class="ui-btn">Volunteer List</a>
+            <a href="#admin-data-management" data-role="button" class="ui-btn">Administration</a>
+            <!-- EDIT SERVICES MENU-->
+            <!-- <a href="#admin-services-menu" data-role="button" class="ui-btn">Manage Services</a> -->
             <a href="#manage-user-accounts" data-role="button" class="ui-btn">Manage Accounts</a>
             <!--THIS button is the only difference from Staff Home Page-->
         </div>
     </div>
     <!-- END Admin Home Page -->
+
+
+    <!-- Admin List of Volunteers Page-->
+    <div data-role="page" id="admin-volunteer-list-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Volunteers List</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+                    logout
+                    </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content filter-container volunteer-filter-admin">
+            <h3>Filter list with Location or Category: </h3>
+            <form id="filter-volunteers-admin">
+                <label for="select-locations">Locations</label>
+                <select data-native-menu="false" multiple="multiple" id="filter_volunteer_locations_admin" name="preferred_locations" data-mini="true" data-required="false"><!--data-param="prefLocation"-->
+                        <!-- ADDED WITH JS -->
+                    </select>
+
+                <label for="select-services">Service Categories</label>
+                <select multiple="multiple" data-native-menu="false" id="filter_volunteer_categories_admin" name="preferred_categories" data-mini="true" data-required="false"><!--data-param="prefServiceCategories"-->
+                        <!--ADDED WITH JS-->
+                    </select>
+            </form>
+            <!-- END filter form-->
+        </div>
+        <div class="my-table-container" id="volunteer-list-container-admin">
+
+            <!--ADDED WITH JS-->
+
+
+        </div>
+        <!-- END of list container-->
+
+        <footer data-role="footer" data-position="fixed" id="foort">
+
+        </footer>
+    </div>
+    <!-- END Volunteer List Page Admin-->
 
     <!-- Admin Manage Accounts Page -->
     <div data-role="page" id="manage-user-accounts">
@@ -568,50 +633,97 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <div data-role="popup" id="popupEditStaff" data-theme="a" class="ui-corner-all">
                 <form id="edit-staff-user">
                     <div class="edit-staff-user">
-                        <h3>Edit/Remove Staff Account</h3>
-                        <p>Bob Smith</p>
+                        <h3 class="text-center">Edit Staff Account</h3>
+                        <label for="edit_staff_name">Name</label>
+                        <input id="edit_staff_name" name="staffName" disabled/>
+
                         <label for="edit-staff-dept">Department</label>
-                        <select name="edit-staff-dept" id="edit-staff-dept" data-mini="true"></select>
+                        <select name="edit-staff-dept" id="edit_staff_dept" class="staff_departments" data-mini="true">
+                            <!-- ADDED WITH JS-->
+                        </select>
                         <label for="edit-staff-loc">Location</label>
-                        <select name="edit-staff-loc" id="edit-staff-loc" data-mini="true"></select>
+                        <select name="edit-staff-loc" id="edit_staff_loc" class="locations" data-mini="true">
+                             <!-- ADDED WITH JS-->
+                        </select>
                         <label for="edit-staff-type">Account Type</label>
-                        <select name="edit-staff-type" id="edit-staff-type" data-mini="true"></select>
-                        <button class="ui-btn">Save</button>
+                        <select name="edit-staff-type" id="edit_staff_type" data-mini="true" disabled>
+                            <option value="staff" selected>Staff</option>
+                            <option value="admin" >Admin</option>
+                        </select>
+                        <button class="ui-btn CQUSubmitBtn sml" type="button">Update</button>
                     </div>
                 </form>
             </div>
             <!-- // Admin Edit Staff Popup -->
 
-            <a href="#create-staff-acct" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plus" id="new-staff-account">Add New</a>
-            <input data-type="search" id="searchForStaff" placeholder="Search Name, Dept., Location, or type ">
+            <a href="#create-staff-acct" class="ui-btn CQUSubmitBtn"> <span class="material-symbols-sharp">
+                add
+                </span> Add Staff</a>
+            <!-- <input data-type="search" id="searchForStaff" placeholder="Search Name, Dept., Location, or type ">
+             -->
             <div>
                 <div>
-                    <h3>Staff Accounts:</h3>
+                    <h3 class="text-center">Staff Accounts</h3>
                 </div>
-                <div class="staff-table-container">
-                    <table>
-                        <tr class="headers">
-                            <td><span>Edit</span></td>
-                            <td><span>Name</span></td>
-                            <td><span>Dept.</span></td>
-                            <td><span>Loc.</span></td>
-                            <td><span>Type</span></td>
-                        </tr>
-                        <tr>
-                            <td><span><a href="#popupEditStaff" class="ui-icon-edit" data-role="button" data-icon="edit" data-iconpos="notext" data-rel="popup"></a></span></td>
-                            <td><span>B.Smith</span></td>
-                            <td><span>Hair & Beauty</span></td>
-                            <td><span>BNE</span></td>
-                            <td><span>Admin</span></td>
-                        </tr>
-                        <tr>
-                            <td><span><a href="#popupEditStaff" class="ui-icon-edit" data-role="button" data-icon="edit" data-iconpos="notext" data-rel="popup"></a></span></td>
-                            <td><span>R.Jones</span></td>
-                            <td><span>Catering</span></td>
-                            <td><span>RKM</span></td>
-                            <td><span>Staff</span></td>
-                        </tr>
-                    </table>
+                <div class="staff-table-container" id="staff-accounts-table-container">
+                    <!-- ADDED WITH JS-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Admin Manage Accounts Page -->
+
+    <!-- Admin Manage Accounts Page -->
+    <div data-role="page" id="manage-user-accounts">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Manage Accounts</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+            logout
+            </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+
+            <!-- Admin Edit Staff Popup -->
+            <div data-role="popup" id="popupEditStaff" data-theme="a" class="ui-corner-all">
+                <form id="edit-staff-user">
+                    <div class="edit-staff-user">
+                        <h3 class="text-center">Edit Staff Account</h3>
+                        <label for="edit_staff_name">Name</label>
+                        <input id="edit_staff_name" name="staffName" disabled/>
+
+                        <label for="edit-staff-dept">Department</label>
+                        <select name="edit-staff-dept" id="edit_staff_dept" class="staff_departments" data-mini="true">
+                            <!-- ADDED WITH JS-->
+                        </select>
+                        <label for="edit-staff-loc">Location</label>
+                        <select name="edit-staff-loc" id="edit_staff_loc" class="locations" data-mini="true">
+                             <!-- ADDED WITH JS-->
+                        </select>
+                        <label for="edit-staff-type">Account Type</label>
+                        <select name="edit-staff-type" id="edit_staff_type" data-mini="true" disabled>
+                            <option value="staff" selected>Staff</option>
+                            <option value="admin" >Admin</option>
+                        </select>
+                        <button class="ui-btn CQUSubmitBtn sml" type="button">Update</button>
+                    </div>
+                </form>
+            </div>
+            <!-- // Admin Edit Staff Popup -->
+
+            <a href="#create-staff-acct" class="ui-btn CQUSubmitBtn"> <span class="material-symbols-sharp">
+                add
+                </span> Add Staff</a>
+            <!-- <input data-type="search" id="searchForStaff" placeholder="Search Name, Dept., Location, or type ">
+             -->
+            <div>
+                <div>
+                    <h3 class="text-center">Staff Accounts</h3>
+                </div>
+                <div class="staff-table-container" id="staff-accounts-table-container">
+                    <!-- ADDED WITH JS-->
                 </div>
             </div>
         </div>
@@ -622,7 +734,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     <div data-role="page" id="create-staff-acct">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
-            <h1>Create New Staff User</h1>
+            <h1>Create New Staff Account</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
                 <span class="material-symbols-sharp">
         logout
@@ -630,7 +742,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </a>
         </div>
         <div data-role="main" class="ui-content">
-            <form class="flex flex-col" id="new-staff-form">
+            <form class="flex flex-col" id="new-staff-form" data-action="save-staff">
+                <input name="acctType" class="display-none" value="staff" />
                 <label for="email">Email * 
             <input type="email" name="email" id="email" data-param="email" data-required="true">
             <span class="err-msg" data-param="email"></span>
@@ -648,31 +761,33 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <span class="err-msg" data-param="lastName"></span>
         </label>
                 <label for="phoneNo">Phone *
-            <input type="text" name="phone" id="phoneNo" data-param="mobile" data-required="true">
+            <input type="text" name="phoneNo" id="phoneNo" data-param="mobile" data-required="true">
             <span class="err-msg" data-param="mobile"></span>
         </label>
 
-                <label for="select-department">Department</label>
-                <select name="select-department" id="select-department" data-mini="true"></select>
+                <label for="department">Department*</label>
+                <select name="department" class="staff_departments" id="select-department" data-mini="true" data-param="staffDepartment" data-required="true">
+                    <!-- ADDED WITH JS-->
+                </select>
+                <span class="err-msg" data-param="staffDepartment"></span>
 
-                <label for="select-location">Location</label>
-                <select name="select-location" id="select-location" data-mini="true"></select>
-
-                <label for="select-type">Account Type</label>
-                <select name="select-type" id="select-type" data-mini="true"></select>
-
-                <button type="submit" class="ui-btn">Submit</button>
+                <label for="location">Location*</label>
+                <select name="location" class="locations" id="select-location" data-mini="true" data-param="staffLocation" data-required="true">
+                    <!-- ADDED WITH JS-->
+                </select>
+                <span class="err-msg" data-param="staffLocation"></span>
+                <button type="submit" class="ui-btn" data-formid="new-staff-form" id="save-staff-btn">Submit</button>
             </form>
         </div>
     </div>
-
     <!-- END Admin Create Staff-->
 
-    <!-- Admin Services Menu -->
-    <div data-role="page" id="admin-services-menu">
+
+    <!-- Admin Create Staff -->
+    <div data-role="page" id="update-staff-acct">
         <div data-role="header" data-position="fixed">
             <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
-            <h1>Services Menu</h1>
+            <h1>Update Staff Account</h1>
             <a href="#" class="ui-btn ui-btn-right signout-btn">
                 <span class="material-symbols-sharp">
         logout
@@ -680,6 +795,66 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </a>
         </div>
         <div data-role="main" class="ui-content">
+            <form class="flex flex-col" id="update-staff-form" data-action="update-staff">
+                <input name="acctType" class="display-none" value="staff" />
+                <label for="firstName">First Name
+        <input type="text" name="firstName" id="firstName" disabled data-param="firstName" data-required="true">
+            <span class="err-msg" data-param="firstName"></span>
+        </label>
+                <label for="lastName">Last Name
+        <input type="text" name="lastName" id="lastName" disabled data-param="lastName" data-required="true">
+            <span class="err-msg" data-param="lastName"></span>
+        </label>
+                <label for="phoneNo">Phone *
+            <input type="text" name="phoneNo" id="phoneNo" data-param="mobile" data-required="true">
+            <span class="err-msg" data-param="mobile"></span>
+        </label>
+
+                <label for="department">Department*</label>
+                <select name="department" class="staff_departments" id="update-select-department" data-mini="true" data-param="staffDepartment" data-required="true">
+                    <!-- ADDED WITH JS-->
+                </select>
+                <span class="err-msg" data-param="staffDepartment"></span>
+
+                <label for="location">Location*</label>
+                <select name="location" class="locations" id="update-select-location" data-mini="true" data-param="staffLocation" data-required="true">
+                    <!-- ADDED WITH JS-->
+                </select>
+                <span class="err-msg" data-param="staffLocation"></span>
+
+                <button type="submit" class="ui-btn" data-formid="update-staff-form" id="update-staff-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+    <!-- END Admin Create Staff-->
+
+    <!-- Admin Services Menu -->
+    <div data-role="page" id="admin-data-management">
+        <div data-role="header" data-position="fixed">
+            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
+            <h1>Administration</h1>
+            <a href="#" class="ui-btn ui-btn-right signout-btn">
+                <span class="material-symbols-sharp">
+        logout
+        </span>
+            </a>
+        </div>
+        <div data-role="main" class="ui-content">
+            <div class="ami-container text-center">
+                <div class="administration-menu-item" data-item="Location" data-popup-name="popupNewLocation">Location</div>
+                <div class="administration-menu-item" data-item="Category" data-popup-name="popupNewCategory">Category</div>
+                <div class="administration-menu-item" data-item="Department" data-popup-name="popupNewDepartment">Department</div>
+            </div>
+
+            <div>
+                <a href="#popupNewCategory" id="page_add_popup_link" class="ui-btn CQUSubmitBtn" data-role="button" data-rel="popup">+ Add <span id="current_page_add_event">Location</span></a>
+            </div>
+            <div class="ami-dynamic-container">
+
+
+                <h3 class="text-center" id="current-page-heading"></h3>
+                <div id="current-page-data"></div>
+            </div>
 
             <!-- Admin New Service Popup -->
             <div data-role="popup" id="popupNewService" data-theme="a" class="ui-corner-all">
@@ -688,11 +863,9 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         <h3>New service:</h3>
                         <label for="service-name">Service Name:</label>
                         <input type="text" for="service-name" id="service-name">
-
                         <label for="select-location">Location</label>
                         <select data-native-menu="false" name="service_loc" data-mini="true" data-param="addServiceLocation" data-required="true">
                 </select>
-
                         <label for="select-services">Service Category:</label>
                         <select data-native-menu="false" name="service-cat" data-mini="true" data-param="addServiceCategories" data-required="true">
                 </select>
@@ -703,46 +876,125 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <option value="on">Yes</option>
                 </select>
                         <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-                        <button class="ui-btn">Save</button>
+                        <button class="ui-btn saveBtn" data-action="add">Save</button>
                     </div>
                 </form>
             </div>
             <!-- //Admin New Service Popup -->
 
-            <!-- Admin New Category Popup -->
-            <div data-role="popup" id="popupNewCategory" data-theme="a" class="ui-corner-all">
-                <form id="add-new-category">
-                    <div class="admin-new-category">
-                        <h3>New Category:</h3>
-                        <input type="text" for="category-name" id="category-name" placeholder="Category Name">
-                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-                        <button class="ui-btn">Save</button>
-                    </div>
-                </form>
-            </div>
-            <!-- // Admin New Category Popup -->
+
 
             <!-- Admin New Location Popup -->
-            <div data-role="popup" id="popupNewLocation" data-theme="a" class="ui-corner-all">
+            <div data-role="popup" id="popupNewLocation" data-theme="a" class="ui-corner-all administration-popup">
                 <form id="add-new-location">
-                    <div class="admin-new-location">
-                        <h3>New Location:</h3>
-                        <input type="text" for="location-name" id="location-name" placeholder="Location Name">
-                        <input type="text" for="location-name" id="location-name" placeholder="Location Abbreviation XXX">
+                    <div class="admin-add-new-location">
+                        <h3 class="text-center">New Location</h3>
+                        <span class="event_response_in_popup"></span>
+                        <label for="locationName">Location Name*</label>
+                        <input type="text" name="locationName" class="empty-after-save" id="new-location-name" placeholder="Enter location name" data-required="true" data-param="locationName">
+                        <span class="err-msg" data-param="locationName"></span>
                         <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-                        <button class="ui-btn">Save</button>
+                        <button class="ui-btn saveBtn" type="button" id="save-new-location" data-action="add" data-target="Location" data-formid="add-new-location">Save</button>
                     </div>
                 </form>
             </div>
             <!-- // Admin New Location Popup -->
 
-            <div>
-                <p><a href="#popupNewService" class="ui-btn" data-role="button" data-rel="popup">+ Service</a></p>
-                <p><a href="#popupNewCategory" class="ui-btn" data-role="button" data-rel="popup">+ Category</a></p>
-                <p><a href="#popupNewLocation" class="ui-btn" data-role="button" data-rel="popup">+ Location</a></p>
+
+
+
+            <!-- Admin New Category Popup -->
+            <div data-role="popup" id="popupNewCategory" data-theme="a" class="ui-corner-all administration-popup">
+                <form id="add-new-category">
+                    <div class="admin-add-new-category">
+                        <h3 class="text-center">New Category</h3>
+                        <span class="event_response_in_popup"></span>
+                        <label for="categoryName">Category Name*</label>
+                        <input type="text" name="categoryName" class="empty-after-save" id="new-category-name" placeholder="Enter category name" data-required="true" data-param="categoryName">
+                        <span class="err-msg" data-param="categoryName"></span>
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn saveBtn" type="button" data-target="Category" data-action="add" id="save-new-category" data-formid="add-new-category">Save</button>
+                    </div>
+                </form>
             </div>
+            <!-- // Admin New Category Popup -->
+
+            <!-- Admin New Department Popup -->
+            <div data-role="popup" id="popupNewDepartment" data-theme="a" class="ui-corner-all administration-popup">
+                <form id="add-new-department">
+                    <div class="add-new-department">
+                        <h3 class="text-center">New Department</h3>
+                        <span class="event_response_in_popup"></span>
+                        <label for="departmentName">Department Name*</label>
+                        <input type="text" name="departmentName" class="empty-after-save" id="new-department-name" placeholder="Enter department name" data-required="true" data-param="departmentName">
+                        <span class="err-msg" data-param="departmentName"></span>
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn saveBtn" type="button" id="save-new-department" data-action="add" data-target="Department" data-formid="add-new-department">Save</button>
+                    </div>
+                </form>
+            </div>
+            <!-- // Admin New Department Popup -->
+
+            <!-- Admin Edit Location Popup -->
+            <div data-role="popup" id="popupUpdateLocation" data-theme="a" class="ui-corner-all administration-popup">
+                <form id="update-location-form">
+                    <div class="admin-add-new-location">
+                        <h3 class="text-center">Update Location</h3>
+                        <span class="event_response_in_popup"></span>
+                        <label for="locationName">Location Name*</label>
+                        <input type="text" name="locationName" class="empty-after-save" id="edit-location-name" placeholder="Enter location name" data-required="true" data-param="locationName">
+                        <span class="err-msg" data-param="locationName"></span>
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn saveBtn" type="button" id="update-location" data-target="Location" data-formid="update-location-form" data-action="edit">Update</button>
+                    </div>
+                </form>
+            </div>
+            <!-- // Admin Edit Location Popup -->
+            <!-- Admin update Category Popup -->
+            <div data-role="popup" id="popupUpdateCategory" data-theme="a" class="ui-corner-all administration-popup">
+                <form id="update-category-form">
+                    <div class="admin-add-new-category">
+                        <h3 class="text-center">Update Category</h3>
+                        <span class="event_response_in_popup"></span>
+                        <label for="categoryName">Category Name*</label>
+                        <input type="text" name="categoryName" class="empty-after-save" id="edit-category-name" placeholder="Enter category name" data-required="true" data-param="categoryName">
+                        <span class="err-msg" data-param="categoryName"></span>
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn saveBtn" type="button" data-target="Category" data-action="edit" id="update-category" data-formid="update-category-form">Update</button>
+                    </div>
+                </form>
+            </div>
+            <!-- // Admin edit Category Popup -->
+
+            <!-- Admin edit Department Popup -->
+            <div data-role="popup" id="popupUpdateDepartment" data-theme="a" class="ui-corner-all administration-popup">
+                <form id="update-department-form">
+                    <div class="update-department">
+                        <h3 class="text-center">Update Department:</h3>
+                        <span class="event_response_in_popup"></span>
+                        <label for="departmentName">Department Name*</label>
+                        <input type="text" name="departmentName" class="empty-after-save" id="new-department-name" placeholder="Enter department name" data-required="true" data-param="departmentName">
+                        <span class="err-msg" data-param="departmentName"></span>
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all  ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <button class="ui-btn saveBtn" type="button" id="update-department" data-action="edit" data-target="Department" data-formid="update-department-form">Update</button>
+                    </div>
+                </form>
+            </div>
+            <!-- // Admin edit Department Popup -->
+
+
+
+
 
             <div>
+                <!-- <p><a href="#popupNewService" class="ui-btn" data-role="button" data-rel="popup">+ Service</a></p>
+                 -->
+                <!-- <p><a href="#popupNewCategory" class="ui-btn" data-role="button" data-rel="popup">+ Category</a></p>
+                <p><a href="#popupNewLocation" class="ui-btn" data-role="button" data-rel="popup">+ Location</a></p>
+             -->
+            </div>
+
+            <!-- <div>
                 <h3>Current Menu Data:</h3>
             </div>
             <div class="services-table-container">
@@ -765,7 +1017,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                         <td><span><a href="#" class="ui-icon-delete" data-role="button" data-icon="delete" data-iconpos="notext"></a></span></td>
                     </tr>
                 </table>
-            </div>
+            </div> -->
         </div>
     </div>
     <!-- END Admin Services Menu-->

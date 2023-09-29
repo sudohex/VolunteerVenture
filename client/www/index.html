@@ -207,11 +207,11 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="main" class="ui-content">
             <form id="search-form">
                 <input name="date-range" placeholder="Example: 12/02/2023 - 14/02/2023" />
-                <input data-type="search" id="searchForCollapsibleSet" placeholder="Enter a keyword to match Service, Category, or Location">
+                <input data-type="search" id="searchForCollapsibleSet" placeholder="Search by Service, Category, or Location">
             </form>
             <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">
                 <!-- ADD Services With JS -->
-                <p class="text-center err-msg">No mathcing services found for your preferences.</p>
+                <p class="text-center err-msg">No matching services found for your preferences.</p>
             </div>
         </div>
         <div>
@@ -250,7 +250,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     notifications_active
                     </span>
                 <h4 class="mainmsg">No notifications yet.</h4>
-                <p class="submsg">When you get notifications,they'll show up here</p>
+                <p class="submsg">When you have notifications, they'll show up here</p>
                 <button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>
             </div>
         </div>
@@ -293,26 +293,26 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             </label>
                 <!-- <label for="update-password">Password 
             <input type="password" name="password" id="update-password" disabled="true">
-        </label> -->
+            </label> -->
                 <label for="update-firstName">First Name 
             <input type="text" name="firstName" id="update-firstName" disabled="true">
-        </label>
+            </label>
                 <label for="update-lastName">Last Name 
             <input type="text" name="lastName" id="update-lastName" disabled="true">
-        </label>
+            </label>
                 <label for="update-phoneNo">Phone *
             <input type="text" name="phone" id="update-phoneNo" data-param="mobile" data-required="true">
             <span class="err-msg" data-param="mobile"></span>
-        </label>
+            </label>
                 <label for="update-select-location">Preferred Locations: *</label>
                 <select id="update-locations" data-native-menu="false" name="preferred_locations" data-param="prefLocation" data-required="true" data-mini="true">
             <!-- ADDED WITH JS -->
-        </select>
+                </select>
                 <span class="err-msg" data-param="prefLocation"></span>
                 <label for="select-services">Preferred Service Categories:</label>
                 <select multiple="multiple" data-native-menu="false" name="preferred_categories" data-mini="true" data-param="prefServiceCategories" data-required="true" id="update-select-services-menu">
             <!--ADDED WITH JS-->
-        </select>
+                </select>
                 <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="update-select-consent">Notification Preferences: *</label>
                 <select multiple="multiple" data-native-menu="false" data-param="notifPref" data-required="true" name="preferred_channles" id="update-select-consent" data-mini="true">
@@ -320,7 +320,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <option value="SMS">SMS</option>
                     <option value="EMAIL">Email</option>
                     
-        </select>
+                </select>
                 <span class="err-msg" data-param="notifPref"></span>
                 <div class="button-group">
                     <button type="submit" class="ui-btn bg-child">Update</button>
@@ -466,8 +466,8 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                     <span class="material-symbols-sharp">
                             notifications_active
                             </span>
-                    <h4 class="mainmsg">No messages have been sent yet</h4>
-                    <p class="submsg">After you send a message to voluteers, it will appear here</p>
+                    <h4 class="mainmsg">No messages have been sent yet.</h4>
+                    <p class="submsg">Once you send messages, they'll appear here</p>
                     <button type="button" class="refresh-notifications" onclick="fetchNotifications()">Refresh</button>
                 </div>
             </div>
@@ -537,9 +537,9 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 </select>
                 <span class="err-msg" data-param="prefServiceCategories"></span>
                 <label for="sm-description">Description</label>
-                <textarea name="sm-description" id="sm-description" data-param="serviceDescription" data-required="true" placeholder="Briefly about this service"></textarea>
+                <textarea name="sm-description" id="sm-description" data-param="serviceDescription" data-required="true" placeholder="Brief service description"></textarea>
                 <span class="err-msg" data-param="serviceDescription"></span>
-                <label for="expireOn">Available till?</label>
+                <label for="expireOn">Service End Date:</label>
                 <input id="sm-expiry-date" name="expireOn" type="date" data-required="true" data-param="serviceExpiryDate" />
                 <span class="err-msg" data-param="serviceExpiryDate"></span>
                 <label for="send-SMS">Display to public?</label>
@@ -566,7 +566,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         </div>
         <div data-role="main" class="ui-content">
             <a href="#admin-volunteer-list-page" data-role="button" class="ui-btn">Volunteer List</a>
-            <a href="#admin-data-management" data-role="button" class="ui-btn">Administration</a>
+            <a href="#admin-data-management" data-role="button" class="ui-btn">Services Admin</a>
             <!-- EDIT SERVICES MENU-->
             <!-- <a href="#admin-services-menu" data-role="button" class="ui-btn">Manage Services</a> -->
             <a href="#manage-user-accounts" data-role="button" class="ui-btn">Manage Accounts</a>

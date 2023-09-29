@@ -9,14 +9,14 @@ var masterData = [{
         lastName: "Last name should be 3-50 characters.",
         cPassword: "Password and confirm password do not match",
         prefLocation: "Please select a location.",
-        prefServiceCategories: "Please select atleast one option",
-        notifPref: "Please select atleast one option.",
-        serviceDescription: "Please write atleast 10 characters.",
+        prefServiceCategories: "Please select at least one option",
+        notifPref: "Please select at least one option.",
+        serviceDescription: "Please write at least 10 characters.",
         serviceExpiryDate: "Please select an expiry date.",
         accType: "Please select a account type.",
         staffDepartment: "Please select a department.",
-        notifMessage: "Please enter atleast  50 characters.",
-        notifSubject: "Please enter atleast  10 characters.",
+        notifMessage: "Please enter at least  50 characters.",
+        notifSubject: "Please enter at least  10 characters.",
         locationName: "Location name is required.",
         categoryName: "Category name is required.",
         staffDepartment: "Please select a department.",
@@ -969,8 +969,8 @@ function onDeviceReady() {
                         renderServices(services);
                     }
                 } else { //0 records
-                    $("#collapsiblesetForFilter").html('<p class="text-center err-msg">No mathcing services found for your preferences.</p>');
-                    showAPIResponse("Zero mathcing services found!!");
+                    $("#collapsiblesetForFilter").html('<p class="text-center err-msg">No matching services found for your preferences.</p>');
+                    showAPIResponse("Zero matching services found!!");
                 }
             },
             error: function(error) {

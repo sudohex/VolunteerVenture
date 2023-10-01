@@ -395,13 +395,17 @@ const addStaff = async(req, res) => {
 const getAllStaff = async(req, res) => {
     try {
         const staffMembers = await Staff.find()
-            .populate("department")
-            .populate("location");
+            .populate('department')
+            .populate('location')
+            .populate('_id', 'email acctType')  // Project only the email, password, and acctType fields from the user document
+           
         res.json(staffMembers);
     } catch (err) {
         sendError(res, 500, "Server error: " + err);
     }
 };
+
+
 const addService = async(req, res) => {
     if (req.authType !== "staff") {
         return sendError(res, 403, "Only staff members can add services");

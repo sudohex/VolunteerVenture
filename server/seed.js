@@ -347,6 +347,7 @@ async function cleanDB() {
     await Category.deleteMany({});
     await Service.deleteMany({});
     await Volunteer.deleteMany({});
+    await Staff.deleteMany({});
     await Notification.deleteMany({});
 
     console.log("Database cleaned!");

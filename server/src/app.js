@@ -491,7 +491,7 @@ const getService = async(req, res) => {
     if (req.authType === "staff") {
         try {
             const services = await Service.find(baseQuery)
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(services);
@@ -545,7 +545,7 @@ const getServiceByDateRange = async(req, res) => {
                     ...dateConditions,
                     status: "online",
                 })
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(services);

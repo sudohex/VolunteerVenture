@@ -58,17 +58,18 @@ const staffs = [
 ];
 
 const categories = [
-  new Category({ categoryName: "Hairdressing" }),
-  new Category({ categoryName: "Beauty" }),
-  new Category({ categoryName: "Catering" }),
-  new Category({ categoryName: "Restaurant" }),
-  new Category({ categoryName: "Chiropractic" }),
-  new Category({ categoryName: "Physiotherapy" }),
-  new Category({ categoryName: "Oral Health" }),
-  new Category({ categoryName: "Occupational Therapy" }),
-  new Category({ categoryName: "Speech Pathology" }),
-  new Category({ categoryName: "Podiatry" }),
+  new Category({ categoryName: "Hairdressing", bookingLink: "https://www.cqu.edu.au/engage/hair-and-beauty" }),
+  new Category({ categoryName: "Beauty", bookingLink: "https://www.cqu.edu.au/engage/hair-and-beauty" }),
+  new Category({ categoryName: "Catering", bookingLink: "https://www.cqu.edu.au/engage/restaurants-catering-canteens" }),
+  new Category({ categoryName: "Restaurant", bookingLink: "https://www.cqu.edu.au/engage/restaurants-catering-canteens" }),
+  new Category({ categoryName: "Chiropractic", bookingLink: "https://www.cqu.edu.au/engage/health-clinics" }),
+  new Category({ categoryName: "Physiotherapy", bookingLink: "https://www.cqu.edu.au/engage/health-clinics" }),
+  new Category({ categoryName: "Oral Health", bookingLink: "https://www.cqu.edu.au/engage/health-clinics" }),
+  new Category({ categoryName: "Occupational Therapy", bookingLink: "https://www.cqu.edu.au/engage/health-clinics" }),
+  new Category({ categoryName: "Speech Pathology", bookingLink: "https://www.cqu.edu.au/engage/health-clinics" }),
+  new Category({ categoryName: "Podiatry", bookingLink: "https://www.cqu.edu.au/engage/health-clinics" }),
 ];
+
 
 
 

@@ -509,7 +509,7 @@ const getService = async(req, res) => {
                     ...baseQuery,
                     status: "online",
                 })
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(onlinePreferredServices);
@@ -569,7 +569,7 @@ const getServiceByDateRange = async(req, res) => {
             };
 
             const services = await Service.find(conditions)
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(services);
@@ -582,7 +582,7 @@ const getServiceByDateRange = async(req, res) => {
 const getServiceById = async(req, res) => {
     try {
         const service = await Service.findById(req.params.id)
-            .populate("category", "categoryName")
+            .populate("category", "categoryName bookingLink")
             .populate("location", "locationName");
 
         if (!service) {

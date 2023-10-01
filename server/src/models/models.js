@@ -8,6 +8,9 @@ const categorySchema = new mongoose.Schema({
         required: true,
         trim: true,
         unique: true
+    },
+    bookingLink: {
+        type: String,
     }
 }, options);
 
@@ -67,7 +70,7 @@ const notificationSchema = new mongoose.Schema({
     subject: { type: String, required: true },
     message: { type: String, required: true },
     readStatus: { type: Boolean, default: false },
-    relatedService: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' } 
+    relatedService: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' }
 }, options);
 
 
@@ -85,5 +88,5 @@ module.exports = {
     Staff: mongoose.model('Staff', staffSchema),
     User: mongoose.model('User', userSchema),
     Volunteer: mongoose.model('Volunteer', volunteerSchema),
-    Notification:mongoose.model('Notification',notificationSchema)
+    Notification: mongoose.model('Notification', notificationSchema)
 };

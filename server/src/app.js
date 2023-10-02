@@ -395,13 +395,17 @@ const addStaff = async(req, res) => {
 const getAllStaff = async(req, res) => {
     try {
         const staffMembers = await Staff.find()
-            .populate("department")
-            .populate("location");
+            .populate('department')
+            .populate('location')
+            .populate('_id', 'email acctType')  // Project only the email, password, and acctType fields from the user document
+           
         res.json(staffMembers);
     } catch (err) {
         sendError(res, 500, "Server error: " + err);
     }
 };
+
+
 const addService = async(req, res) => {
     if (req.authType !== "staff") {
         return sendError(res, 403, "Only staff members can add services");
@@ -491,7 +495,7 @@ const getService = async(req, res) => {
     if (req.authType === "staff") {
         try {
             const services = await Service.find(baseQuery)
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(services);
@@ -509,7 +513,7 @@ const getService = async(req, res) => {
                     ...baseQuery,
                     status: "online",
                 })
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(onlinePreferredServices);
@@ -545,7 +549,7 @@ const getServiceByDateRange = async(req, res) => {
                     ...dateConditions,
                     status: "online",
                 })
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(services);
@@ -569,7 +573,7 @@ const getServiceByDateRange = async(req, res) => {
             };
 
             const services = await Service.find(conditions)
-                .populate("category", "categoryName")
+                .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
             res.json(services);
@@ -582,7 +586,7 @@ const getServiceByDateRange = async(req, res) => {
 const getServiceById = async(req, res) => {
     try {
         const service = await Service.findById(req.params.id)
-            .populate("category", "categoryName")
+            .populate("category", "categoryName bookingLink")
             .populate("location", "locationName");
 
         if (!service) {

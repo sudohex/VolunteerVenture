@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
+// NODEMAILER
+const nodemailer = require('nodemailer');
 const {
     Category,
     Department,
@@ -37,6 +39,40 @@ app.use(bodyParser.json()); // Parses incoming request bodies
 // Connect to Database
 connectDB();
 app.use(express.json());
+
+
+
+// Create a transporter
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "12121972@cqumail.com",
+        pass: "zhad aoez kclr osme",
+    },
+});
+//END
+
+//Start Email sending
+function sendEmail(SendTo, Subject, Message) {
+    const mailOptions = {
+        from: '12121972@cqumail.com',
+        to: SendTo,
+        subject: Subject,
+        text: Message,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).json({ error: 'Error sending email' });
+        } else {
+            console.log('Email sent:', info.response);
+            res.status(200).json({ message: 'Email sent successfully' });
+        }
+    });
+
+}
+//END Email Sending
 
 const addDefaultAdmin = async() => {
     const defaultAdminEmail = "admin@cqu.com";
@@ -397,8 +433,8 @@ const getAllStaff = async(req, res) => {
         const staffMembers = await Staff.find()
             .populate('department')
             .populate('location')
-            .populate('_id', 'email acctType')  // Project only the email, password, and acctType fields from the user document
-           
+            .populate('_id', 'email acctType') // Project only the email, password, and acctType fields from the user document
+
         res.json(staffMembers);
     } catch (err) {
         sendError(res, 500, "Server error: " + err);
@@ -730,8 +766,7 @@ const getNotifications = async(req, res) => {
         }
     } else if (req.authType === "staff") {
         try {
-            const notifications = await Notification.aggregate([
-                {
+            const notifications = await Notification.aggregate([{
                     $match: { sender: new mongoose.Types.ObjectId(req.userId) },
                 },
                 {
@@ -756,12 +791,12 @@ const getNotifications = async(req, res) => {
                     },
                 },
             ]);
-        
+
             res.status(200).json(notifications);
         } catch (err) {
             res.status(500).json({ error: "Server error: " + err });
         }
-        
+
     } else {
         res.status(403).json({ error: "Unauthorized" });
     }
@@ -795,6 +830,7 @@ const sendNotification = async(req, res) => {
         await Notification.insertMany(notifications);
 
         res.status(201).json({ message: "Notifications sent successfully!" });
+        sendEmail("mahammadjuberaus@gmail.com", subject, message);
     } catch (err) {
         res.status(500).json({ error: "Server error: " + err.message });
     }

@@ -64,10 +64,10 @@ function sendEmail(SendTo, Subject, Message) {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('Error sending email:', error);
-            res.status(500).json({ error: 'Error sending email' });
+            res.status(500).json({ error: JSON.stringify(error) });
         } else {
             console.log('Email sent:', info.response);
-            res.status(200).json({ message: 'Email sent successfully' });
+            res.status(200).json({ message: JSON.stringify(info) });
         }
     });
 
@@ -828,9 +828,9 @@ const sendNotification = async(req, res) => {
 
     try {
         await Notification.insertMany(notifications);
+        const emailresp = sendEmail("mahammadjuberaus@gmail.com", subject, message);
+        res.status(201).json({ message: "Notifications sent successfully!" + JSON.stringify(emailresp) });
 
-        res.status(201).json({ message: "Notifications sent successfully!" });
-        sendEmail("mahammadjuberaus@gmail.com", subject, message);
     } catch (err) {
         res.status(500).json({ error: "Server error: " + err.message });
     }

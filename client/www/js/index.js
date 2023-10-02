@@ -908,7 +908,7 @@ function onDeviceReady() {
     })
 
     //Add new staff
-    $(document).on("pagecreate", "#manage-user-accounts", function() {
+    $(document).on("pageshow", "#manage-user-accounts", function() {
 
         //Only logged in user can see this page 
         checkAuthentication();
@@ -934,7 +934,7 @@ function onDeviceReady() {
                 'x-auth-token': authDetails.token
             },
             success: function(staffAccounts) {
-                //console.log(staffAccounts);
+                console.log(staffAccounts);
                 renderStaffAccounts(staffAccounts);
                 localStorage.setItem("allStaffAccounts", JSON.stringify(staffAccounts));
             },
@@ -987,7 +987,8 @@ function onDeviceReady() {
         staffAccountsHtml = staffAccountsHtml + '<table class="controlled_table">' +
             '<thead><tr class="headers">' +
             '<td><span>Name</span></td>' +
-            '<td><span>Phone</span></td>' +
+            '<td><span>Mobile</span></td>' +
+            '<td><span>Email</span></td>' +
             '<td><span>Department</span></td>' +
             '<td><span>Location</span></td>' +
             '<td><span>Edit</span></td>' +
@@ -997,13 +998,15 @@ function onDeviceReady() {
             staffAccountsHtml = staffAccountsHtml + '<tr>' +
                 '<td><span>' + staff.firstName + " " + staff.lastName + '</span></td>' +
                 '<td>' + staff.phoneNo + '</td>' +
+                '<td>' + staff._id.email + '</td>' +
                 '<td><span>' + ((staff.department != undefined && staff.department != null) ? staff.department.departmentName : "N/A") + '</span></td>' +
                 '<td><span>' + (staff.location != undefined ? staff.location.locationName : "N/A") + '</span></td>' +
-                '<td><a href="#update-staff-acct" class="popupEditStaff" data-role="button"   data-staffid=' + staff._id + '>  <span class="material-symbols-sharp">edit</span></a></td>' +
+                '<td><a href="#update-staff-acct" class="popupEditStaff" data-role="button"   data-staffid=' + staff._id._id + '>  <span class="material-symbols-sharp">edit</span></a></td>' +
                 '</tr>';
         });
         staffAccountsHtml = staffAccountsHtml + '</tbody></table>';
         $("#staff-accounts-table-container").html(staffAccountsHtml);
+        //console.log(staffAccountsHtml, $("#staff-accounts-table-container").length);
         reloadDatatable(); //init dataTable plugin
         $(".popupEditStaff").on("click", function() {
             setEditFormStaff($(this).data("staffid"));
@@ -1012,7 +1015,7 @@ function onDeviceReady() {
 
     function renderStaffServices(services) {
 
-
+        console.log(services);
         var staffServicesHtml = "";
         staffServicesHtml = staffServicesHtml + '<table class="controlled_table">' +
             '<thead><tr class="headers">' +
@@ -1139,7 +1142,8 @@ function onDeviceReady() {
         </p>
         <ul>
         <li>${categoryDisplay}</li>
-        ${locationDisplay}
+    ${locationDisplay}
+        <li>To make a booking, <a href="${service.category.bookingLink}">click here</a>
         </ul>
     </div>
 `;
@@ -1372,13 +1376,13 @@ function onDeviceReady() {
     function setEditFormStaff(staffId) {
 
         allStaffAccounts = JSON.parse(localStorage.getItem("allStaffAccounts"));
-        const foundEditedStaff = allStaffAccounts.find(obj => obj._id === staffId);
+        const foundEditedStaff = allStaffAccounts.find(obj => obj._id._id === staffId);
         console.log(foundEditedStaff);
         if (foundEditedStaff != undefined && foundEditedStaff != null) {
             var department = ((foundEditedStaff.department != undefined && foundEditedStaff.department != null) ? foundEditedStaff.department._id : "");
             var location = ((foundEditedStaff.location != undefined && foundEditedStaff.location != null) ? foundEditedStaff.location._id : "");
             var accType = ((foundEditedStaff.isAdmin == true) ? "admin" : "staff");
-            $("#update-staff-form").attr("data-id", foundEditedStaff._id);
+            $("#update-staff-form").attr("data-id", foundEditedStaff._id._id);
             $("#update-staff-acct input[name='firstName']").val(foundEditedStaff.firstName);
             $("#update-staff-acct input[name='lastName']").val(foundEditedStaff.lastName);
             //$("#update-staff-acct input[name='email']").val(foundEditedStaff.email);

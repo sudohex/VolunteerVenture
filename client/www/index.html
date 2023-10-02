@@ -616,62 +616,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
     </div>
     <!-- END Volunteer List Page Admin-->
 
-    <!-- Admin Manage Accounts Page -->
-    <div data-role="page" id="manage-user-accounts">
-        <div data-role="header" data-position="fixed">
-            <a href="#admin-home-page" data-role="button" data-icon="home">Home</a>
-            <h1>Manage Accounts</h1>
-            <a href="#" class="ui-btn ui-btn-right signout-btn">
-                <span class="material-symbols-sharp">
-            logout
-            </span>
-            </a>
-        </div>
-        <div data-role="main" class="ui-content">
 
-            <!-- Admin Edit Staff Popup -->
-            <div data-role="popup" id="popupEditStaff" data-theme="a" class="ui-corner-all">
-                <form id="edit-staff-user">
-                    <div class="edit-staff-user">
-                        <h3 class="text-center">Edit Staff Account</h3>
-                        <label for="edit_staff_name">Name</label>
-                        <input id="edit_staff_name" name="staffName" disabled/>
-
-                        <label for="edit-staff-dept">Department</label>
-                        <select name="edit-staff-dept" id="edit_staff_dept" class="staff_departments" data-mini="true">
-                            <!-- ADDED WITH JS-->
-                        </select>
-                        <label for="edit-staff-loc">Location</label>
-                        <select name="edit-staff-loc" id="edit_staff_loc" class="locations" data-mini="true">
-                             <!-- ADDED WITH JS-->
-                        </select>
-                        <label for="edit-staff-type">Account Type</label>
-                        <select name="edit-staff-type" id="edit_staff_type" data-mini="true" disabled>
-                            <option value="staff" selected>Staff</option>
-                            <option value="admin" >Admin</option>
-                        </select>
-                        <button class="ui-btn CQUSubmitBtn sml" type="button">Update</button>
-                    </div>
-                </form>
-            </div>
-            <!-- // Admin Edit Staff Popup -->
-
-            <a href="#create-staff-acct" class="ui-btn CQUSubmitBtn"> <span class="material-symbols-sharp">
-                add
-                </span> Add Staff</a>
-            <!-- <input data-type="search" id="searchForStaff" placeholder="Search Name, Dept., Location, or type ">
-             -->
-            <div>
-                <div>
-                    <h3 class="text-center">Staff Accounts</h3>
-                </div>
-                <div class="staff-table-container" id="staff-accounts-table-container">
-                    <!-- ADDED WITH JS-->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- END Admin Manage Accounts Page -->
 
     <!-- Admin Manage Accounts Page -->
     <div data-role="page" id="manage-user-accounts">

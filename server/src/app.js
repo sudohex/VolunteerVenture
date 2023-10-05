@@ -54,24 +54,26 @@ const transporter = nodemailer.createTransport({
 
 //Start Email sending
 function sendEmail(SendTo, Subject, Message) {
-    const mailOptions = {
-        from: '12121972@cqumail.com',
-        to: SendTo,
-        subject: Subject,
-        text: Message,
-    };
+    return new Promise((resolve, reject) => {
+        const mailOptions = {
+            from: '12121972@cqumail.com',
+            to: SendTo,
+            subject: Subject,
+            text: Message,
+        };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-            res.status(500).json({ error: JSON.stringify(error) });
-        } else {
-            console.log('Email sent:', info.response);
-            res.status(200).json({ message: JSON.stringify(info) });
-        }
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                reject(error);
+            } else {
+                console.log('Email sent:', info.response);
+                resolve(info);
+            }
+        });
     });
-
 }
+
 //END Email Sending
 
 const addDefaultAdmin = async() => {
@@ -802,7 +804,7 @@ const getNotifications = async(req, res) => {
     }
 };
 
-const sendNotification = async(req, res) => {
+const sendNotification = async (req, res) => {
     if (req.authType !== "staff") {
         return res
             .status(403)
@@ -818,18 +820,34 @@ const sendNotification = async(req, res) => {
             .json({ error: "Required fields: volunteerIds, subject, message" });
     }
 
-    const notifications = volunteerIds.map((volunteerId) => ({
-        sender: req.userId, // assuming staff's user ID is stored in req.userId
-        recipient: volunteerId,
-        subject,
-        message,
-        relatedService,
-    }));
-
     try {
+        // Fetching emails of the volunteers
+        const users = await User.find({
+            '_id': { $in: volunteerIds }
+        });
+        const userEmails = users.map(user => user.email);
+
+        const notifications = volunteerIds.map((volunteerId, index) => ({
+            sender: req.userId, 
+            recipient: volunteerId,
+            subject,
+            message,
+            relatedService,
+        }));
+
         await Notification.insertMany(notifications);
-        const emailresp = sendEmail("mahammadjuberaus@gmail.com", subject, message);
-        res.status(201).json({ message: "Notifications sent successfully!" + JSON.stringify(emailresp) });
+
+        // Sending email to all fetched user emails
+        let emailResults = [];
+        for (let email of userEmails) {
+            const emailResp = await sendEmail(email, subject, message);
+            emailResults.push(emailResp);
+        }
+
+        res.status(201).json({
+            message: "Notifications and emails sent successfully!",
+            emailResults
+        });
 
     } catch (err) {
         res.status(500).json({ error: "Server error: " + err.message });

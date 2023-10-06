@@ -20,7 +20,8 @@ var masterData = [{
         locationName: "Location name is required.",
         categoryName: "Category name is required.",
         staffDepartment: "Please select a department.",
-        staffLocation: "Please select a location."
+        staffLocation: "Please select a location.",
+        serviceName: "Service name is required.",
 
     },
 }, ];
@@ -178,6 +179,7 @@ function isValidInput(inputType, inputValue, originalPassword = "") {
         case "locationName":
         case "categoryName":
         case "departmentName":
+        case "serviceName":
             if (inputValue.length <= 0) {
 
                 return false;
@@ -305,6 +307,19 @@ function onDeviceReady() {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
         $("#search-form").submit();
     });
+
+    $('input[name="date-range"]').on('cancel.daterangepicker', function(ev, picker) {
+        // This function will be called when the date range is cleared or emptied
+        $(this).val(''); // Clear the input value
+        $("#search-form").submit(); // Submit the form or perform any other action
+    });
+    $('input[name="date-range"]').on('blur', function(ev, picker) {
+        $("#search-form").submit(); // Submit the form or perform any other action
+    });
+    $('#searchForCollapsibleSet_modified').on('keyup', function(ev, picker) {
+        $("#search-form").submit(); // Submit the form or perform any other action
+    });
+
     /*  DATERANGE PICKER PLUGIN -->> */
 
 
@@ -676,7 +691,7 @@ function onDeviceReady() {
 
                     //4.Handle resposne
                     // TO-DO need to populate from server response
-                    console.log(response);
+                    console.log(response.emailResults);
                     showAPIResponse(response.message, true);
                     alert(response.message);
                     $.mobile.changePage("#staff-sent-notif");
@@ -1114,7 +1129,7 @@ function onDeviceReady() {
 
     // Function to render services in the collapsible set
     function renderServices(services) {
-
+        console.log("Inside render services");
         var $collapsibleSet = $("#collapsiblesetForFilter");
         $collapsibleSet.empty(); // Clear existing services
 
@@ -1181,15 +1196,17 @@ function onDeviceReady() {
                 const formattedStartDate = "startDate=" + startDateStr.split('/').reverse().join('-');
                 const formattedEndDate = "endDate=" + endDateStr.split('/').reverse().join('-');
 
+
                 // Create the final string
                 dateRangeString = formattedStartDate + "&" + formattedEndDate;
 
                 console.log(dateRangeString);
             }
-
-            var query = $("#searchForCollapsibleSet").val();
-            if (dateRangeString != '') {
-                query = query + "/date?" + dateRangeString;
+            var searchText = $("#searchForCollapsibleSet_modified").val();
+            var queryString = (searchText.length > 0) ? "&query='" + searchText + "'" : "";
+            var query = "";
+            if (dateRangeString != '' || queryString != '') {
+                query += "/date?" + dateRangeString + queryString;
             }
             fetchServices(query);
         });
@@ -1354,7 +1371,7 @@ function onDeviceReady() {
                     console.log(data);
                     if (data != undefined) {
                         alert("Service added successfully!");
-                        location.href("#manage-services-menu"); //refresh page
+                        $.mobile.changePage("#manage-services-menu"); //refresh page
                     }
                 },
                 error: function(error) {
@@ -1418,9 +1435,21 @@ function onDeviceReady() {
             scrollX: true,
         });
 
-        table.on('page.dt', function() {
+        table.on('draw.dt', function() { //on filter with search results
             setTimeout(function() {
                 reloadFlipswitch(); //to wait for updating DOM
+                $("select[name='service-displayed']").on("change", function() {
+                    flipswitchChange($(this)); //console.log("switchch");
+                })
+            }, 500);
+        });
+
+        table.on('page.dt', function() { //on change of page from pagination
+            setTimeout(function() {
+                reloadFlipswitch(); //to wait for updating DOM
+                $("select[name='service-displayed']").on("change", function() {
+                    flipswitchChange($(this)); //console.log("switchch");
+                })
             }, 500);
 
         });

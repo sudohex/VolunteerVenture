@@ -381,6 +381,7 @@ const addStaff = async(req, res) => {
         "firstName",
         "lastName",
         "phoneNo",
+        
     ];
     const validation = validateRequestBody(req.body, requiredFields);
     if (!validation.isValid) {
@@ -408,7 +409,7 @@ const addStaff = async(req, res) => {
         const user = new User({
             email,
             password: await hashPassword(password),
-            authType: "staff",
+            acctType: "staff",
         });
 
         await user.save();
@@ -424,6 +425,8 @@ const addStaff = async(req, res) => {
         });
 
         await staff.save();
+
+        await sendEmail(email, "Welcome to CQU Volunteer Portal", `Your account has been created successfully! Username: ${email} Password: ${password}`)
 
         res.status(201).json(staff);
     } catch (err) {

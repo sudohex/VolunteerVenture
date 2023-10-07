@@ -1203,7 +1203,7 @@ function onDeviceReady() {
                 console.log(dateRangeString);
             }
             var searchText = $("#searchForCollapsibleSet_modified").val();
-            var queryString = (searchText.length > 0) ? "&query='" + searchText + "'" : "";
+            var queryString = (searchText.length > 0) ? "&q='" + searchText + "'" : "";
             var query = "";
             if (dateRangeString != '' || queryString != '') {
                 query += "?" + dateRangeString + queryString;

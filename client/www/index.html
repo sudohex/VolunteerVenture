@@ -207,7 +207,7 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="main" class="ui-content">
             <form id="search-form">
                 <input name="date-range" placeholder="Example: 12/02/2023 - 14/02/2023" />
-                <input data-type="search" id="searchForCollapsibleSet" placeholder="Search by Service, Category, or Location">
+                <input data-type="search" id="searchForCollapsibleSet_modified" placeholder="Search by Service, Category, or Location">
             </form>
             <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">
                 <!-- ADD Services With JS -->
@@ -529,13 +529,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
             <form id="add-new-service-form">
 
                 <label for="service-name">Service Name*</label>
-                <input type="text" for="service-name" id="service-name" data-param="serviceName" data-trequired="true">
+                <input type="text" for="service-name" id="service-name" data-param="serviceName" data-required="true">
                 <span class="err-msg" data-param="serviceName"></span>
-                <label for="select-location">Location</label>
+                <label for="select-location">Location*</label>
                 <select data-native-menu="false" id="sm-location" name="preferred_locations" data-mini="true" data-param="prefLocation" data-required="true">
                     </select>
                 <span class="err-msg" data-param="prefLocation"></span>
-                <label for="select-services">Service Category:</label>
+                <label for="select-services">Service Category*</label>
                 <!-- name="service-cat" -->
                 <select data-native-menu="false" id="sm-category" name="preferred_categories" data-mini="true" data-param="prefServiceCategories" data-required="true">
                 <!-- ADDED WITH JS-->    
@@ -549,11 +549,12 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
                 <span class="err-msg" data-param="serviceExpiryDate"></span>
                 <label for="send-SMS">Display to public?</label>
                 <select name="send-SMS" id="send-SMS" data-role="flipswitch" data-mini="true">
+                    <option value="on">Yes</option>
                 <option value="off">No</option>
-                <option value="on">Yes</option>
+
                 </select>
             </form>
-            <a href="#" data-role="button" class="ui-btn" id="submit-new-service" data-id="add-new-service-form">Save</a>
+            <a href="#" data-role="button" type="submit" class="ui-btn" id="submit-new-service" data-id="add-new-service-form">Save</a>
         </div>
     </div>
     <!-- END Staff services menu -->

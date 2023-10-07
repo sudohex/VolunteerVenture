@@ -442,3 +442,11 @@
         display: flex;
         justify-content: center;
     }
+    select {
+        background-color: white !important;
+    }
+    
+    select option {
+        background-color: white !important;
+    }
+    

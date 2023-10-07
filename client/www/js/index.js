@@ -1206,7 +1206,7 @@ function onDeviceReady() {
             var queryString = (searchText.length > 0) ? "&query='" + searchText + "'" : "";
             var query = "";
             if (dateRangeString != '' || queryString != '') {
-                query += "/date?" + dateRangeString + queryString;
+                query += "?" + dateRangeString + queryString;
             }
             fetchServices(query);
         });

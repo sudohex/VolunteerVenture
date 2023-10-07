@@ -381,6 +381,7 @@ const addStaff = async(req, res) => {
         "firstName",
         "lastName",
         "phoneNo",
+        
     ];
     const validation = validateRequestBody(req.body, requiredFields);
     if (!validation.isValid) {
@@ -408,7 +409,7 @@ const addStaff = async(req, res) => {
         const user = new User({
             email,
             password: await hashPassword(password),
-            authType: "staff",
+            acctType: "staff",
         });
 
         await user.save();
@@ -424,6 +425,8 @@ const addStaff = async(req, res) => {
         });
 
         await staff.save();
+
+        await sendEmail(email, "Welcome to CQU Volunteer Portal", `Your account has been created successfully! Username: ${email} Password: ${password}`)
 
         res.status(201).json(staff);
     } catch (err) {
@@ -516,7 +519,8 @@ const getPreferredServicesForVolunteer = async(volunteerId) => {
     return preferredServices;
 };
 
-const getService = async(req, res) => {
+const getService = async (req, res) => {
+    // Search conditions
     let conditions = [];
     if (req.query.q) {
         const query = new RegExp(req.query.q, "i");
@@ -530,40 +534,9 @@ const getService = async(req, res) => {
 
     const baseQuery = conditions.length ? { $or: conditions } : {};
 
-    if (req.authType === "staff") {
-        try {
-            const services = await Service.find(baseQuery)
-                .populate("category", "categoryName bookingLink")
-                .populate("location", "locationName");
-
-            res.json(services);
-        } catch (err) {
-            sendError(res, 500, "Server error: " + err);
-        }
-    } else if (req.authType === "volunteer") {
-        try {
-            // Get preferred services for the volunteer
-            const services = await getPreferredServicesForVolunteer(req.userId);
-
-            // Now, filter out the ones that are not online and then populate necessary fields
-            const onlinePreferredServices = await Service.find({
-                    _id: { $in: services.map((service) => service._id) },
-                    ...baseQuery,
-                    status: "online",
-                })
-                .populate("category", "categoryName bookingLink")
-                .populate("location", "locationName");
-
-            res.json(onlinePreferredServices);
-        } catch (err) {
-            sendError(res, 500, "Server error: " + err);
-        }
-    }
-};
-const getServiceByDateRange = async(req, res) => {
+    // Date conditions
     const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
     const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
-
     let dateConditions = {};
 
     if (startDate && endDate) {
@@ -581,36 +554,32 @@ const getServiceByDateRange = async(req, res) => {
         };
     }
 
+    let finalQuery = {
+        ...baseQuery,
+        ...dateConditions,
+    };
+
     if (req.authType === "staff") {
         try {
-            const services = await Service.find({
-                    ...dateConditions,
-                    status: "online",
-                })
+            const services = await Service.find(finalQuery)
                 .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
-
             res.json(services);
         } catch (err) {
             sendError(res, 500, "Server error: " + err);
         }
     } else if (req.authType === "volunteer") {
         try {
-            // Get volunteer preferences
             const volunteer = await Volunteer.findById(req.userId);
             if (!volunteer) {
                 return sendError(res, 404, "Volunteer not found");
             }
+            finalQuery = {...finalQuery, status: "online"}
+            // Extend the final query with volunteer preferences
+            finalQuery.category = { $in: volunteer.preferred_categories };
+            finalQuery.location = { $in: volunteer.preferred_locations };
 
-            // Combine preferred categories, locations, date conditions, and online status
-            const conditions = {
-                ...dateConditions,
-                status: "online",
-                category: { $in: volunteer.preferred_categories },
-                location: { $in: volunteer.preferred_locations },
-            };
-
-            const services = await Service.find(conditions)
+            const services = await Service.find(finalQuery)
                 .populate("category", "categoryName bookingLink")
                 .populate("location", "locationName");
 
@@ -998,7 +967,6 @@ app.put("/staff/:id", auth, updateStaff);
 
 // Services
 app.get("/service", auth, getService);
-app.get("/service/date", auth, getServiceByDateRange);
 app.get("/service/:id", auth, getServiceById);
 app.post("/service", auth, addService);
 app.delete("/service/:id", auth, deleteService); // Delete route for service

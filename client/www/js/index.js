@@ -316,7 +316,7 @@ function onDeviceReady() {
     $('input[name="date-range"]').on('blur', function(ev, picker) {
         $("#search-form").submit(); // Submit the form or perform any other action
     });
-    $('#searchForCollapsibleSet_modified').on('keyup', function(ev, picker) {
+    $('#search_service_button').on('click', function(ev, picker) {
         $("#search-form").submit(); // Submit the form or perform any other action
     });
 
@@ -986,8 +986,8 @@ function onDeviceReady() {
                         renderServices(services);
                     }
                 } else { //0 records
-                    $("#collapsiblesetForFilter").html('<p class="text-center err-msg">No matching services found for your preferences.</p>');
-                    showAPIResponse("Zero matching services found!!");
+                    $("#collapsiblesetForFilter").html('<p class="text-center err-msg">No matching services found for your preferences/search.</p>');
+                    //showAPIResponse("Zero matching services found!!");
                 }
             },
             error: function(error) {

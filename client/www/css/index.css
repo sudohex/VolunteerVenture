@@ -12,6 +12,10 @@
         text-shadow: none;
     }
     
+    .loading {
+        color: black !important;
+    }
+    
     .success_response {
         color: #198754;
     }
@@ -442,6 +446,7 @@
         display: flex;
         justify-content: center;
     }
+    
     select {
         background-color: white !important;
     }
@@ -449,4 +454,3 @@
     select option {
         background-color: white !important;
     }
-    

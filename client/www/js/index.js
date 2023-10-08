@@ -322,7 +322,9 @@ function onDeviceReady() {
 
     /*  DATERANGE PICKER PLUGIN -->> */
 
-
+    $(".ui-input-clear").on("click", function() {
+        console.log("cleardetected");
+    })
 
     $("#btn-forgotpwd,#btn-forgotpwd-staff").on("click", function(e) {
         e.preventDefault();
@@ -897,7 +899,7 @@ function onDeviceReady() {
     }
 
     //staff services menu
-    $(document).on("pagecreate", "#manage-services-menu", function() {
+    $(document).on("pageshow", "#manage-services-menu", function() {
         //Only logged in user can see this page 
         checkAuthentication();
         fetchServices("", true); //query,true for staff/admin
@@ -1203,7 +1205,7 @@ function onDeviceReady() {
                 console.log(dateRangeString);
             }
             var searchText = $("#searchForCollapsibleSet_modified").val();
-            var queryString = (searchText.length > 0) ? "&q='" + searchText + "'" : "";
+            var queryString = (searchText.length > 0) ? "&q=" + searchText + "" : "";
             var query = "";
             if (dateRangeString != '' || queryString != '') {
                 query += "?" + dateRangeString + queryString;

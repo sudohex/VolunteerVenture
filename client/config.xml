@@ -19,6 +19,6 @@
 
     <!-- Platform-specific icon elements -->
     <platform name="android">
-        <icon src="www\css\img\VVIcon.png" />
+        <icon src="www/css/img/VVIcon.png" />
     </platform>
 </widget>

@@ -257,8 +257,8 @@ function toCreateMessage() {
     $.mobile.changePage("#create-message-page");
 }
 
-// document.addEventListener('deviceready', onDeviceReady, false);
-$(document).ready(onDeviceReady)
+document.addEventListener('deviceready', onDeviceReady, false);
+// $(document).ready(onDeviceReady)
 
 function onDeviceReady() {
 
@@ -1506,8 +1506,11 @@ function onDeviceReady() {
                     $.each(response.preferred_channels, function(index, value) {
                         $("#update-select-consent option[value='" + value + "']").prop("selected", true);
                     });
-                    $("#update-locations,#update-select-services-menu,#update-select-consent").selectmenu().selectmenu("refresh");
-
+                    $("#update-profile-page").on("pagecreate", function() {
+                        $("#update-locations").selectmenu().selectmenu().selectmenu("destroy").selectmenu().selectmenu("refresh");
+                        $("#update-select-services-menu").selectmenu().selectmenu().selectmenu("destroy").selectmenu().selectmenu("refresh");
+                        $("#update-select-consent").selectmenu().selectmenu().selectmenu("destroy").selectmenu().selectmenu("refresh");
+                    });
 
                 } else {
 

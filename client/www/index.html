@@ -207,11 +207,13 @@ Authors: Pyae Phyo Kyaw, Briana Loughlin, Mahammad Juber Shaik
         <div data-role="main" class="ui-content">
             <form id="search-form">
                 <input name="date-range" placeholder="Example: 12/02/2023 - 14/02/2023" />
-                <input data-type="search" id="searchForCollapsibleSet_modified" placeholder="Search by Service, Category, or Location">
+
+                <input id="searchForCollapsibleSet_modified" placeholder="Search by Service, Category, or Location">
+                <button class="ui btn" type="button" id="search_service_button">Search</button>
             </form>
             <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet">
                 <!-- ADD Services With JS -->
-                <p class="text-center err-msg">No matching services found for your preferences.</p>
+                <p class="text-center err-msg loading">loading...</p>
             </div>
         </div>
         <div>
